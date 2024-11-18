@@ -31,9 +31,9 @@ public abstract class Migrator {
                 ClaimManager.getInstance().cacheChunk(chunk);
                 scannedChunks.getAndIncrement();
             });
-            Logger.info("Scanned %s Chunks".formatted(scannedChunks.get()));
+            Logger.info("Scanned & Migrated %s Chunks".formatted(scannedChunks.get()));
 
-            Logger.info("Migration Complete!");
+            Logger.info("Migration Complete! (%sms)".formatted(startTime - System.currentTimeMillis()));
             return null;
         });
     }

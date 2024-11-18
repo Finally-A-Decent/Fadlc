@@ -1,4 +1,4 @@
-package info.preva1l.fadlc.config;
+package info.preva1l.fadlc.config.misc;
 
 import info.preva1l.fadlc.menus.lib.ItemBuilder;
 import info.preva1l.fadlc.utils.Text;

@@ -26,7 +26,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.6' // Placeholder support
 
     // Database
-    implementation 'com.zaxxer:HikariCP:5.1.0'
+    compileOnly 'com.zaxxer:HikariCP:5.1.0'
     compileOnly 'org.xerial:sqlite-jdbc:3.45.2.0'
     compileOnly 'com.mysql:mysql-connector-j:8.3.0'
     compileOnly('org.mariadb.jdbc:mariadb-java-client:3.3.3') {
@@ -36,7 +36,7 @@ dependencies {
 
     implementation 'net.wesjd:anvilgui:1.9.6-SNAPSHOT' // Text Input
 
-    implementation 'de.exlll:configlib-yaml:4.5.0' // config
+    compileOnly 'de.exlll:configlib-yaml:4.5.0' // config
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7' // Economy Hook
 
@@ -45,11 +45,8 @@ dependencies {
 }
 
 shadowJar {
-    relocate 'com.zaxxer', 'info.preva1l.fadfc.libs.hikari'
     relocate 'net.wesjd', 'info.preva1l.fadfc.libs.anvilgui'
     relocate 'com.github.puregero.multilib', 'info.preva1l.fadfc.libs.multilib'
-    relocate 'de.exlll.configlib', 'info.preva1l.fadfc.libs.config'
 
     archiveClassifier.set('')
-    //minimize()
 }

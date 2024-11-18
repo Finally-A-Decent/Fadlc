@@ -158,7 +158,7 @@ public class Lang {
             });
             return;
         }
-        sender.sendMessage(Text.legacyMessage(getInstance().getPrefix() + message));
+        sender.sendMessage(Text.legacyMessage(i().getPrefix() + message));
     }
 
     public static void reload() {
@@ -166,7 +166,7 @@ public class Lang {
         Logger.info("Configuration automatically reloaded from disk.");
     }
 
-    public static Lang getInstance() {
+    public static Lang i() {
         if (instance == null) {
             instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), "lang.yml").toPath(), Lang.class, PROPERTIES);
             AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "lang.yml", Lang::reload);

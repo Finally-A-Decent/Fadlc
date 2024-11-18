@@ -113,9 +113,9 @@ public class BukkitUser implements OnlineUser, CommandUser {
     @Override
     public void sendMessage(String message, boolean prefixed) {
         switch (messageLocation) {
-            case CHAT -> getAudience().sendMessage(Text.modernMessage(Lang.getInstance().getPrefix() + message));
-            case HOTBAR -> getAudience().sendActionBar(Text.modernMessage(Lang.getInstance().getPrefix() + message));
-            case TITLE -> getAudience().sendTitlePart(TitlePart.SUBTITLE, Text.modernMessage(Lang.getInstance().getPrefix() + message));
+            case CHAT -> getAudience().sendMessage(Text.modernMessage(Lang.i().getPrefix() + message));
+            case HOTBAR -> getAudience().sendActionBar(Text.modernMessage(Lang.i().getPrefix() + message));
+            case TITLE -> getAudience().sendTitlePart(TitlePart.SUBTITLE, Text.modernMessage(Lang.i().getPrefix() + message));
         }
     }
 

@@ -52,12 +52,11 @@ public class SQLiteHandler implements DatabaseHandler {
             config.setJdbcUrl("jdbc:sqlite:" + databaseFile.getAbsolutePath());
             config.setConnectionTestQuery("SELECT 1");
             config.setMaxLifetime(60000);
-            config.setIdleTimeout(45000);
             config.setMaximumPoolSize(50);
             dataSource = new HikariDataSource(config);
             this.backupFlatFile(databaseFile);
 
-            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.getInstance().getStorage().getType().getId()));
+            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.i().getStorage().getType().getId()));
             try (Statement statement = dataSource.getConnection().createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
                     statement.execute(tableCreationStatement);

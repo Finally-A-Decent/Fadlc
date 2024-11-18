@@ -12,4 +12,9 @@ public class ProfileFlag {
     private final String name;
     private final List<String> description;
     private final boolean enabledByDefault;
+
+    @Override
+    public String toString() {
+        return id;
+    }
 }

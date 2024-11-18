@@ -1,10 +1,12 @@
 package info.preva1l.fadlc.models.claim;
 
+import info.preva1l.fadlc.models.ChunkLoc;
 import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
 import info.preva1l.fadlc.models.user.User;
 import info.preva1l.fadlc.persistence.DatabaseObject;
 import org.bukkit.Material;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,4 +34,8 @@ public interface IClaimProfile extends DatabaseObject {
     void setBorder(String border);
 
     IProfileGroup getPlayerGroup(User user);
+
+    List<ChunkLoc> getClaimedChunks();
+
+    List<User> getMembers();
 }

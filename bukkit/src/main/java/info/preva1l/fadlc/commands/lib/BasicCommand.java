@@ -14,7 +14,7 @@ import java.util.List;
 
 public abstract class BasicCommand {
     private final Command info;
-    @Getter private final List<BasicSubCommand> subCommands;
+    @Getter private final List<BasicCommand> subCommands;
 
     public BasicCommand() {
         this.info = getClass().getAnnotation(Command.class);
@@ -39,17 +39,17 @@ public abstract class BasicCommand {
      * false if the sender does not have permission or if the sender was console on a player only command
      */
     public boolean subCommandExecutor(CommandUser sender, String[] args) {
-        for (BasicSubCommand subCommand : getSubCommands()) {
+        for (BasicCommand subCommand : getSubCommands()) {
             if (args[0].equalsIgnoreCase(subCommand.getName())
                     || Arrays.stream(subCommand.getAliases()).toList().contains(args[0])) {
 
                 if (subCommand.isInGameOnly() && sender instanceof ConsoleUser) {
-                    sender.sendMessage(Text.modernMessage(Lang.getInstance().getCommand().getMustBePlayer()));
+                    sender.sendMessage(Text.modernMessage(Lang.i().getCommand().getMustBePlayer()));
                     return false;
                 }
 
                 if (!subCommand.getPermission().isEmpty() && !sender.hasPermission(subCommand.getPermission())) {
-                    sender.sendMessage(Text.modernMessage(Lang.getInstance().getCommand().getNoPermission()));
+                    sender.sendMessage(Text.modernMessage(Lang.i().getCommand().getNoPermission()));
                     return false;
                 }
 

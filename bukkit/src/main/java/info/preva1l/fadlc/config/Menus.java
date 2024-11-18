@@ -5,6 +5,7 @@ import de.exlll.configlib.NameFormatters;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import info.preva1l.fadlc.Fadlc;
+import info.preva1l.fadlc.config.misc.ConfigurableItem;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AccessLevel;
 import lombok.Getter;

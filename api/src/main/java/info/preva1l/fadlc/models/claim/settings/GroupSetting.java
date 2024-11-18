@@ -11,4 +11,9 @@ public class GroupSetting {
     private final String id;
     private final String name;
     private final List<String> description;
+
+    @Override
+    public String toString() {
+        return id;
+    }
 }

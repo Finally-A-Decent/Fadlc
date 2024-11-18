@@ -2,7 +2,6 @@ package info.preva1l.fadlc.managers;
 
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.commands.lib.BasicCommand;
-import info.preva1l.fadlc.commands.lib.BasicSubCommand;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.models.user.BukkitUser;
 import info.preva1l.fadlc.models.user.CommandUser;
@@ -10,10 +9,8 @@ import info.preva1l.fadlc.models.user.ConsoleUser;
 import info.preva1l.fadlc.utils.CommandMapUtil;
 import info.preva1l.fadlc.utils.Logger;
 import info.preva1l.fadlc.utils.TaskManager;
-import info.preva1l.fadlc.utils.Text;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
@@ -42,7 +39,7 @@ public final class CommandManager {
      * @param basicCommand the command.
      */
     public void registerCommand(BasicCommand basicCommand) {
-        CommandMapUtil.getCommandMap().register("", new CommandExecutor(basicCommand));
+        CommandMapUtil.getCommandMap().register("fadlc", new CommandExecutor(basicCommand));
         loadedCommands.add(basicCommand);
         Logger.info(String.format("Registered Command /%s", basicCommand.getName()));
     }
@@ -77,17 +74,16 @@ public final class CommandManager {
         }
 
         public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-            if (this.basicCommand.isInGameOnly() && sender instanceof ConsoleCommandSender) {
-                sender.sendMessage(Text.legacyMessage(Lang.getInstance().getCommand().getNoPermission()));
+            CommandUser commandUser = sender instanceof Player p ? (BukkitUser) UserManager.getInstance().getUser(p.getUniqueId()).get() : new ConsoleUser(Fadlc.i().getAudiences().console());
+
+            if (this.basicCommand.isInGameOnly() && commandUser instanceof ConsoleUser) {
+                commandUser.sendMessage(Lang.i().getCommand().getMustBePlayer());
                 return false;
             }
             if (this.getPermission() != null && !sender.hasPermission(this.getPermission())) {
-                sender.sendMessage(Text.legacyMessage(Lang.getInstance().getCommand().getNoPermission()));
+                commandUser.sendMessage(Lang.i().getCommand().getNoPermission());
                 return false;
             }
-
-
-            CommandUser commandUser = sender instanceof Player p ? (BukkitUser) UserManager.getInstance().getUser(p.getUniqueId()).get() : new ConsoleUser(Fadlc.i().getAudiences().console());
 
             if (this.basicCommand.isAsync()) {
                 TaskManager.runAsync(Fadlc.i(), () -> basicCommand.execute(commandUser, args));
@@ -107,7 +103,7 @@ public final class CommandManager {
 
                 if (completors.isEmpty() && !basicCommand.getSubCommands().isEmpty()) {
                     List<String> ret = new ArrayList<>();
-                    for (BasicSubCommand subCommand : basicCommand.getSubCommands()) {
+                    for (BasicCommand subCommand : basicCommand.getSubCommands()) {
                         if (!subCommand.getPermission().isEmpty() && !commandUser.hasPermission(subCommand.getPermission())) {
                             continue;
                         }
@@ -129,7 +125,7 @@ public final class CommandManager {
             List<String> completors = new ArrayList<>();
 
             List<String> ret = new ArrayList<>();
-            for (BasicSubCommand subCommand : basicCommand.getSubCommands()) {
+            for (BasicCommand subCommand : basicCommand.getSubCommands()) {
                 if (!subCommand.getName().equals(args[0]) && !Arrays.stream(subCommand.getAliases()).toList().contains(args[0])) {
                     continue;
                 }

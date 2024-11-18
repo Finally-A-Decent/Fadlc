@@ -38,7 +38,7 @@ public class SaveJobs {
 
     public static class ClaimSaveJob extends Job {
         public ClaimSaveJob() {
-            super("Claim Save", Duration.ofMinutes(Config.getInstance().getJobs().getClaimSaveInterval()));
+            super("Claim Save", Duration.ofMinutes(Config.i().getJobs().getClaimSaveInterval()));
         }
 
         @Override
@@ -47,7 +47,7 @@ public class SaveJobs {
                     PersistenceManager.getInstance().save(IClaim.class, f).join();
                     f.getProfiles().values().forEach(p -> {
                         PersistenceManager.getInstance().save(IClaimProfile.class, p).join();
-                        p.getGroups().values().forEach(g -> PersistenceManager.getInstance().save(IProfileGroup.class, g));
+                        p.getGroups().values().forEach(g -> PersistenceManager.getInstance().save(IProfileGroup.class, g).join());
                     });
                     f.getClaimedChunks().keySet().forEach(cUUID ->
                             PersistenceManager.getInstance().save(IClaimChunk.class, ClaimManager.getInstance().getChunk(cUUID)).join());
@@ -57,7 +57,7 @@ public class SaveJobs {
 
     public static class UsersSaveJob extends Job {
         public UsersSaveJob() {
-            super("Users Save", Duration.ofMinutes(Config.getInstance().getJobs().getUsersSaveInterval()));
+            super("Users Save", Duration.ofMinutes(Config.i().getJobs().getUsersSaveInterval()));
         }
 
         @Override

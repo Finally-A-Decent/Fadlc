@@ -8,9 +8,9 @@ import info.preva1l.fadlc.managers.PersistenceManager;
 import info.preva1l.fadlc.models.claim.ClaimProfile;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.models.claim.IProfileGroup;
-import info.preva1l.fadlc.models.claim.settings.EProfileFlag;
 import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
 import info.preva1l.fadlc.persistence.Dao;
+import info.preva1l.fadlc.registry.ProfileFlagsRegistry;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
@@ -26,7 +26,7 @@ import java.util.*;
 public class SQLiteProfileDao implements Dao<IClaimProfile> {
     private final HikariDataSource dataSource;
     private static final Type stringListType = new TypeToken<List<String>>(){}.getType();
-    private static final Type flagsType = new TypeToken<Map<EProfileFlag, Boolean>>(){}.getType();
+    private static final Type flagsType = new TypeToken<Map<String, Boolean>>(){}.getType();
 
     /**
      * Get an object from the database by its id.
@@ -50,7 +50,7 @@ public class SQLiteProfileDao implements Dao<IClaimProfile> {
                     final UUID parent = UUID.fromString(resultSet.getString("parent"));
                     final int id = resultSet.getInt("id");
                     final Map<Integer, IProfileGroup> groups = groupDeserialize(gson.fromJson(resultSet.getString("groups"), stringListType));
-                    final Map<ProfileFlag, Boolean> flags = gson.fromJson(resultSet.getString("flags"), flagsType);
+                    final Map<ProfileFlag, Boolean> flags = flagsDeserialize(gson.fromJson(resultSet.getString("flags"), flagsType));
                     final String border = resultSet.getString("border");
                     return Optional.of(new ClaimProfile(parent, uuid, name, id, Material.BLUE_WOOL, groups, flags, border));
                 }
@@ -78,6 +78,7 @@ public class SQLiteProfileDao implements Dao<IClaimProfile> {
      */
     @Override
     public void save(IClaimProfile profile) {
+        Gson gson = Fadlc.i().getGson();
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `profiles`
@@ -90,8 +91,8 @@ public class SQLiteProfileDao implements Dao<IClaimProfile> {
                             `flags` = excluded.`flags`,
                             `border` = excluded.`border`;""")) {
 
-                String groups = Fadlc.i().getGson().toJson(groupSerialize(profile.getGroups().values()));
-                String flags = Fadlc.i().getGson().toJson(profile.getFlags());
+                String groups = gson.toJson(groupSerialize(profile.getGroups().values()));
+                String flags = gson.toJson(flagsSerialize(profile.getFlags()));
                 statement.setString(1, profile.getUniqueId().toString());
                 statement.setInt(2, profile.getId());
                 statement.setString(3, profile.getName());
@@ -146,5 +147,21 @@ public class SQLiteProfileDao implements Dao<IClaimProfile> {
             });
         }
         return list;
+    }
+
+    private Map<ProfileFlag, Boolean> flagsDeserialize(Map<String, Boolean> map) {
+        Map<ProfileFlag, Boolean> result = new HashMap<>();
+        for (String flag : map.keySet()) {
+            result.put(ProfileFlagsRegistry.get(flag), map.get(flag));
+        }
+        return result;
+    }
+
+    private Map<String, Boolean> flagsSerialize(Map<ProfileFlag, Boolean> map) {
+        Map<String, Boolean> result = new HashMap<>();
+        for (ProfileFlag setting : map.keySet()) {
+            result.put(setting.getId(), map.get(setting));
+        }
+        return result;
     }
 }

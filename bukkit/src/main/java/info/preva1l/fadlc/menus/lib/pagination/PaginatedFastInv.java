@@ -1,8 +1,8 @@
 package info.preva1l.fadlc.menus.lib.pagination;
 
 import info.preva1l.fadlc.Fadlc;
-import info.preva1l.fadlc.config.ConfigurableItem;
 import info.preva1l.fadlc.config.Menus;
+import info.preva1l.fadlc.config.misc.ConfigurableItem;
 import info.preva1l.fadlc.managers.LayoutManager;
 import info.preva1l.fadlc.menus.lib.FastInv;
 import info.preva1l.fadlc.menus.lib.ItemBuilder;

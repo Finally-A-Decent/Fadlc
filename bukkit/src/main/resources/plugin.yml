@@ -16,7 +16,11 @@ libraries:
   - net.kyori:adventure-api:4.17.0
   - net.kyori:adventure-platform-bukkit:4.3.3
   - com.influxdb:influxdb-client-java:3.3.0
+  - de.exlll:configlib-yaml:4.5.0
+  - com.zaxxer:HikariCP:5.1.0
 
 permissions:
   fadlc.claim:
+    default: true
+  fadlc.particle.default:
     default: true

@@ -55,6 +55,14 @@ public final class PersistenceManager {
         return CompletableFuture.supplyAsync(() -> handler.get(clazz, id), threadPool);
     }
 
+    public <T extends DatabaseObject> CompletableFuture<Optional<T>> search(Class<T> clazz, String search) {
+        if (!isConnected()) {
+            Logger.severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.completedFuture(Optional.empty());
+        }
+        return CompletableFuture.supplyAsync(() -> handler.search(clazz, search), threadPool);
+    }
+
     public <T extends DatabaseObject> CompletableFuture<Void> save(Class<T> clazz, T t) {
         if (!isConnected()) {
             Logger.severe("Tried to perform database action when the database is not connected!");
@@ -108,7 +116,7 @@ public final class PersistenceManager {
     }
 
     private DatabaseHandler initHandler() {
-        DatabaseType type = Config.getInstance().getStorage().getType();
+        DatabaseType type = Config.i().getStorage().getType();
         Logger.info("DB Type: %s".formatted(type.getFriendlyName()));
         try {
             Class<? extends DatabaseHandler> handlerClass = databaseHandlers.get(type);

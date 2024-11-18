@@ -2,6 +2,7 @@ package info.preva1l.fadlc.models.claim;
 
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.managers.ClaimManager;
+import info.preva1l.fadlc.models.ChunkLoc;
 import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.User;
@@ -39,14 +40,14 @@ public class ClaimProfile implements IClaimProfile {
                 4, ProfileGroup.rankFour(),
                 5, ProfileGroup.rankFive()
         );
-        return new ClaimProfile(user.getUniqueId(), UUID.randomUUID(), "&7%s's Claim".formatted(user.getName()), id, getRandomMaterial(), groups, flags, "default");
+        return new ClaimProfile(user.getUniqueId(), UUID.randomUUID(), "&7%s's Claim".formatted(user.getName()), id, getRandomMaterial(), groups, flags, "default"); // todo: config
     }
 
     private static Material getRandomMaterial() {
         for (int i = 0; i < 2; i++) {
             Material[] materials = Material.values();
             Material material = materials[Fadlc.i().getRandom().nextInt(materials.length)];
-            if (material.isAir() || !material.isItem()) {
+            if (material.isAir() || !material.isItem() || material.isLegacy()) {
                 --i;
                 continue;
             }
@@ -111,5 +112,24 @@ public class ClaimProfile implements IClaimProfile {
         }
         groupCache.put(user, group);
         return group;
+    }
+
+    @Override
+    public List<ChunkLoc> getClaimedChunks() {
+        List<ChunkLoc> chunks = new ArrayList<>();
+        for (ChunkLoc chunk : getParent().getClaimedChunks().keySet()) {
+            if (getParent().getClaimedChunks().get(chunk) != getId()) continue;
+            chunks.add(chunk);
+        }
+        return chunks;
+    }
+
+    @Override
+    public List<User> getMembers() {
+        List<User> users = new ArrayList<>();
+        for (IProfileGroup group : groups.values()) {
+            users.addAll(group.getUsers());
+        }
+        return users;
     }
 }

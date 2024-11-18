@@ -35,7 +35,6 @@ lang:
           - "&7&l‣ &3Owner: &f%owner%"
           - "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%"
           - "&7&l‣ &3Claimed: &f%formatted_time% ago"
-          - ""
     unclaimed:
       icon: "GRAY_STAINED_GLASS_PANE"
       model-data: 0

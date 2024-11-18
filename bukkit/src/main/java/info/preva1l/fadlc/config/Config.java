@@ -160,6 +160,9 @@ public class Config {
 
         @Comment("How often user data should save, in minutes.")
         private int usersSaveInterval = 10;
+
+        @Comment("Enable to stop the [JOBS] logs.")
+        private boolean shutTheHellUp = false;
     }
 
     private Storage storage = new Storage();
@@ -184,7 +187,7 @@ public class Config {
         Logger.info("Configuration automatically reloaded from disk.");
     }
 
-    public static Config getInstance() {
+    public static Config i() {
         if (instance == null) {
             instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), "config.yml").toPath(), Config.class, PROPERTIES);
             AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "config.yml", Config::reload);

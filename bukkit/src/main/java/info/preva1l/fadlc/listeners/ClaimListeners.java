@@ -34,26 +34,30 @@ public class ClaimListeners implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
+        ILoc loc = Loc.fromBukkit(event.getBlock().getLocation());
         OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (isActionAllowed(user, Loc.fromBukkit(event.getBlock().getLocation()), GroupSettingsRegistry.PLACE_BLOCKS.get())) {
+        if (isActionAllowed(user, loc, GroupSettingsRegistry.PLACE_BLOCKS.get())) {
             return;
         }
         event.setCancelled(true);
+        IClaim claimAtLocation = ClaimManager.getInstance().getClaimAt(loc).orElseThrow();
 
-        Lang.sendMessage(event.getPlayer(), Lang.getInstance().getGroupSettings().getPlaceBlocks().getMessage()
-                .replace("%player%", user.getName()));
+        Lang.sendMessage(event.getPlayer(), Lang.i().getGroupSettings().getPlaceBlocks().getMessage()
+                .replace("%player%", claimAtLocation.getOwner().getName()));
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        ILoc loc = Loc.fromBukkit(event.getBlock().getLocation());
         OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (isActionAllowed(user, Loc.fromBukkit(event.getBlock().getLocation()), GroupSettingsRegistry.BREAK_BLOCKS.get())) {
+        if (isActionAllowed(user, loc, GroupSettingsRegistry.BREAK_BLOCKS.get())) {
             return;
         }
         event.setCancelled(true);
+        IClaim claimAtLocation = ClaimManager.getInstance().getClaimAt(loc).orElseThrow();
 
-        Lang.sendMessage(event.getPlayer(), Lang.getInstance().getGroupSettings().getBreakBlocks().getMessage()
-                .replace("%player%", user.getName()));
+        Lang.sendMessage(event.getPlayer(), Lang.i().getGroupSettings().getBreakBlocks().getMessage()
+                .replace("%player%", claimAtLocation.getOwner().getName()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -76,13 +80,16 @@ public class ClaimListeners implements Listener {
             ClaimLeaveEvent leaveEvent = new ClaimLeaveEvent(e.getPlayer(), fromClaim, fromChunk);
             Bukkit.getPluginManager().callEvent(leaveEvent);
 
-            Lang.sendMessage(e.getPlayer(), Lang.getInstance().getClaimMessages().getLeave()
+            Lang.sendMessage(e.getPlayer(), Lang.i().getClaimMessages().getLeave()
                     .replace("%player%", fromClaim.getOwner().getName()));
         }
 
         if (toClaim != null) {
             if (!isActionAllowed(user, Loc.fromBukkit(e.getTo()), GroupSettingsRegistry.ENTER.get())) {
                 e.setCancelled(true);
+
+                Lang.sendMessage(e.getPlayer(), Lang.i().getGroupSettings().getEnter().getMessage()
+                        .replace("%player%", toClaim.getOwner().getName()));
                 return;
             }
 
@@ -97,7 +104,7 @@ public class ClaimListeners implements Listener {
                 return;
             }
 
-            Lang.sendMessage(e.getPlayer(), Lang.getInstance().getClaimMessages().getEnter()
+            Lang.sendMessage(e.getPlayer(), Lang.i().getClaimMessages().getEnter()
                     .replace("%player%", toClaim.getOwner().getName()));
         }
     }

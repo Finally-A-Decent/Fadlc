@@ -91,7 +91,7 @@ public class MySQLChunkDao implements Dao<IClaimChunk> {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `chunks` (`location`, `timeClaimed`, `profile`)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        VALUES (?, ?, ?)
                         ON DUPLICATE KEY UPDATE
                             `profile` = VALUES(`profile`);""")) {
                 statement.setString(1, Fadlc.i().getGson().toJson(chunk.getLoc()));

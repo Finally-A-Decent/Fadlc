@@ -20,32 +20,32 @@ public class ProfileGroup implements IProfileGroup {
     private final Map<GroupSetting, Boolean> settings;
 
     public static ProfileGroup rankOne() {
-        Config.Groups.First conf = Config.getInstance().getGroupDefaults().getFirst();
+        Config.Groups.First conf = Config.i().getGroupDefaults().getFirst();
         Map<GroupSetting, Boolean> settings = conf.getRealSettings();
-        return new ProfileGroup(UUID.randomUUID(), 1, "Default", List.of(), settings);
+        return new ProfileGroup(UUID.randomUUID(), 1, conf.getName(), List.of(), settings);
     }
 
     public static ProfileGroup rankTwo() {
-        Config.Groups.Second conf = Config.getInstance().getGroupDefaults().getSecond();
+        Config.Groups.Second conf = Config.i().getGroupDefaults().getSecond();
         Map<GroupSetting, Boolean> settings = conf.getRealSettings();
-        return new ProfileGroup(UUID.randomUUID(), 2, "Rank 2", List.of(), settings);
+        return new ProfileGroup(UUID.randomUUID(), 2, conf.getName(), List.of(), settings);
     }
 
     public static ProfileGroup rankThree() {
-        Config.Groups.Third conf = Config.getInstance().getGroupDefaults().getThird();
+        Config.Groups.Third conf = Config.i().getGroupDefaults().getThird();
         Map<GroupSetting, Boolean> settings = conf.getRealSettings();
-        return new ProfileGroup(UUID.randomUUID(), 3, "Rank 3", List.of(), settings);
+        return new ProfileGroup(UUID.randomUUID(), 3, conf.getName(), List.of(), settings);
     }
 
     public static ProfileGroup rankFour() {
-        Config.Groups.Fourth conf = Config.getInstance().getGroupDefaults().getFourth();
+        Config.Groups.Fourth conf = Config.i().getGroupDefaults().getFourth();
         Map<GroupSetting, Boolean> settings = conf.getRealSettings();
-        return new ProfileGroup(UUID.randomUUID(), 4, "Rank 4", List.of(), settings);
+        return new ProfileGroup(UUID.randomUUID(), 4, conf.getName(), List.of(), settings);
     }
 
     public static ProfileGroup rankFive() {
-        Config.Groups.Fifth conf = Config.getInstance().getGroupDefaults().getFifth();
+        Config.Groups.Fifth conf = Config.i().getGroupDefaults().getFifth();
         Map<GroupSetting, Boolean> settings = conf.getRealSettings();
-        return new ProfileGroup(UUID.randomUUID(), 5, "Rank 5", List.of(), settings);
+        return new ProfileGroup(UUID.randomUUID(), 5, conf.getName(), List.of(), settings);
     }
 }

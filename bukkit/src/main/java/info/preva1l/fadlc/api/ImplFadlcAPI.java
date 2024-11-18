@@ -25,7 +25,7 @@ public class ImplFadlcAPI extends FadlcAPI {
 
     @Override
     public IAdapter getAdapter() {
-        return null;
+        return Adapter.getInstance();
     }
 
     @Override

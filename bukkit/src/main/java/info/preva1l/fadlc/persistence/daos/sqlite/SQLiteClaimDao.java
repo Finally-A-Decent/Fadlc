@@ -171,7 +171,6 @@ public class SQLiteClaimDao implements Dao<IClaim> {
         return list;
     }
 
-    @Blocking
     private Map<ChunkLoc, Integer> chunkDeserialize(List<String> profiles) {
         Map<ChunkLoc, Integer> ret = new HashMap<>();
         for (String locStr : profiles) {

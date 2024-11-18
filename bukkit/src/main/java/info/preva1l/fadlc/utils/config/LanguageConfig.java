@@ -54,11 +54,11 @@ public class LanguageConfig {
     }
 
     public @NotNull String getStringFormatted(String path) {
-        String f = superSection.getString(path);
-        if (f == null || f.equals(path)) {
-            throw new RuntimeException("No value at path %s".formatted(path));
-        }
-        return Text.legacyMessage(f);
+        return getStringFormatted(path, "Regenerate Config");
+    }
+
+    public @NotNull String getString(String path) {
+        return getString(path, "Regenerate Config");
     }
 
     public @NotNull String getString(String path, String def) {
@@ -66,13 +66,13 @@ public class LanguageConfig {
     }
 
     public @NotNull String getStringFormatted(String path, String def) {
-        return Text.legacyMessage(superSection.getString(path, def));
+        return Text.legacyMessage(getString(path, def));
     }
 
     public @NotNull List<String> getLore(String path) {
         List<String> str = superSection.getStringList(path);
         List<String> newStr = new ArrayList<>();
-        if (str.isEmpty() || str.get(0).equals(path) || str.get(0).equals("null")) {
+        if (str.isEmpty() || str.getFirst().equals(path) || str.getFirst().equals("null")) {
             return Collections.emptyList();
         }
         for (String s : str) {
@@ -84,7 +84,7 @@ public class LanguageConfig {
     public @NotNull List<String> getLore(String path, List<String> def) {
         List<String> str = superSection.getStringList(path);
         List<String> newStr = new ArrayList<>();
-        if (str.isEmpty() || str.get(0).equals(path) || str.get(0).equals("null")) {
+        if (str.isEmpty() || str.getFirst().equals(path) || str.getFirst().equals("null")) {
             for (String s : str) {
                 newStr.add(Text.legacyMessage(s));
             }

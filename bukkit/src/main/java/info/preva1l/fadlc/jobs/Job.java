@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public abstract class Job {
     private static final ScheduledExecutorService scheduler =
-            new ScheduledThreadPoolExecutor(Config.getInstance().getJobs().getPoolSize());
+            new ScheduledThreadPoolExecutor(Config.i().getJobs().getPoolSize());
 
     private final String name;
     private final Duration interval;
@@ -64,6 +64,7 @@ public abstract class Job {
 
     void run() {
         int errors = 0;
+        long start = System.currentTimeMillis();
         log("[JOBS] Running job '%s'".formatted(name));
         try {
             execute();
@@ -71,18 +72,18 @@ public abstract class Job {
             e.printStackTrace();
             errors++;
         }
-        log("[JOBS] Job '%s' completed (%s errors)".formatted(this.name, errors));
+        log("[JOBS] Job '%s' completed (%s errors, took %sms)".formatted(this.name, errors, System.currentTimeMillis() - start));
     }
 
     public final void shutdown() {
-        future.cancel(true);
+        future.cancel(false);
         log("[JOBS] Job '%s' shutdown!".formatted(this.name));
     }
 
     protected abstract void execute();
 
     private void log(String message) {
-        if (!silent) {
+        if (!silent && !Config.i().getJobs().isShutTheHellUp()) {
             Logger.info(message);
         }
     }

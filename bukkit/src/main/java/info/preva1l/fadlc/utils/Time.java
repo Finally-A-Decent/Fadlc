@@ -24,7 +24,7 @@ public class Time {
         long minutes = durationSinceDeletion.toMinutes() % 60;
         long seconds = durationSinceDeletion.getSeconds() % 60;
 
-        Config.Formatting.Time conf = Config.getInstance().getFormatting().getTime();
+        Config.Formatting.Time conf = Config.i().getFormatting().getTime();
 
         if (years > 0) {
             return String.format(conf.getYears(), years, months, days, hours, minutes, seconds);
@@ -55,7 +55,7 @@ public class Time {
         long minutes = durationUntilDeletion.toMinutes() % 60;
         long seconds = durationUntilDeletion.getSeconds() % 60;
 
-        Config.Formatting.Time conf = Config.getInstance().getFormatting().getTime();
+        Config.Formatting.Time conf = Config.i().getFormatting().getTime();
 
         if (years > 0) {
             return String.format(conf.getYears(), years, months, days, hours, minutes, seconds);

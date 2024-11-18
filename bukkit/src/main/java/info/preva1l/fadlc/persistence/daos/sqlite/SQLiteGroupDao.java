@@ -6,7 +6,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.models.claim.IProfileGroup;
 import info.preva1l.fadlc.models.claim.ProfileGroup;
-import info.preva1l.fadlc.models.claim.settings.EGroupSetting;
 import info.preva1l.fadlc.models.claim.settings.GroupSetting;
 import info.preva1l.fadlc.models.user.OfflineUser;
 import info.preva1l.fadlc.models.user.User;
@@ -25,7 +24,7 @@ import java.util.*;
 @AllArgsConstructor
 public class SQLiteGroupDao implements Dao<IProfileGroup> {
     private final HikariDataSource dataSource;
-    private static final Type settingsType = new TypeToken<Map<EGroupSetting, Boolean>>(){}.getType();
+    private static final Type settingsType = new TypeToken<Map<String, Boolean>>(){}.getType();
     private static final Type usersType = new TypeToken<List<OfflineUser>>(){}.getType();
 
     /**

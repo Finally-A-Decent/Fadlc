@@ -29,7 +29,7 @@ public class MySQLHandler implements DatabaseHandler {
     private HikariDataSource dataSource;
 
     public MySQLHandler() {
-        this.driverClass = Config.getInstance().getStorage().getType().getDriverClass();
+        this.driverClass = Config.i().getStorage().getType().getDriverClass();
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -44,11 +44,11 @@ public class MySQLHandler implements DatabaseHandler {
     }
 
     public void connect() {
-        Config.Storage sql = Config.getInstance().getStorage();
+        Config.Storage sql = Config.i().getStorage();
 
         dataSource = new HikariDataSource();
         dataSource.setDriverClassName(driverClass);
-        dataSource.setJdbcUrl(String.format("jdbc:%s://%s:%d/%s", Config.getInstance().getStorage().getType().getId(), sql.getHost(), sql.getPort(), sql.getDatabase()));
+        dataSource.setJdbcUrl(String.format("jdbc:%s://%s:%d/%s", Config.i().getStorage().getType().getId(), sql.getHost(), sql.getPort(), sql.getDatabase()));
         dataSource.setUsername(sql.getUsername());
         dataSource.setPassword(sql.getPassword());
 
@@ -79,7 +79,7 @@ public class MySQLHandler implements DatabaseHandler {
         dataSource.setDataSourceProperties(properties);
 
         try (Connection connection = dataSource.getConnection()) {
-            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.getInstance().getStorage().getType().getId()));
+            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.i().getStorage().getType().getId()));
             try (Statement statement = connection.createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
                     statement.execute(tableCreationStatement);

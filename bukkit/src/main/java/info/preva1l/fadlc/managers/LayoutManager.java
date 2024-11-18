@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class LayoutManager {
+public final class LayoutManager {
     private static LayoutManager instance;
     private final List<GuiLayout> guiLayouts = new ArrayList<>();
 

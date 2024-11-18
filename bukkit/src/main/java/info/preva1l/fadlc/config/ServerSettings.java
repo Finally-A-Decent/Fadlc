@@ -40,7 +40,7 @@ public class ServerSettings {
     public static ServerSettings getInstance() {
         if (instance == null) {
             instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), "server.yml").toPath(), ServerSettings.class, PROPERTIES);
-            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "server.yml", Config::reload);
+            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "server.yml", ServerSettings::reload);
         }
 
         return instance;

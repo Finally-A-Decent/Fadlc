@@ -33,7 +33,7 @@ public class SQLiteChunkDao implements Dao<IClaimChunk> {
             try (PreparedStatement statement = connection.prepareStatement("""
                         SELECT `location`, `timeClaimed`, `profile`
                         FROM `chunks`
-                        WHERE uniqueId=?;""")) {
+                        WHERE location=?;""")) {
                 statement.setString(1, id);
                 final ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
@@ -86,8 +86,8 @@ public class SQLiteChunkDao implements Dao<IClaimChunk> {
             try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `chunks`
                         (`location`, `timeClaimed`, `profile`)
-                        VALUES (?,?,?,?,?,?,?)
-                        ON CONFLICT(`uniqueId`) DO UPDATE SET
+                        VALUES (?,?,?)
+                        ON CONFLICT(`location`) DO UPDATE SET
                             `profile` = excluded.`profile`;""")) {
                 statement.setString(1, Fadlc.i().getGson().toJson(chunk.getLoc()));
                 statement.setLong(2, chunk.getClaimedSince());

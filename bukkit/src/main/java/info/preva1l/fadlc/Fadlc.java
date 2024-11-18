@@ -124,7 +124,7 @@ public final class Fadlc extends JavaPlugin {
     }
 
     private void loadRegistries() {
-        Lang.ProfileFlags fConf = Lang.getInstance().getProfileFlags();
+        Lang.ProfileFlags fConf = Lang.i().getProfileFlags();
         Stream.of(
                 new ProfileFlag("exposion_damage",
                         fConf.getExplosionDamage().getName(),
@@ -143,7 +143,7 @@ public final class Fadlc extends JavaPlugin {
                 )
         ).forEach(ProfileFlagsRegistry::register);
 
-        Lang.GroupSettings gsConf = Lang.getInstance().getGroupSettings();
+        Lang.GroupSettings gsConf = Lang.i().getGroupSettings();
         Stream.of(
                 new GroupSetting(
                         "break_blocks",
