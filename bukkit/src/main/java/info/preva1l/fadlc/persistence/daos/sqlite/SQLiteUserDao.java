@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,7 +49,7 @@ public class SQLiteUserDao implements Dao<OnlineUser> {
             } catch (Exception e) {
                 Logger.severe("Failed to get!", e);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             Logger.severe("Failed to get user!", e);
         }
         return Optional.empty();
@@ -98,7 +97,7 @@ public class SQLiteUserDao implements Dao<OnlineUser> {
             } catch (Exception e) {
                 Logger.severe("Failed to save!", e);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             Logger.severe("Failed to add item to users!", e);
         }
     }

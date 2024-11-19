@@ -1,5 +1,9 @@
 package info.preva1l.fadlc.menus.lib;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import info.preva1l.fadlc.utils.Skins;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -174,7 +178,9 @@ public class ItemBuilder {
         if (skullMeta == null) {
             return this;
         }
-        skullMeta.setOwningPlayer(player);
+        PlayerProfile profile = Bukkit.getServer().createProfile(player.getUniqueId());
+        profile.setProperty(new ProfileProperty("textures", Skins.getTexture(player.getUniqueId())));
+        skullMeta.setPlayerProfile(profile);
         skull.setItemMeta(skullMeta);
 
         return edit(item -> item.setItemMeta(skullMeta));

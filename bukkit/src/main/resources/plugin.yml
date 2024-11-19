@@ -3,7 +3,7 @@ description: Finally a Decent Land Claim
 author: Preva1l
 version: '${version}'
 main: info.preva1l.fadlc.Fadlc
-api-version: 1.16
+api-version: 1.17
 
 libraries:
   - redis.clients:jedis:5.1.0

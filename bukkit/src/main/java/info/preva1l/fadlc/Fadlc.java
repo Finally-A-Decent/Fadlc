@@ -20,6 +20,7 @@ import info.preva1l.fadlc.registry.GroupSettingsRegistry;
 import info.preva1l.fadlc.registry.ProfileFlagsRegistry;
 import info.preva1l.fadlc.utils.Logger;
 import info.preva1l.fadlc.utils.Metrics;
+import info.preva1l.fadlc.utils.Skins;
 import info.preva1l.fadlc.utils.Text;
 import info.preva1l.fadlc.utils.config.BasicConfig;
 import lombok.Getter;
@@ -67,6 +68,7 @@ public final class Fadlc extends JavaPlugin {
 
         Sounds.update();
         Particles.update();
+        Skins.load();
 
         loadMenus();
 
@@ -112,6 +114,7 @@ public final class Fadlc extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Skins.save();
         SaveJobs.forceRunAll();
         SaveJobs.shutdownAll();
         if (borderJob != null) {

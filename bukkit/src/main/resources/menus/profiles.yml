@@ -27,6 +27,7 @@ lang:
 size: 4
 
 layout:
+  '10': "PAGINATION_ITEM"
   '11': "PAGINATION_ITEM"
   '12': "PAGINATION_ITEM"
   '13': "PAGINATION_ITEM"

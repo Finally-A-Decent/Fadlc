@@ -101,7 +101,7 @@ lang:
     lore:
       - "&7Click to manage your settings"
 
-size: 54
+size: 54 # Unused
 
 layout:
   '45': "FILLER"

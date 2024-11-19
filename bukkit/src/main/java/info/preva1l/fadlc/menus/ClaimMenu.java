@@ -83,11 +83,13 @@ public class ClaimMenu extends FastInv {
 
             placeNavigationButtons();
         });
+
         setItem(manageProfilesSlot, getLang().getItemStack("manage-profiles").getBase(), e -> {
             Sounds.playSound(player, getLang().getSound("manage-profiles.sound"));
             new ProfilesMenu(player).open(player);
         });
-        setItem(userSettingsSlot, getLang().getItemStack("player-settings").getBase(), e -> {
+
+        setItem(userSettingsSlot, getLang().getItemStack("player-settings").skullOwner(player).getBase(), e -> {
             Sounds.playSound(player, getLang().getSound("player-settings.sound"));
         });
     }
@@ -185,6 +187,7 @@ public class ClaimMenu extends FastInv {
         return stack;
     }
 
+    @Deprecated(forRemoval = true)
     private ItemBuilder chunkMaterial(int index, IClaimChunk chunk) {
         ItemBuilder itemBuilder = null;
         switch (chunk.getStatus()) {
@@ -206,6 +209,7 @@ public class ClaimMenu extends FastInv {
         return itemBuilder;
     }
 
+    @Deprecated(forRemoval = true)
     private ItemBuilder chunkName(ItemBuilder itemBuilder, IClaimChunk chunk) {
         return null;
 //        return switch (chunk.getStatus()) {
@@ -225,6 +229,7 @@ public class ClaimMenu extends FastInv {
 //        };
     }
 
+    @Deprecated(forRemoval = true)
     private ItemBuilder chunkLore(ItemBuilder itemBuilder, IClaimChunk chunk) {
         return null;
 //        return switch (chunk.getStatus()) {
