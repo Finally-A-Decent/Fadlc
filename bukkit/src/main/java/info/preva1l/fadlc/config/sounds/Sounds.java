@@ -27,6 +27,7 @@ public class Sounds {
     public Map<String, SoundType> getSoundsFromFile() {
         Map<String, SoundType> list = new HashMap<>();
         for (String key : soundsFile.getConfiguration().getKeys(false)) {
+            if (soundsFile.getString(key + ".value").equals("none")) continue;
             Sound bukkit = Sound.valueOf(soundsFile.getString(key + ".value"));
             float volume = soundsFile.getFloat(key + ".volume");
             float pitch = soundsFile.getFloat(key + ".pitch");

@@ -11,6 +11,8 @@ import java.util.function.Supplier;
 public class GroupSettingsRegistry {
     public static final Supplier<GroupSetting> PLACE_BLOCKS = () -> get("place_blocks");
     public static final Supplier<GroupSetting> BREAK_BLOCKS = () -> get("break_blocks");
+    public static final Supplier<GroupSetting> USE_DOORS = () -> get("use_doors");
+    public static final Supplier<GroupSetting> USE_BUTTONS = () -> get("use_buttons");
     public static final Supplier<GroupSetting> ENTER = () -> get("enter");
 
     private static Map<String, GroupSetting> settings = new ConcurrentHashMap<>();

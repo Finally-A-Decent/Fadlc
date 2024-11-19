@@ -6,6 +6,7 @@ import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.MessageLocation;
 import info.preva1l.fadlc.models.user.BukkitUser;
 import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -28,6 +29,11 @@ public class PlayerListeners implements Listener {
 
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent e) {
+        if (!PersistenceManager.getInstance().isConnected()) {
+            e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+            Logger.severe("User tried to join before database was ready! (Blocked)");
+        }
+
         invalidateIfNoJoin.put(e.getUniqueId(), Bukkit.getScheduler().runTaskLater(Fadlc.i(), () -> {
             leave(e.getUniqueId(), e.getName());
             invalidateIfNoJoin.remove(e.getUniqueId());

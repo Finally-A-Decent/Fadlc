@@ -108,6 +108,28 @@ public class Lang {
             private List<String> description = List.of("Whether or not to allow", "players to place blocks.");
             private String message = "&cYou cannot place blocks in &e%player%'s&c claim!";
         }
+
+        private UseDoors useDoors = new UseDoors();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class UseDoors {
+            private String name = "Use Doors";
+            private List<String> description = List.of("Whether or not to allow", "players to use doors.");
+            private String message = "&cYou cannot use doors in &e%player%'s&c claim!";
+        }
+
+        private UseButtons useButtons = new UseButtons();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class UseButtons {
+            private String name = "Use Buttons";
+            private List<String> description = List.of("Whether or not to allow", "players to use buttons.");
+            private String message = "&cYou cannot use buttons in &e%player%'s&c claim!";
+        }
     }
 
     private ProfileFlags profileFlags = new ProfileFlags();

@@ -111,7 +111,8 @@ public class BukkitUser implements OnlineUser, CommandUser {
     }
 
     @Override
-    public void sendMessage(String message, boolean prefixed) {
+    public void sendMessage(@NotNull String message, boolean prefixed) {
+        if (message.isEmpty()) return;
         switch (messageLocation) {
             case CHAT -> getAudience().sendMessage(Text.modernMessage(Lang.i().getPrefix() + message));
             case HOTBAR -> getAudience().sendActionBar(Text.modernMessage(Lang.i().getPrefix() + message));

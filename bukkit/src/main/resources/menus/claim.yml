@@ -52,19 +52,28 @@ lang:
       model-data: 0
       sound: "fail"
       name: "&c&oClaiming is disabled in this world!"
-      lore: []
+      lore:
+        - "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%"
+        - ""
+        - "&c&oClaiming is disabled in this world!"
     restricted-region:
       icon: "RED_STAINED_GLASS_PANE"
       model-data: 0
       sound: "fail"
       name: "&c&oYou cannot claim in protected areas!"
-      lore: []
-    asz-zone-border:
+      lore:
+        - "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%"
+        - ""
+        - "&c&oYou cannot claim in protected areas!"
+    asz-zone-border: # Advanced Server Zones Hook
       icon: "PURPLE_STAINED_GLASS_PANE"
       model-data: 0
       sound: "fail"
       name: "&c&oYou cannot claim near the zone border!"
-      lore: []
+      lore:
+        - "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%"
+        - ""
+        - "&c&oYou cannot claim near the zone border!"
   buy-chunks:
     icon: "BELL"
     model-data: 0

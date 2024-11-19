@@ -159,6 +159,16 @@ public final class Fadlc extends JavaPlugin {
                         gsConf.getPlaceBlocks().getDescription()
                 ),
                 new GroupSetting(
+                        "use_doors",
+                        gsConf.getUseDoors().getName(),
+                        gsConf.getUseDoors().getDescription()
+                ),
+                new GroupSetting(
+                        "use_buttons",
+                        gsConf.getUseButtons().getName(),
+                        gsConf.getUseButtons().getDescription()
+                ),
+                new GroupSetting(
                         "enter",
                         gsConf.getPlaceBlocks().getName(),
                         gsConf.getPlaceBlocks().getDescription()
