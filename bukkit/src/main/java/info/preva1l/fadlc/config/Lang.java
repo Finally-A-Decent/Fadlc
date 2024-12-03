@@ -48,6 +48,15 @@ public class Lang {
     public static class ClaimMessages {
         private String enter = "&fYou have &aentered &e%player%'s&f claim!";
         private String leave = "&fYou have &cleft &e%player%'s&f claim!";
+
+        private Fail fail = new Fail();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Fail {
+            private String s = "s";
+        }
     }
 
     private Prevention prevention = new Prevention();
@@ -65,9 +74,9 @@ public class Lang {
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Command {
-        private String noPermission = "&c&l(!)&r &fInsufficient permission";
-        private String unknownArgs = "&c&l(!)&r &fUnknown arguments.";
-        private String mustBePlayer = "&c&l(!)&r &fYou must be a player to run this command.";
+        private String noPermission = "&cInsufficient permission.";
+        private String unknownArgs = "&cUnknown arguments.";
+        private String mustBePlayer = "&cYou must be a player to run this command.";
     }
 
     private GroupSettings groupSettings = new GroupSettings();

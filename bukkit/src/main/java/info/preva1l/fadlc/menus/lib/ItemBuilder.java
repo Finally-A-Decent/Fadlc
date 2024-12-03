@@ -6,7 +6,6 @@ import info.preva1l.fadlc.utils.Skins;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -14,10 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -172,18 +168,13 @@ public class ItemBuilder {
         return this.item;
     }
 
-    public ItemBuilder skullOwner(OfflinePlayer player) {
-        ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        if (skullMeta == null) {
-            return this;
-        }
-        PlayerProfile profile = Bukkit.getServer().createProfile(player.getUniqueId());
-        profile.setProperty(new ProfileProperty("textures", Skins.getTexture(player.getUniqueId())));
-        skullMeta.setPlayerProfile(profile);
-        skull.setItemMeta(skullMeta);
-
-        return edit(item -> item.setItemMeta(skullMeta));
+    public ItemBuilder skullOwner(UUID player) {
+        if (this.item.getType() != Material.PLAYER_HEAD) return this;
+        return meta(meta -> {
+            PlayerProfile profile = Bukkit.getServer().createProfile(player);
+            profile.setProperty(new ProfileProperty("textures", Skins.getTexture(player)));
+            ((SkullMeta) meta).setPlayerProfile(profile);
+        });
     }
 
     public ItemBuilder modelData(int modelData) {

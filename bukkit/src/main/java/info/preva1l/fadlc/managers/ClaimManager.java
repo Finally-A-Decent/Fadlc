@@ -3,10 +3,7 @@ package info.preva1l.fadlc.managers;
 import info.preva1l.fadlc.config.Config;
 import info.preva1l.fadlc.config.ServerSettings;
 import info.preva1l.fadlc.config.misc.PerformanceMode;
-import info.preva1l.fadlc.models.ChunkLoc;
-import info.preva1l.fadlc.models.ClaimChunk;
-import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.ILoc;
+import info.preva1l.fadlc.models.*;
 import info.preva1l.fadlc.models.claim.Claim;
 import info.preva1l.fadlc.models.claim.ClaimProfile;
 import info.preva1l.fadlc.models.claim.IClaim;
@@ -51,7 +48,6 @@ public final class ClaimManager implements IClaimManager {
         if (claim == null) {
             Map<Integer, IClaimProfile> baseProfiles = new HashMap<>();
             baseProfiles.put(1, ClaimProfile.baseProfile(user, 1));
-            //baseProfiles.put(2, ClaimProfile.baseProfile(user, 2));
             claim = new Claim(user, new HashMap<>(), baseProfiles);
             updateClaim(claim);
         }
@@ -68,7 +64,7 @@ public final class ClaimManager implements IClaimManager {
     }
 
     public List<IClaimChunk> getClaimedChunks() {
-        return new ArrayList<>(chunkCache.values());
+        return new ArrayList<>(chunkCache.values().stream().filter(c -> c.getStatus() == ChunkStatus.CLAIMED).toList());
     }
 
     public void cacheChunk(IClaimChunk claimChunk) {

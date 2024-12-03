@@ -38,7 +38,7 @@ public class ClaimBorderJob extends Job {
                     Chunk chunk = player.getWorld().getChunkAt(chunkX, chunkZ);
                     IClaimChunk claimChunk = ClaimManager.getInstance().getChunkAt(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
 
-                    if (claimChunk.getStatus() != ChunkStatus.ALREADY_CLAIMED) continue;
+                    if (claimChunk.getStatus() != ChunkStatus.CLAIMED) continue;
 
                     outlineChunkWithParticles(player, chunk, playerY, playerLocation);
                 }

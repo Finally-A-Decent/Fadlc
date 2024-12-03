@@ -1,6 +1,7 @@
 package info.preva1l.fadlc.menus;
 
 import info.preva1l.fadlc.Fadlc;
+import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.config.sounds.Sounds;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.managers.LayoutManager;
@@ -101,7 +102,7 @@ public class ClaimMenu extends FastInv {
             setItem(index, getChunkItem(index, chunk), e -> {
                 switch (chunkStatus) {
                     case CLAIMABLE -> claimChunk(chunk);
-                    case ALREADY_CLAIMED -> {
+                    case CLAIMED -> {
                         Optional<IClaim> claim = ClaimManager.getInstance().getClaimAt(chunk);
                         if (claim.orElseThrow().getOwner().equals(user)) {
                             Sounds.playSound(player, getLang().getSound("chunks.claimed.yours.sound"));
@@ -130,7 +131,12 @@ public class ClaimMenu extends FastInv {
     }
 
     private void claimChunk(IClaimChunk chunk) {
-        // todo: implement available chunks
+        if (user.getAvailableChunks() <= 0) {
+            user.sendMessage(Lang.i().getClaimMessages());
+            Sounds.playSound(player, getLang().getSound("chunks.unclaimed.sound.no-chunks"));
+            return;
+        }
+
         user.getClaim().claimChunk(chunk);
         placeChunkItems();
         Sounds.playSound(player, getLang().getSound("chunks.unclaimed.sound.claimed"));
@@ -142,7 +148,7 @@ public class ClaimMenu extends FastInv {
                     .replaceAnywhere("%chunk_x%", chunk.getChunkX() + "")
                     .replaceAnywhere("%chunk_z%", chunk.getChunkZ() + "")
                     .replaceInLore("%available%", user.getAvailableChunks() + "").getBase();
-            case ALREADY_CLAIMED -> {
+            case CLAIMED -> {
                 IClaim claim = ClaimManager.getInstance().getClaimAt(chunk).orElseThrow();
                 if (claim.getOwner().equals(user)) {
                     yield getLang().getItemStack("chunks.claimed.yours").skullOwner(claim.getOwner().getUniqueId())

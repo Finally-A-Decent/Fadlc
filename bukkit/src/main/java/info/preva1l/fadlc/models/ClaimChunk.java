@@ -13,33 +13,45 @@ import java.util.Optional;
 @Setter
 public class ClaimChunk implements IClaimChunk {
     private final ChunkLoc loc;
-    private final int chunkX;
-    private final int chunkZ;
-    private final String worldName;
-    private final String server;
     private long claimedSince; // -1 if not claimed
     private int profileId; // -1 if not claimed
 
     public ClaimChunk(ChunkLoc chunkLoc, long claimedSince, int profileId) {
-        this.chunkX = chunkLoc.getX();
-        this.chunkZ = chunkLoc.getZ();
-        this.worldName = chunkLoc.getWorld();
-        this.server = chunkLoc.getServer();
         this.loc = chunkLoc;
         this.claimedSince = claimedSince;
         this.profileId = profileId;
     }
 
     @Override
+    public int getChunkX() {
+        return loc.getX();
+    }
+
+    @Override
+    public int getChunkZ() {
+        return loc.getZ();
+    }
+
+    @Override
+    public String getWorldName() {
+        return loc.getWorld();
+    }
+
+    @Override
+    public String getServer() {
+        return loc.getServer();
+    }
+
+    @Override
     public World getWorld() {
-        return Bukkit.getWorld(worldName);
+        return Bukkit.getWorld(loc.getWorld());
     }
 
     @Override
     public ChunkStatus getStatus() {
         Optional<IClaim> claim = ClaimManager.getInstance().getClaimAt(this);
         if (claim.isPresent()) {
-            return ChunkStatus.ALREADY_CLAIMED;
+            return ChunkStatus.CLAIMED;
         }
 
         // todo: check if world is restricted

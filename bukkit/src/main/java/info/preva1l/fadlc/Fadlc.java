@@ -57,7 +57,6 @@ public final class Fadlc extends JavaPlugin {
 
         loadRegistries();
 
-        // Init the managers
         Logger.info("Initializing Managers...");
         FastInvManager.register(this);
         PersistenceManager.getInstance();
@@ -87,7 +86,6 @@ public final class Fadlc extends JavaPlugin {
         ).forEach(e -> getServer().getPluginManager().registerEvents(e, this));
         Logger.info("Listeners Registered!");
 
-        // Init Jobs
         Logger.info("Starting Jobs...");
         SaveJobs.startAll();
         borderJob = new ClaimBorderJob();

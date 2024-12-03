@@ -2,7 +2,7 @@ package info.preva1l.fadlc.models;
 
 public enum ChunkStatus {
     CLAIMABLE,
-    ALREADY_CLAIMED,
+    CLAIMED,
     WORLD_DISABLED,
     // Hooks
     BLOCKED_ZONE_BORDER,
