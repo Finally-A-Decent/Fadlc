@@ -116,7 +116,10 @@ public class BukkitUser implements OnlineUser, CommandUser {
         switch (messageLocation) {
             case CHAT -> getAudience().sendMessage(Text.modernMessage(Lang.i().getPrefix() + message));
             case HOTBAR -> getAudience().sendActionBar(Text.modernMessage(Lang.i().getPrefix() + message));
-            case TITLE -> getAudience().sendTitlePart(TitlePart.SUBTITLE, Text.modernMessage(Lang.i().getPrefix() + message));
+            case TITLE -> {
+                getAudience().sendTitlePart(TitlePart.TITLE, Text.modernMessage(Lang.i().getPrefix()));
+                getAudience().sendTitlePart(TitlePart.SUBTITLE, Text.modernMessage(message));
+            }
         }
     }
 

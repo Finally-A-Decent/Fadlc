@@ -1,6 +1,10 @@
 package info.preva1l.fadlc;
 
 import com.google.gson.Gson;
+import dev.triumphteam.cmd.bukkit.BukkitCommandManager;
+import dev.triumphteam.cmd.bukkit.message.NoPermissionMessageContext;
+import dev.triumphteam.cmd.core.message.MessageKey;
+import dev.triumphteam.cmd.core.message.context.DefaultMessageContext;
 import info.preva1l.fadlc.api.FadlcAPI;
 import info.preva1l.fadlc.api.ImplFadlcAPI;
 import info.preva1l.fadlc.commands.ClaimCommand;
@@ -16,18 +20,19 @@ import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.settings.GroupSetting;
 import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
+import info.preva1l.fadlc.models.user.BukkitUser;
+import info.preva1l.fadlc.models.user.CommandUser;
+import info.preva1l.fadlc.models.user.ConsoleUser;
 import info.preva1l.fadlc.registry.GroupSettingsRegistry;
 import info.preva1l.fadlc.registry.ProfileFlagsRegistry;
-import info.preva1l.fadlc.utils.Logger;
-import info.preva1l.fadlc.utils.Metrics;
-import info.preva1l.fadlc.utils.Skins;
-import info.preva1l.fadlc.utils.Text;
+import info.preva1l.fadlc.utils.*;
 import info.preva1l.fadlc.utils.config.BasicConfig;
 import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.william278.desertwell.util.UpdateChecker;
 import net.william278.desertwell.util.Version;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -44,6 +49,7 @@ public final class Fadlc extends JavaPlugin {
     @Getter private BukkitAudiences audiences;
     @Getter private Gson gson;
     @Getter private Random random;
+    @Getter private BukkitCommandManager<CommandUser> commandManager;
 
     private ClaimBorderJob borderJob;
     private Metrics metrics;
@@ -62,7 +68,16 @@ public final class Fadlc extends JavaPlugin {
         PersistenceManager.getInstance();
         ClaimManager.getInstance();
         UserManager.getInstance();
-        CommandManager.getInstance();
+        commandManager = BukkitCommandManager.create(
+                this,
+                sender -> sender instanceof Player p ? (BukkitUser) UserManager.getInstance().getUser(p.getUniqueId()).orElseThrow() : new ConsoleUser(Fadlc.i().getAudiences().console()),
+                new CommandUserValidator()
+        );
+        commandManager.registerMessage(MessageKey.NOT_ENOUGH_ARGUMENTS, (user, context) -> user.sendMessage(Lang.i().getCommand().getUnknownArgs()));
+        commandManager.registerMessage(MessageKey.INVALID_ARGUMENT, (user, context) -> user.sendMessage(Lang.i().getCommand().getUnknownArgs()));
+        commandManager.registerMessage(MessageKey.UNKNOWN_COMMAND, (user, context) -> user.sendMessage(Lang.i().getCommand().getUnknownArgs()));
+        commandManager.registerMessage(MessageKey.of("NO_PERMISSION", NoPermissionMessageContext.class), (user, context) -> user.sendMessage(Lang.i().getCommand().getNoPermission()));
+        commandManager.registerMessage(MessageKey.of("PLAYER_ONLY", DefaultMessageContext.class), (user, context) -> user.sendMessage(Lang.i().getCommand().getMustBePlayer()));
         Logger.info("Managers initialized!");
 
         Sounds.update();
@@ -76,7 +91,7 @@ public final class Fadlc extends JavaPlugin {
         Logger.info("Registering Commands...");
         Stream.of(
                 new ClaimCommand()
-        ).forEach(CommandManager.getInstance()::registerCommand);
+        ).forEach(commandManager::registerCommand);
         Logger.info("Commands Registered!");
 
         Logger.info("Registering Listeners...");
@@ -101,10 +116,6 @@ public final class Fadlc extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(Text.legacyMessage("&2&l------------------------------"));
         Bukkit.getConsoleSender().sendMessage(Text.legacyMessage("&a  Finally a Decent Land Claim"));
         Bukkit.getConsoleSender().sendMessage(Text.legacyMessage("&a   has successfully started!"));
-        Bukkit.getConsoleSender().sendMessage(Text.legacyMessage("&a  Licenced to: " + skibidiToilet
-                .replace("%%", "")
-                .replace("__USERNAME__", "Not Logged In")
-                .replace("__USER__", "Self Compiled Build")));
         Bukkit.getConsoleSender().sendMessage(Text.legacyMessage("&2&l------------------------------"));
 
         Bukkit.getScheduler().runTaskLater(this, this::checkForUpdates, 60L);

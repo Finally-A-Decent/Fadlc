@@ -55,7 +55,7 @@ public class Lang {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class Fail {
-            private String s = "s";
+            private String notEnoughChunks = "&fYou do not have enough claim chunks!";
         }
     }
 

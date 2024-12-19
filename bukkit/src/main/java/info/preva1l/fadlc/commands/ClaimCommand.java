@@ -1,34 +1,25 @@
 package info.preva1l.fadlc.commands;
 
-import info.preva1l.fadlc.commands.lib.BasicCommand;
-import info.preva1l.fadlc.commands.lib.Command;
-import info.preva1l.fadlc.commands.subcommands.ProfileSubCommand;
-import info.preva1l.fadlc.config.Lang;
+import dev.triumphteam.cmd.bukkit.annotation.Permission;
+import dev.triumphteam.cmd.core.BaseCommand;
+import dev.triumphteam.cmd.core.annotation.Command;
+import dev.triumphteam.cmd.core.annotation.Default;
+import dev.triumphteam.cmd.core.annotation.SubCommand;
 import info.preva1l.fadlc.menus.ClaimMenu;
+import info.preva1l.fadlc.menus.ProfilesMenu;
 import info.preva1l.fadlc.models.user.CommandUser;
 
-import java.util.stream.Stream;
-
-@Command(
-        name = "claim",
-        aliases = {"c", "claims"},
-        permission = "fadlc.claim"
-)
-public class ClaimCommand extends BasicCommand {
-    public ClaimCommand() {
-        Stream.of(
-                new ProfileSubCommand()
-        ).forEach(getSubCommands()::add);
+@Command(value = "claim", alias = {"c", "claims"})
+@Permission("fadlc.claim")
+public class ClaimCommand extends BaseCommand {
+    @Default
+    public void root(CommandUser sender) {
+        new ClaimMenu(sender.asPlayer()).open(sender.asPlayer());
     }
 
-    @Override
-    public void execute(CommandUser sender, String[] args) {
-        if (args.length >= 1) {
-            if (subCommandExecutor(sender, args)) return;
-            sender.sendMessage(Lang.i().getCommand().getUnknownArgs());
-            return;
-        }
-
-        new ClaimMenu(sender.asPlayer()).open(sender.asPlayer());
+    @SubCommand("profiles")
+    @Permission("fadlc.profiles")
+    public void profile(CommandUser sender) {
+        new ProfilesMenu(sender.asPlayer()).open(sender.asPlayer());
     }
 }

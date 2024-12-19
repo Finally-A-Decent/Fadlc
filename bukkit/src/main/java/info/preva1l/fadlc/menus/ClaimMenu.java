@@ -132,7 +132,7 @@ public class ClaimMenu extends FastInv {
 
     private void claimChunk(IClaimChunk chunk) {
         if (user.getAvailableChunks() <= 0) {
-            user.sendMessage(Lang.i().getClaimMessages());
+            user.sendMessage(Lang.i().getClaimMessages().getFail().getNotEnoughChunks());
             Sounds.playSound(player, getLang().getSound("chunks.unclaimed.sound.no-chunks"));
             return;
         }
