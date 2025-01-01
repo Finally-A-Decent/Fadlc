@@ -39,13 +39,6 @@ public class Config {
 
     private Formatting formatting = new Formatting();
 
-    @Comment({
-            "What should Fadlc optimize for?",
-            "TICK_TIME = More caching to prevent cpu heavy tasks",
-            "MEMORY = Less caching to prevent excess memory usage"
-    })
-    private PerformanceMode performanceMode = PerformanceMode.TICK_TIME;
-
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -65,6 +58,23 @@ public class Config {
             private String months = "%dm, %dd, %dh, %dm, %ds";
             private String years = "%dy, %dm, %dd, %dh, %dm, %ds";
         }
+    }
+
+    private Optimization optimization = new Optimization();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Optimization {
+        @Comment({
+                "What should Fadlc optimize for?",
+                "TICK_TIME = More caching to prevent cpu heavy tasks",
+                "MEMORY = Less caching to prevent excess memory usage"
+        })
+        private PerformanceMode performanceMode = PerformanceMode.TICK_TIME;
+
+        private int particleFrequencyMillis = 200;
+        private int particleDistance = 30;
     }
 
     private Groups groupDefaults = new Groups();

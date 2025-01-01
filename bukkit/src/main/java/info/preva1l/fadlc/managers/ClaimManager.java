@@ -87,7 +87,7 @@ public final class ClaimManager implements IClaimManager {
         }
 
         IClaimChunk newChunk = new ClaimChunk(new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4, loc.getWorld(), ServerSettings.getInstance().getName()), -1, -1);
-        if (Config.i().getPerformanceMode() != PerformanceMode.MEMORY) {
+        if (Config.i().getOptimization().getPerformanceMode() != PerformanceMode.MEMORY) {
             cacheChunk(newChunk);
         }
         return newChunk;
@@ -102,7 +102,7 @@ public final class ClaimManager implements IClaimManager {
         }
 
         IClaimChunk newChunk = new ClaimChunk(new ChunkLoc(x, z, world, ServerSettings.getInstance().getName()), -1, -1);
-        if (Config.i().getPerformanceMode() != PerformanceMode.MEMORY) {
+        if (Config.i().getOptimization().getPerformanceMode() != PerformanceMode.MEMORY) {
             cacheChunk(newChunk);
         }
         return newChunk;

@@ -1,5 +1,6 @@
 package info.preva1l.fadlc.jobs;
 
+import info.preva1l.fadlc.config.Config;
 import info.preva1l.fadlc.config.particles.Particles;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.models.ChunkStatus;
@@ -15,10 +16,8 @@ import java.time.Duration;
 import java.util.Optional;
 
 public class ClaimBorderJob extends Job {
-    private static final int viewDistance = 30;
-
     public ClaimBorderJob() {
-        super("Claim Borders", Duration.ofMillis(200), true);
+        super("Claim Borders", Duration.ofMillis(Config.i().getOptimization().getParticleFrequencyMillis()), true);
     }
 
     @Override
@@ -31,7 +30,7 @@ public class ClaimBorderJob extends Job {
             int playerChunkX = playerChunk.getX();
             int playerChunkZ = playerChunk.getZ();
 
-            int chunkRadius = viewDistance / 16 + 1;
+            int chunkRadius = Config.i().getOptimization().getParticleDistance() / 16 + 1;
 
             for (int chunkX = playerChunkX - chunkRadius; chunkX <= playerChunkX + chunkRadius; chunkX++) {
                 for (int chunkZ = playerChunkZ - chunkRadius; chunkZ <= playerChunkZ + chunkRadius; chunkZ++) {
@@ -101,7 +100,7 @@ public class ClaimBorderJob extends Job {
 
     private boolean isWithinViewDistance(Location playerLocation, int x, int z) {
         double distance = playerLocation.distance(new Location(playerLocation.getWorld(), x, playerLocation.getY(), z));
-        return distance <= viewDistance;
+        return distance <= Config.i().getOptimization().getParticleDistance();
     }
 
     private void spawnParticleAt(Player player, Location loc, IClaimProfile profile) {
