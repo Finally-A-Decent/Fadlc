@@ -1,7 +1,6 @@
-package info.preva1l.fadlc.managers;
+package info.preva1l.fadlc.menus.lib;
 
 import com.github.puregero.multilib.MultiLib;
-import info.preva1l.fadlc.menus.lib.FastInv;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author MrMicky
  */
 public final class FastInvManager {
-
     private static final AtomicBoolean REGISTERED = new AtomicBoolean(false);
 
     private FastInvManager() {
@@ -50,9 +48,9 @@ public final class FastInvManager {
      * Close all open FastInv inventories.
      */
     public static void closeAll(Plugin plugin) {
-        for (Player player : Bukkit.getOnlinePlayers().stream().filter(p -> p.getOpenInventory().getTopInventory().getHolder() instanceof FastInv).toList()) {
-            MultiLib.getEntityScheduler(player).execute(plugin, player::closeInventory, null, 0L);
-        }
+        Bukkit.getOnlinePlayers().stream()
+                .filter(p -> p.getOpenInventory().getTopInventory().getHolder() instanceof FastInv)
+                .forEach(p -> MultiLib.getEntityScheduler(p).execute(plugin, p::closeInventory, null, 0L));
     }
 
     public static final class InventoryListener implements Listener {
@@ -65,7 +63,6 @@ public final class FastInvManager {
         @EventHandler
         public void onInventoryClick(InventoryClickEvent e) {
             if (e.getInventory().getHolder() instanceof FastInv inv && e.getClickedInventory() != null) {
-
                 boolean wasCancelled = e.isCancelled();
                 e.setCancelled(true);
 
@@ -81,7 +78,6 @@ public final class FastInvManager {
         @EventHandler
         public void onInventoryDrag(InventoryDragEvent e) {
             if (e.getInventory().getHolder() instanceof FastInv inv) {
-
                 boolean wasCancelled = e.isCancelled();
                 e.setCancelled(true);
 
@@ -113,7 +109,7 @@ public final class FastInvManager {
         @EventHandler
         public void onPluginDisable(PluginDisableEvent e) {
             if (e.getPlugin() == this.plugin) {
-                closeAll(this.plugin);
+                closeAll(e.getPlugin());
 
                 REGISTERED.set(false);
             }

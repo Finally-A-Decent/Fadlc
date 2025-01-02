@@ -3,6 +3,7 @@ package info.preva1l.fadlc.menus.lib;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import info.preva1l.fadlc.utils.Skins;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -24,7 +25,6 @@ import java.util.function.Consumer;
  */
 @SuppressWarnings({"unused", "deprecation"})
 public class ItemBuilder {
-
     private final ItemStack item;
 
     public ItemBuilder(Material material) {
@@ -100,6 +100,10 @@ public class ItemBuilder {
         return meta(meta -> meta.setDisplayName(name));
     }
 
+    public ItemBuilder name(Component name) {
+        return meta(meta -> meta.displayName(name));
+    }
+
     public ItemBuilder lore(String lore) {
         return lore(Collections.singletonList(lore));
     }
@@ -108,8 +112,12 @@ public class ItemBuilder {
         return lore(Arrays.asList(lore));
     }
 
-    public ItemBuilder lore(List<String> lore) {
-        return meta(meta -> meta.setLore(lore));
+    public ItemBuilder lore(Collection<String> lore) {
+        return meta(meta -> meta.setLore(lore.stream().toList()));
+    }
+
+    public ItemBuilder lore(List<Component> lore) {
+        return meta(meta -> meta.lore(lore));
     }
 
     public ItemBuilder addLore(String line) {

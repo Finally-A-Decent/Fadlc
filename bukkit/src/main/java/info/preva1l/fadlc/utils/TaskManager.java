@@ -1,5 +1,7 @@
 package info.preva1l.fadlc.utils;
 
+import com.github.puregero.multilib.MultiLib;
+import com.github.puregero.multilib.regionized.RegionizedTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -39,25 +41,27 @@ public class TaskManager {
      * @param plugin The current plugin
      * @param runnable The runnable, lambda supported yeh
      */
-    public static void runAsync(JavaPlugin plugin, Runnable runnable) {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, runnable);
+    public static RegionizedTask runAsync(JavaPlugin plugin, Runnable runnable) {
+        return MultiLib.getAsyncScheduler().runNow(plugin, c -> runnable.run());
     }
+
     /**
      * Run an asynchronous task forever with a delay between runs.
      * @param plugin The current plugin
      * @param runnable The runnable, lambda supported yeh
      * @param interval Time between each run
      */
-    public static void runAsyncRepeat(JavaPlugin plugin, Runnable runnable, long interval) {
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, interval);
+    public static RegionizedTask runAsyncRepeat(JavaPlugin plugin, Runnable runnable, long interval) {
+        return MultiLib.getAsyncScheduler().runAtFixedRate(plugin, c -> runnable.run(), 0L, interval);
     }
+
     /**
      * Run an asynchronous task once with a delay. Helpful when needing to run some sync code in an async loop
      * @param plugin The current plugin
      * @param runnable The runnable, lambda supported yeh
      * @param delay Time before running.
      */
-    public static void runAsyncDelayed(JavaPlugin plugin, Runnable runnable, long delay) {
-        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, runnable, delay);
+    public static RegionizedTask runAsyncDelayed(JavaPlugin plugin, Runnable runnable, long delay) {
+        return MultiLib.getAsyncScheduler().runDelayed(plugin, c -> runnable.run(), delay);
     }
 }

@@ -8,7 +8,7 @@ import org.bukkit.Sound;
 @AllArgsConstructor
 public class SoundType {
     private final String name;
-    private final Sound bukkit;
+    private final String bukkit;
     private final float volume;
     private final float pitch;
 }

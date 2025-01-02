@@ -126,10 +126,10 @@ public final class Text {
         return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
     }
 
-    public List<String> legacyList(@NotNull List<String> list) {
-        List<String> legacyList = new ArrayList<>();
+    public List<Component> modernList(@NotNull List<String> list) {
+        List<Component> legacyList = new ArrayList<>();
         for (String s : list) {
-            legacyList.add(legacyMessage(s));
+            legacyList.add(modernMessage(s));
         }
         return legacyList;
     }

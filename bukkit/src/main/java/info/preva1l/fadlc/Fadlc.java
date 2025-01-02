@@ -16,17 +16,14 @@ import info.preva1l.fadlc.jobs.SaveJobs;
 import info.preva1l.fadlc.listeners.ClaimListeners;
 import info.preva1l.fadlc.listeners.PlayerListeners;
 import info.preva1l.fadlc.managers.*;
+import info.preva1l.fadlc.menus.lib.FastInvManager;
 import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.claim.IClaim;
-import info.preva1l.fadlc.models.claim.settings.GroupSetting;
-import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
 import info.preva1l.fadlc.models.user.BukkitUser;
 import info.preva1l.fadlc.models.user.CommandUser;
 import info.preva1l.fadlc.models.user.ConsoleUser;
-import info.preva1l.fadlc.registry.GroupSettingsRegistry;
-import info.preva1l.fadlc.registry.ProfileFlagsRegistry;
+import info.preva1l.fadlc.registry.RegistryProvider;
 import info.preva1l.fadlc.utils.*;
-import info.preva1l.fadlc.utils.config.BasicConfig;
 import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.william278.desertwell.util.UpdateChecker;
@@ -39,8 +36,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-public final class Fadlc extends JavaPlugin {
-    private static final String skibidiToilet = "%%__USERNAME__%% (%%__USER__%%)";
+public final class Fadlc extends JavaPlugin implements RegistryProvider {
+    private static final String POLYMART_PURCHASE = "%%__USERNAME__%%";
+    private static final String BBB_PURCHASE = "%%__USERNAME__%%";
     private static final int POLYMART_ID = 6616;
     private static final int METRICS_ID = 23412;
     private final Version pluginVersion = Version.fromString(getDescription().getVersion());
@@ -83,8 +81,6 @@ public final class Fadlc extends JavaPlugin {
         Sounds.update();
         Particles.update();
         Skins.load();
-
-        loadMenus();
 
         populateCaches();
 
@@ -135,56 +131,6 @@ public final class Fadlc extends JavaPlugin {
         }
     }
 
-    private void loadRegistries() {
-        Lang.ProfileFlags fConf = Lang.i().getProfileFlags();
-        Stream.of(
-                new ProfileFlag("exposion_damage",
-                        fConf.getExplosionDamage().getName(),
-                        fConf.getExplosionDamage().getDescription(),
-                        fConf.getExplosionDamage().isEnabledByDefault()
-                ),
-                new ProfileFlag("entity_griefing",
-                        fConf.getEntityGriefing().getName(),
-                        fConf.getEntityGriefing().getDescription(),
-                        fConf.getEntityGriefing().isEnabledByDefault()
-                ),
-                new ProfileFlag("pvp",
-                        fConf.getPvp().getName(),
-                        fConf.getPvp().getDescription(),
-                        fConf.getPvp().isEnabledByDefault()
-                )
-        ).forEach(ProfileFlagsRegistry::register);
-
-        Lang.GroupSettings gsConf = Lang.i().getGroupSettings();
-        Stream.of(
-                new GroupSetting(
-                        "break_blocks",
-                        gsConf.getBreakBlocks().getName(),
-                        gsConf.getBreakBlocks().getDescription()
-                ),
-                new GroupSetting(
-                        "place_blocks",
-                        gsConf.getPlaceBlocks().getName(),
-                        gsConf.getPlaceBlocks().getDescription()
-                ),
-                new GroupSetting(
-                        "use_doors",
-                        gsConf.getUseDoors().getName(),
-                        gsConf.getUseDoors().getDescription()
-                ),
-                new GroupSetting(
-                        "use_buttons",
-                        gsConf.getUseButtons().getName(),
-                        gsConf.getUseButtons().getDescription()
-                ),
-                new GroupSetting(
-                        "enter",
-                        gsConf.getPlaceBlocks().getName(),
-                        gsConf.getPlaceBlocks().getDescription()
-                )
-        ).forEach(GroupSettingsRegistry::register);
-    }
-
     private void populateCaches() {
         Logger.info("Populating Caches...");
         List<IClaimChunk> chunks = PersistenceManager.getInstance().getAll(IClaimChunk.class).join();
@@ -194,15 +140,6 @@ public final class Fadlc extends JavaPlugin {
         List<IClaim> claims = PersistenceManager.getInstance().getAll(IClaim.class).join();
         claims.forEach(claim -> ClaimManager.getInstance().updateClaim(claim));
         Logger.info("Claim Cache Populated!");
-    }
-
-    private void loadMenus() {
-        Logger.info("Loading Menus...");
-        Stream.of(
-                new BasicConfig(this, "menus/claim.yml"),
-                new BasicConfig(this, "menus/profiles.yml")
-        ).forEach(LayoutManager.getInstance()::loadLayout);
-        Logger.info("Menus Loaded!");
     }
 
     private void setupMetrics() {

@@ -1,5 +1,6 @@
 package info.preva1l.fadlc.models.claim;
 
+import info.preva1l.fadlc.api.events.ChunkClaimEvent;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.models.ChunkLoc;
 import info.preva1l.fadlc.models.IClaimChunk;
@@ -30,6 +31,7 @@ public class Claim implements IClaim {
         claimedChunks.put(claimChunk.getLoc(), owner.getOnlineUser().getClaimWithProfile().getId());
         ClaimManager.getInstance().cacheChunk(claimChunk);
         ClaimManager.getInstance().updateClaim(this);
+        new ChunkClaimEvent(owner.getOnlineUser().asPlayer(), this, claimChunk).callEvent();
     }
 
     @Override

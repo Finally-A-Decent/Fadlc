@@ -3,8 +3,11 @@ package info.preva1l.fadlc.models.user;
 import info.preva1l.fadlc.models.MessageLocation;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
+import org.bukkit.entity.Player;
 
 public interface OnlineUser extends User {
+    Player asPlayer();
+
     int getAvailableChunks();
 
     void setAvailableChunks(int newAmount);

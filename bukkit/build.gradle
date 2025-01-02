@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     implementation project(":api")
-    compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT'
 
     // Support mini message format
     compileOnly 'net.kyori:adventure-text-minimessage:4.17.0'

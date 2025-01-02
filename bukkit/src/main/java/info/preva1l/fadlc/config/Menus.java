@@ -35,29 +35,10 @@ public class Menus {
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
 
-    private Filler filler = new Filler();
-
-    @Getter
-    @Configuration
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Filler implements ConfigurableItem {
-        private Material material = Material.BLACK_STAINED_GLASS_PANE;
-        private int modelData = 0;
-        private String name = "&r ";
-        private List<String> lore = List.of("&8I <3 Fadlc");
-    }
-
-    private NoItems noItems = new NoItems();
-
-    @Getter
-    @Configuration
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class NoItems implements ConfigurableItem {
-        private Material material = Material.BARRIER;
-        private int modelData = 0;
-        private String name = "&cNo Items Found!";
-        private List<String> lore = List.of("");
-    }
+    private ConfigurableItem filler = new ConfigurableItem(
+            Material.BLACK_STAINED_GLASS_PANE, 0, "",
+            "&r ", List.of("&8I <3 Fadlc")
+    );
 
     public static void reload() {
         instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), "menus/misc.yml").toPath(), Menus.class, PROPERTIES);

@@ -3,10 +3,7 @@ package info.preva1l.fadlc.menus.lib;
 import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.Menus;
-import info.preva1l.fadlc.managers.LayoutManager;
-import info.preva1l.fadlc.utils.config.LanguageConfig;
-import lombok.AccessLevel;
-import lombok.Getter;
+import info.preva1l.fadlc.config.menus.MenuConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -29,47 +26,24 @@ import java.util.stream.IntStream;
  * The project is on <a href="https://github.com/MrMicky-FR/FastInv">GitHub</a>.
  *
  * @author MrMicky
- * @version 3.0.4
+ * @version 3.1.1
  */
-@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-public class FastInv implements InventoryHolder {
-
-    private final Map<Integer, Consumer<GuiClickEvent>> itemHandlers = new HashMap<>();
+public class FastInv<C extends MenuConfig> implements InventoryHolder {
+    protected final C config;
+    protected final InventoryScheme scheme;
+    private final Map<Integer, Consumer<InventoryClickEvent>> itemHandlers = new HashMap<>();
     private final List<Consumer<InventoryOpenEvent>> openHandlers = new ArrayList<>();
-    @Getter(AccessLevel.PROTECTED)
     private final List<Consumer<InventoryCloseEvent>> closeHandlers = new ArrayList<>();
-    private final List<Consumer<GuiClickEvent>> clickHandlers = new ArrayList<>();
-
+    private final List<Consumer<InventoryClickEvent>> clickHandlers = new ArrayList<>();
+    private final List<Consumer<InventoryDragEvent>> dragHandlers = new ArrayList<>();
     private final Inventory inventory;
-    private final LayoutManager.MenuType menuType;
-
     private Predicate<Player> closeFilter;
 
-    public FastInv(LayoutManager.MenuType menuType) {
-        this(owner -> Bukkit.createInventory(owner, menuType.getSize(), menuType.getTitle()), menuType);
+    public FastInv(C config) {
+        this(owner -> Bukkit.createInventory(owner, config.getSize(), config.title()), config);
     }
 
-    /**
-     * Create a new FastInv with a custom size.
-     *
-     * @param size The size of the inventory.
-     */
-    public FastInv(int size, LayoutManager.MenuType menuType) {
-        this(owner -> Bukkit.createInventory(owner, size, menuType.getTitle()), menuType);
-    }
-
-    /**
-     * Create a new FastInv with a custom size and title.
-     *
-     * @param size  The size of the inventory.
-     * @param title The title (name) of the inventory.
-     */
-    public FastInv(int size, String title, LayoutManager.MenuType menuType) {
-        this(owner -> Bukkit.createInventory(owner, size, title), menuType);
-    }
-
-
-    public FastInv(Function<InventoryHolder, Inventory> inventoryFunction, LayoutManager.MenuType menuType) {
+    public FastInv(Function<InventoryHolder, Inventory> inventoryFunction, C config) {
         Objects.requireNonNull(inventoryFunction, "inventoryFunction");
         Inventory inv = inventoryFunction.apply(this);
 
@@ -78,34 +52,46 @@ public class FastInv implements InventoryHolder {
         }
 
         this.inventory = inv;
-        this.menuType = menuType;
+        this.config = config;
+        this.scheme = new InventoryScheme().masks(config.getLayout().toArray(new String[0])).bindItem('0', Menus.getInstance().getFiller().itemStack());
     }
 
+    /**
+     * Called when the inventory is opened.
+     *
+     * @param event the InventoryOpenEvent that triggered this method
+     */
     protected void onOpen(InventoryOpenEvent event) {
     }
 
+    /**
+     * Called when the inventory is clicked.
+     *
+     * @param event the InventoryClickEvent that triggered this method
+     */
     protected void onClick(InventoryClickEvent event) {
     }
 
+    /**
+     * Called when the player drags an item in their cursor across the inventory.
+     *
+     * @param event the InventoryDragEvent that triggered this method
+     */
     protected void onDrag(InventoryDragEvent event) {
     }
 
+    /**
+     * Called when the inventory is closed.
+     *
+     * @param event the InventoryCloseEvent that triggered this method
+     */
     protected void onClose(InventoryCloseEvent event) {
     }
 
-    // Fadlc start
-    protected void placeFillerItems() {
-        List<Integer> fillerSlots = getLayout().fillerSlots();
-        if (!fillerSlots.isEmpty()) {
-            setItems(fillerSlots.stream().mapToInt(Integer::intValue).toArray(), Menus.getInstance().getFiller().asItemStack());
-        }
-    }
-    // Fadlc end
-
     /**
-     * Add an {@link ItemStack} to the inventory on the first empty slot.
+     * Add an {@link ItemStack} to the inventory on the first empty slot, with no click handler.
      *
-     * @param item The ItemStack to add
+     * @param item the item to add
      */
     public void addItem(ItemStack item) {
         addItem(item, null);
@@ -114,10 +100,10 @@ public class FastInv implements InventoryHolder {
     /**
      * Add an {@link ItemStack} to the inventory on the first empty slot with a click handler.
      *
-     * @param item    The item to add.
-     * @param handler The click handler for the item.
+     * @param item    the item to add.
+     * @param handler the click handler associated to this item
      */
-    public void addItem(ItemStack item, Consumer<GuiClickEvent> handler) {
+    public void addItem(ItemStack item, Consumer<InventoryClickEvent> handler) {
         int slot = this.inventory.firstEmpty();
         if (slot >= 0) {
             setItem(slot, item, handler);
@@ -125,7 +111,7 @@ public class FastInv implements InventoryHolder {
     }
 
     /**
-     * Add an {@link ItemStack} to the inventory on a specific slot.
+     * Add an {@link ItemStack} to the inventory on a specific slot, with no click handler.
      *
      * @param slot The slot where to add the item.
      * @param item The item to add.
@@ -137,11 +123,11 @@ public class FastInv implements InventoryHolder {
     /**
      * Add an {@link ItemStack} to the inventory on specific slot with a click handler.
      *
-     * @param slot    The slot where to add the item.
-     * @param item    The item to add.
-     * @param handler The click handler for the item
+     * @param slot    the slot where to add the item
+     * @param item    the item to add.
+     * @param handler the click handler associated to this item
      */
-    public void setItem(int slot, ItemStack item, Consumer<GuiClickEvent> handler) {
+    public void setItem(int slot, ItemStack item, Consumer<InventoryClickEvent> handler) {
         if (slot == -1) return;
         this.inventory.setItem(slot, item);
 
@@ -153,10 +139,35 @@ public class FastInv implements InventoryHolder {
     }
 
     /**
-     * Add an {@link ItemStack} to the inventory on multiple slots.
+     * Add an {@link ItemStack} to the inventory on a range of slots, with no click handler.
      *
-     * @param slots The slots where to add the item
-     * @param item  The item to add.
+     * @param slotFrom starting slot (inclusive) to put the item in
+     * @param slotTo   ending slot (exclusive) to put the item in
+     * @param item     The item to add.
+     */
+    public void setItems(int slotFrom, int slotTo, ItemStack item) {
+        setItems(slotFrom, slotTo, item, null);
+    }
+
+    /**
+     * Add an {@link ItemStack} to the inventory on a range of slots with a click handler.
+     *
+     * @param slotFrom starting slot (inclusive) to put the item in
+     * @param slotTo   ending slot (exclusive) to put the item in
+     * @param item     the item to add
+     * @param handler  the click handler associated to these items
+     */
+    public void setItems(int slotFrom, int slotTo, ItemStack item, Consumer<InventoryClickEvent> handler) {
+        for (int i = slotFrom; i < slotTo; i++) {
+            setItem(i, item, handler);
+        }
+    }
+
+    /**
+     * Add an {@link ItemStack} to the inventory on multiple slots, with no click handler.
+     *
+     * @param slots the slots where to add the item
+     * @param item  the item to add
      */
     public void setItems(int[] slots, ItemStack item) {
         setItems(slots, item, null);
@@ -165,12 +176,35 @@ public class FastInv implements InventoryHolder {
     /**
      * Add an {@link ItemStack} to the inventory on multiples slots with a click handler.
      *
-     * @param slots   The slots where to add the item
-     * @param item    The item to add.
-     * @param handler The click handler for the item
+     * @param slots   the slots where to add the item
+     * @param item    the item to add
+     * @param handler the click handler associated to this item
      */
-    public void setItems(int[] slots, ItemStack item, Consumer<GuiClickEvent> handler) {
+    public void setItems(int[] slots, ItemStack item, Consumer<InventoryClickEvent> handler) {
         for (int slot : slots) {
+            setItem(slot, item, handler);
+        }
+    }
+
+    /**
+     * Add an {@link ItemStack} to the inventory on multiple slots, with no click handler.
+     *
+     * @param slots the list of slots where to add the item
+     * @param item  the item to add
+     */
+    public void setItems(Iterable<Integer> slots, ItemStack item) {
+        setItems(slots, item, null);
+    }
+
+    /**
+     * Add an {@link ItemStack} to the inventory on multiple slots with a click handler.
+     *
+     * @param slots   the list of slots where to add the item
+     * @param item    the item to add
+     * @param handler the click handler associated to this item
+     */
+    public void setItems(Iterable<Integer> slots, ItemStack item, Consumer<InventoryClickEvent> handler) {
+        for (Integer slot : slots) {
             setItem(slot, item, handler);
         }
     }
@@ -178,54 +212,125 @@ public class FastInv implements InventoryHolder {
     /**
      * Remove an {@link ItemStack} from the inventory.
      *
-     * @param slot The slot where to remove the item
+     * @param slot the slot from where to remove the item
      */
     public void removeItem(int slot) {
-        if (slot == -1) return;
         this.inventory.clear(slot);
         this.itemHandlers.remove(slot);
     }
 
     /**
-     * Open the inventory to a player.
+     * Remove multiples {@link ItemStack} from the inventory.
      *
-     * @param player The player to open the menu.
+     * @param slots the slots from where to remove the items
      */
-    public void open(Player player) {
-        MultiLib.getEntityScheduler(player).execute(Fadlc.i(),
-                () -> player.openInventory(this.inventory),
-                null,
-                0L);
+    public void removeItems(int... slots) {
+        for (int slot : slots) {
+            removeItem(slot);
+        }
     }
 
     /**
-     * Get borders of the inventory. If the inventory size is under 27, all slots are returned.
+     * Clear all items from the inventory and remove the click handlers.
+     */
+    public void clearItems() {
+        this.inventory.clear();
+        this.itemHandlers.clear();
+    }
+
+    /**
+     * Add a close filter to prevent players from closing the inventory.
+     * To prevent a player from closing the inventory the predicate should return {@code true}.
      *
-     * @return inventory borders
+     * @param closeFilter The close filter
+     */
+    public void setCloseFilter(Predicate<Player> closeFilter) {
+        this.closeFilter = closeFilter;
+    }
+
+    /**
+     * Add a handler that will be called when the inventory is opened.
+     *
+     * @param openHandler the handler to add
+     */
+    public void addOpenHandler(Consumer<InventoryOpenEvent> openHandler) {
+        this.openHandlers.add(openHandler);
+    }
+
+    /**
+     * Add a handler that will be called when the inventory is closed.
+     *
+     * @param closeHandler the handler to add
+     */
+    public void addCloseHandler(Consumer<InventoryCloseEvent> closeHandler) {
+        this.closeHandlers.add(closeHandler);
+    }
+
+    /**
+     * Add a handler that will be called when an item is clicked.
+     *
+     * @param clickHandler the handler to add
+     */
+    public void addClickHandler(Consumer<InventoryClickEvent> clickHandler) {
+        this.clickHandlers.add(clickHandler);
+    }
+
+    /**
+     * Add a handler that will be called when the player drags an item in their cursor across the inventory.
+     *
+     * @param dragHandler the handler to add
+     */
+    public void addDragHandler(Consumer<InventoryDragEvent> dragHandler) {
+        this.dragHandlers.add(dragHandler);
+    }
+
+    /**
+     * Open the inventory to the given player.
+     *
+     * @param player the player to open the inventory to
+     */
+    public void open(Player player) {
+        scheme.apply(this);
+        MultiLib.getEntityScheduler(player).execute(Fadlc.i(), () -> player.openInventory(this.inventory), null, 0L);
+    }
+
+    /**
+     * Get the borders of this inventory. If the inventory size is under 27, all slots are returned.
+     *
+     * @return the inventory borders slots
      */
     public int[] getBorders() {
         int size = this.inventory.getSize();
-        return IntStream.range(0, size).filter(i -> size < 27 || i < 9
-                || i % 9 == 0 || (i - 8) % 9 == 0 || i > size - 9).toArray();
+        return IntStream.range(0, size).filter(i -> size < 27 || i < 9 || i % 9 == 0 || (i - 8) % 9 == 0 || i > size - 9).toArray();
     }
 
     /**
-     * Get the Bukkit inventory.
+     * Get the corners of this inventory.
      *
-     * @return The Bukkit inventory.
+     * @return the inventory corners slots
+     */
+    public int[] getCorners() {
+        int size = this.inventory.getSize();
+        return IntStream.range(0, size).filter(i -> i < 2 || (i > 6 && i < 10) || i == 17 || i == size - 18 || (i > size - 11 && i < size - 7) || i > size - 3).toArray();
+    }
+
+    /**
+     * Get the underlying Bukkit inventory.
+     *
+     * @return the Bukkit inventory
      */
     @Override
     public @NotNull Inventory getInventory() {
         return this.inventory;
     }
 
-    public void handleOpen(InventoryOpenEvent e) {
+    void handleOpen(InventoryOpenEvent e) {
         onOpen(e);
 
         this.openHandlers.forEach(c -> c.accept(e));
     }
 
-    public boolean handleClose(InventoryCloseEvent e) {
+    boolean handleClose(InventoryCloseEvent e) {
         onClose(e);
 
         this.closeHandlers.forEach(c -> c.accept(e));
@@ -233,40 +338,21 @@ public class FastInv implements InventoryHolder {
         return this.closeFilter != null && this.closeFilter.test((Player) e.getPlayer());
     }
 
-    public void handleClick(InventoryClickEvent e) {
+    void handleClick(InventoryClickEvent e) {
         onClick(e);
 
-        this.clickHandlers.forEach(c -> c.accept(new GuiClickEvent((Player) e.getWhoClicked(), e.getSlot(), e.getClick())));
+        this.clickHandlers.forEach(c -> c.accept(e));
 
-        Consumer<GuiClickEvent> clickConsumer = this.itemHandlers.get(e.getRawSlot());
+        Consumer<InventoryClickEvent> clickConsumer = this.itemHandlers.get(e.getRawSlot());
 
         if (clickConsumer != null) {
-            clickConsumer.accept(new GuiClickEvent((Player) e.getWhoClicked(), e.getSlot(), e.getClick()));
+            clickConsumer.accept(e);
         }
     }
 
-    public void handleDrag(InventoryDragEvent e) {
+    void handleDrag(InventoryDragEvent e) {
         onDrag(e);
 
-        for (int slot : e.getNewItems().keySet()) {
-            this.clickHandlers.forEach(c -> c.accept(new GuiClickEvent((Player) e.getWhoClicked(), slot, e.getType())));
-            Consumer<GuiClickEvent> clickConsumer = this.itemHandlers.get(slot);
-
-            if (clickConsumer != null) {
-                clickConsumer.accept(new GuiClickEvent((Player) e.getWhoClicked(), slot, e.getType()));
-            }
-        }
-    }
-
-    public @NotNull LayoutManager.MenuType getMenuType() {
-        return menuType;
-    }
-
-    public @NotNull GuiLayout getLayout() {
-        return LayoutManager.getInstance().getLayout(this);
-    }
-
-    public @NotNull LanguageConfig getLang() {
-        return getLayout().language();
+        this.dragHandlers.forEach(c -> c.accept(e));
     }
 }

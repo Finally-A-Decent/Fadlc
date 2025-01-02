@@ -194,7 +194,7 @@ public class Lang {
 
     public static void reload() {
         instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), "lang.yml").toPath(), Lang.class, PROPERTIES);
-        Logger.info("Configuration automatically reloaded from disk.");
+        Logger.info("Language automatically reloaded from disk.");
     }
 
     public static Lang i() {
