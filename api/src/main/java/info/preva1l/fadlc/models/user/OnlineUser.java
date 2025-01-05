@@ -1,9 +1,11 @@
 package info.preva1l.fadlc.models.user;
 
-import info.preva1l.fadlc.models.MessageLocation;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
+import info.preva1l.fadlc.models.user.settings.SettingHolder;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public interface OnlineUser extends User {
     Player asPlayer();
@@ -11,22 +13,6 @@ public interface OnlineUser extends User {
     int getAvailableChunks();
 
     void setAvailableChunks(int newAmount);
-
-    boolean isViewBorders();
-
-    void setViewBorders(boolean viewBorders);
-
-    boolean isShowEnterMessages();
-
-    void setShowEnterMessage(boolean showEnterMessage);
-
-    boolean isShowLeaveMessages();
-
-    void setShowLeaveMessage(boolean showLeaveMessage);
-
-    MessageLocation getMessageLocation();
-
-    void setMessageLocation(MessageLocation newMessageLocation);
 
     IClaimProfile getClaimWithProfile();
 
@@ -37,4 +23,12 @@ public interface OnlineUser extends User {
     void sendMessage(String message);
 
     void sendMessage(String message, boolean prefixed);
+
+    List<SettingHolder<?>> getSettings();
+
+    <T> T getSetting(Class<T> clazz);
+
+    <T> SettingHolder<T> getSettingHolder(Class<T> clazz);
+
+    <T> void updateSetting(T object, Class<T> clazz);
 }

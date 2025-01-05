@@ -1,13 +1,16 @@
 package info.preva1l.fadlc.persistence.daos.mysql;
 
+import com.google.gson.reflect.TypeToken;
 import com.zaxxer.hikari.HikariDataSource;
-import info.preva1l.fadlc.models.MessageLocation;
+import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.models.user.BukkitUser;
 import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.models.user.settings.SettingHolder;
 import info.preva1l.fadlc.persistence.Dao;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
 
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MySQLUserDao implements Dao<OnlineUser> {
     private final HikariDataSource dataSource;
+    private static final Type SETTINGS_TYPE = new TypeToken<List<SettingHolder<?>>>(){}.getType();
 
     /**
      * Get an object from the database by its id.
@@ -30,7 +34,7 @@ public class MySQLUserDao implements Dao<OnlineUser> {
     public Optional<OnlineUser> get(UUID id) {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("""
-                    SELECT  `uniqueId`, `username`, `availableChunks`, `showBorders`, `showEnterMessages`, `showLeaveMessages`, `messageLocation`, `usingProfile`
+                    SELECT  `uniqueId`, `username`, `availableChunks`, `settings`, `usingProfile`
                     FROM `users`
                     WHERE `uniqueId`=?;""")) {
                 statement.setString(1, id.toString());
@@ -39,13 +43,11 @@ public class MySQLUserDao implements Dao<OnlineUser> {
                     final UUID ownerUUID = id;
                     final String ownerName = resultSet.getString("username");
                     final int availableChunks = resultSet.getInt("availableChunks");
-                    final boolean showBorders = resultSet.getBoolean("showBorders");
-                    final boolean enterMessages = resultSet.getBoolean("showEnterMessages");
-                    final boolean leaveMessages = resultSet.getBoolean("showLeaveMessages");
-                    final MessageLocation messageLocation = MessageLocation.valueOf(resultSet.getString("messageLocation"));
+                    final List<SettingHolder<?>> settings =
+                            Fadlc.i().getGson().fromJson(resultSet.getString("settings"), SETTINGS_TYPE);
                     final int usingProfile = resultSet.getInt("usingProfile");
                     return Optional.of(new BukkitUser(ownerName, ownerUUID,
-                            availableChunks, showBorders, enterMessages, leaveMessages, messageLocation, usingProfile));
+                            availableChunks, usingProfile, settings));
                 }
             } catch (Exception e) {
                 Logger.severe("Failed to get!", e);
@@ -76,24 +78,18 @@ public class MySQLUserDao implements Dao<OnlineUser> {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("""
                     INSERT INTO `users`
-                        (`uniqueId`, `username`, `availableChunks`, `showBorders`, `showEnterMessages`, `showLeaveMessages`, `messageLocation`, `usingProfile`)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        (`uniqueId`, `username`, `availableChunks`, `settings`, `usingProfile`)
+                    VALUES (?, ?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE
                         `username` = VALUES(`username`),
                         `availableChunks` = VALUES(`availableChunks`),
-                        `showBorders` = VALUES(`showBorders`),
-                        `showEnterMessages` = VALUES(`showEnterMessages`),
-                        `showLeaveMessages` = VALUES(`showLeaveMessages`),
-                        `messageLocation` = VALUES(`messageLocation`),
+                        `settings` = VALUES(`settings`),
                         `usingProfile` = VALUES(`usingProfile`);""")) {
                 statement.setString(1, onlineUser.getUniqueId().toString());
                 statement.setString(2, onlineUser.getName());
                 statement.setInt(3, onlineUser.getAvailableChunks());
-                statement.setBoolean(4, onlineUser.isViewBorders());
-                statement.setBoolean(5, onlineUser.isShowEnterMessages());
-                statement.setBoolean(6, onlineUser.isShowLeaveMessages());
-                statement.setString(7, onlineUser.getMessageLocation().name());
-                statement.setInt(8, onlineUser.getClaimWithProfile().getId()); // error?
+                statement.setString(4, Fadlc.i().getGson().toJson(onlineUser.getSettings(), SETTINGS_TYPE));
+                statement.setInt(5, onlineUser.getClaimWithProfile().getId());
                 statement.execute();
             } catch (Exception e) {
                 Logger.severe("Failed to save!", e);

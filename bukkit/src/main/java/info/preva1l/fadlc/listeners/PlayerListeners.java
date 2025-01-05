@@ -3,7 +3,6 @@ package info.preva1l.fadlc.listeners;
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.managers.PersistenceManager;
 import info.preva1l.fadlc.managers.UserManager;
-import info.preva1l.fadlc.models.MessageLocation;
 import info.preva1l.fadlc.models.user.BukkitUser;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.utils.Logger;
@@ -16,10 +15,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 public class PlayerListeners implements Listener {
@@ -43,8 +39,8 @@ public class PlayerListeners implements Listener {
         OnlineUser onlineUser;
 
         if (user.isEmpty()) {
-            onlineUser = new BukkitUser(e.getName(), e.getUniqueId(), 0, true,
-                    true, true, MessageLocation.CHAT, 1); // todo: config first chunks
+            onlineUser = new BukkitUser(e.getName(), e.getUniqueId(),
+                    0, 1, new ArrayList<>()); // todo: config first chunks
             PersistenceManager.getInstance().save(OnlineUser.class, onlineUser).join();
         } else {
             onlineUser = user.get();

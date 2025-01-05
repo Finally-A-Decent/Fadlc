@@ -7,6 +7,7 @@ import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.MessageLocation;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
+import info.preva1l.fadlc.models.user.settings.SettingHolder;
 import info.preva1l.fadlc.utils.Text;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
@@ -15,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -23,22 +25,16 @@ public class BukkitUser implements OnlineUser, CommandUser {
     private final UUID uniqueId;
     private Player player = null;
     private int availableChunks;
-    private boolean viewBorders;
-    private boolean showEnterMessages;
-    private boolean showLeaveMessages;
-    private MessageLocation messageLocation;
     private int claimWithProfileId;
+    private final List<SettingHolder<?>> settings;
 
-    public BukkitUser(String name, UUID uniqueId, int availableChunks, boolean viewBorders, boolean showEnterMessages,
-                      boolean showLeaveMessages, MessageLocation messageLocation, int claimWithProfileId) {
+    public BukkitUser(String name, UUID uniqueId, int availableChunks,
+                      int claimWithProfileId, List<SettingHolder<?>> settings) {
         this.name = name;
         this.uniqueId = uniqueId;
         this.availableChunks = availableChunks;
-        this.viewBorders = viewBorders;
-        this.showEnterMessages = showEnterMessages;
-        this.showLeaveMessages = showLeaveMessages;
-        this.messageLocation = messageLocation;
         this.claimWithProfileId = claimWithProfileId;
+        this.settings = settings;
     }
 
     @Override
@@ -66,30 +62,6 @@ public class BukkitUser implements OnlineUser, CommandUser {
     }
 
     @Override
-    public void setViewBorders(boolean viewBorders) {
-        this.viewBorders = viewBorders;
-        UserManager.getInstance().cacheUser(this);
-    }
-
-    @Override
-    public void setShowEnterMessage(boolean showEnterMessage) {
-        this.showEnterMessages = showEnterMessage;
-        UserManager.getInstance().cacheUser(this);
-    }
-
-    @Override
-    public void setShowLeaveMessage(boolean showLeaveMessage) {
-        this.showLeaveMessages = showLeaveMessage;
-        UserManager.getInstance().cacheUser(this);
-    }
-
-    @Override
-    public void setMessageLocation(MessageLocation newMessageLocation) {
-        this.messageLocation = newMessageLocation;
-        UserManager.getInstance().cacheUser(this);
-    }
-
-    @Override
     public IClaimProfile getClaimWithProfile() {
         return getClaim().getProfiles().get(getClaimWithProfileId());
     }
@@ -113,7 +85,7 @@ public class BukkitUser implements OnlineUser, CommandUser {
     @Override
     public void sendMessage(@NotNull String message, boolean prefixed) {
         if (message.isEmpty()) return;
-        switch (messageLocation) {
+        switch (getSetting(MessageLocation.class)) {
             case CHAT -> getAudience().sendMessage(Text.modernMessage(Lang.i().getPrefix() + message));
             case HOTBAR -> getAudience().sendActionBar(Text.modernMessage(Lang.i().getPrefix() + message));
             case TITLE -> {
@@ -121,6 +93,26 @@ public class BukkitUser implements OnlineUser, CommandUser {
                 getAudience().sendTitlePart(TitlePart.SUBTITLE, Text.modernMessage(message));
             }
         }
+    }
+
+    @Override
+    public <T> T getSetting(Class<T> clazz) {
+        return getSettingHolder(clazz).getValue();
+    }
+
+    @Override
+    public <T> SettingHolder<T> getSettingHolder(Class<T> clazz) {
+        return settings.stream()
+                .filter(c -> c.getValueClass().equals(clazz))
+                .findFirst()
+                .map(holder -> (SettingHolder<T>) holder)
+                .orElseThrow();
+    }
+
+    @Override
+    public <T> void updateSetting(T object, Class<T> clazz) {
+        getSettingHolder(clazz).setValue(object);
+        UserManager.getInstance().cacheUser(this);
     }
 
     @Override

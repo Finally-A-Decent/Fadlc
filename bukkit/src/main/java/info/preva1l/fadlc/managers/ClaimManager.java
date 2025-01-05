@@ -79,14 +79,12 @@ public final class ClaimManager implements IClaimManager {
 
     @Override
     public IClaimChunk getChunkAt(ILoc loc) {
-        Optional<IClaimChunk> optChunk = chunkCache.values().stream().filter(chunk -> chunk.getChunkX() == loc.getX() >> 4
-                && chunk.getChunkZ() == loc.getZ() >> 4 && loc.getWorld().equals(chunk.getWorldName())).findFirst();
+        ChunkLoc chunkLoc = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4, loc.getWorld(), ServerSettings.getInstance().getName());
+        IClaimChunk chunk = chunkCache.get(chunkLoc);
 
-        if (optChunk.isPresent()) {
-            return optChunk.get();
-        }
+        if (chunk != null) return chunk;
 
-        IClaimChunk newChunk = new ClaimChunk(new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4, loc.getWorld(), ServerSettings.getInstance().getName()), -1, -1);
+        IClaimChunk newChunk = new ClaimChunk(chunkLoc, -1, -1);
         if (Config.i().getOptimization().getPerformanceMode() != PerformanceMode.MEMORY) {
             cacheChunk(newChunk);
         }
@@ -94,14 +92,12 @@ public final class ClaimManager implements IClaimManager {
     }
 
     public IClaimChunk getChunkAt(int x, int z, String world) {
-        Optional<IClaimChunk> optChunk = chunkCache.values().stream().filter(chunk -> chunk.getChunkX() == x
-                && chunk.getChunkZ() == z && world.equals(chunk.getWorldName())).findFirst();
+        ChunkLoc chunkLoc = new ChunkLoc(x, z, world, ServerSettings.getInstance().getName());
+        IClaimChunk chunk = chunkCache.get(chunkLoc);
 
-        if (optChunk.isPresent()) {
-            return optChunk.get();
-        }
+        if (chunk != null) return chunk;
 
-        IClaimChunk newChunk = new ClaimChunk(new ChunkLoc(x, z, world, ServerSettings.getInstance().getName()), -1, -1);
+        IClaimChunk newChunk = new ClaimChunk(chunkLoc, -1, -1);
         if (Config.i().getOptimization().getPerformanceMode() != PerformanceMode.MEMORY) {
             cacheChunk(newChunk);
         }
