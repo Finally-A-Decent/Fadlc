@@ -5,6 +5,8 @@ import info.preva1l.fadlc.managers.PersistenceManager;
 import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.user.BukkitUser;
 import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.models.user.settings.Setting;
+import info.preva1l.fadlc.registry.UserSettingsRegistry;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
@@ -46,6 +48,9 @@ public class PlayerListeners implements Listener {
             onlineUser = user.get();
         }
 
+        for (Class<? extends Setting<?>> setting : UserSettingsRegistry.getAll()) {
+            onlineUser.putSettingIfEmpty(null, setting);
+        }
         userManager.cacheUser(onlineUser);
     }
 

@@ -3,10 +3,13 @@ package info.preva1l.fadlc.jobs;
 import info.preva1l.fadlc.config.Config;
 import info.preva1l.fadlc.config.particles.Particles;
 import info.preva1l.fadlc.managers.ClaimManager;
+import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.ChunkStatus;
 import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
+import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.registry.UserSettingsRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -23,6 +26,8 @@ public class ClaimBorderJob extends Job {
     @Override
     protected void execute() {
         for (Player player : Bukkit.getOnlinePlayers()) {
+            OnlineUser user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
+            if (!user.getSetting(UserSettingsRegistry.VIEW_BORDERS, true)) continue;
             Location playerLocation = player.getLocation();
             int playerY = playerLocation.getBlockY();
 

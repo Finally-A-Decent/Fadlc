@@ -21,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class SQLiteUserDao implements Dao<OnlineUser> {
     private final HikariDataSource dataSource;
-    private static final Type SETTINGS_TYPE = new TypeToken<List<SettingHolder<?>>>(){}.getType();
+    private static final Type SETTINGS_TYPE = new TypeToken<List<SettingHolder<?, ?>>>(){}.getType();
 
     /**
      * Get an object from the database by its id.
@@ -42,7 +42,7 @@ public class SQLiteUserDao implements Dao<OnlineUser> {
                     final UUID ownerUUID = id;
                     final String ownerName = resultSet.getString("username");
                     final int availableChunks = resultSet.getInt("availableChunks");
-                    final List<SettingHolder<?>> settings =
+                    final List<SettingHolder<?, ?>> settings =
                             Fadlc.i().getGson().fromJson(resultSet.getString("settings"), SETTINGS_TYPE);
                     final int usingProfile = resultSet.getInt("usingProfile");
                     return Optional.of(new BukkitUser(ownerName, ownerUUID,

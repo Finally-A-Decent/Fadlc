@@ -91,6 +91,7 @@ public final class ClaimManager implements IClaimManager {
         return newChunk;
     }
 
+    @Override
     public IClaimChunk getChunkAt(int x, int z, String world) {
         ChunkLoc chunkLoc = new ChunkLoc(x, z, world, ServerSettings.getInstance().getName());
         IClaimChunk chunk = chunkCache.get(chunkLoc);

@@ -7,9 +7,12 @@ import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.MessageLocation;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
+import info.preva1l.fadlc.models.user.settings.Setting;
 import info.preva1l.fadlc.models.user.settings.SettingHolder;
+import info.preva1l.fadlc.registry.UserSettingsRegistry;
 import info.preva1l.fadlc.utils.Text;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
@@ -26,10 +29,10 @@ public class BukkitUser implements OnlineUser, CommandUser {
     private Player player = null;
     private int availableChunks;
     private int claimWithProfileId;
-    private final List<SettingHolder<?>> settings;
+    private final List<SettingHolder<?, ?>> settings;
 
     public BukkitUser(String name, UUID uniqueId, int availableChunks,
-                      int claimWithProfileId, List<SettingHolder<?>> settings) {
+                      int claimWithProfileId, List<SettingHolder<?, ?>> settings) {
         this.name = name;
         this.uniqueId = uniqueId;
         this.availableChunks = availableChunks;
@@ -85,7 +88,7 @@ public class BukkitUser implements OnlineUser, CommandUser {
     @Override
     public void sendMessage(@NotNull String message, boolean prefixed) {
         if (message.isEmpty()) return;
-        switch (getSetting(MessageLocation.class)) {
+        switch (getSetting(UserSettingsRegistry.MESSAGE_LOCATION, MessageLocation.CHAT)) {
             case CHAT -> getAudience().sendMessage(Text.modernMessage(Lang.i().getPrefix() + message));
             case HOTBAR -> getAudience().sendActionBar(Text.modernMessage(Lang.i().getPrefix() + message));
             case TITLE -> {
@@ -96,22 +99,41 @@ public class BukkitUser implements OnlineUser, CommandUser {
     }
 
     @Override
-    public <T> T getSetting(Class<T> clazz) {
-        return getSettingHolder(clazz).getValue();
+    public <T> T getSetting(Class<? extends Setting<T>> clazz, T def) {
+        T t = getSettingHolder(clazz).getState();
+        if (t == null) t = updateSetting(def, clazz);
+        return t;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> SettingHolder<T> getSettingHolder(Class<T> clazz) {
-        return settings.stream()
+    public <T> SettingHolder<T, ? extends Setting<T>> getSettingHolder(Class<? extends Setting<T>> clazz) {
+        return (SettingHolder<T, ? extends Setting<T>>) settings.stream()
                 .filter(c -> c.getValueClass().equals(clazz))
-                .findFirst()
-                .map(holder -> (SettingHolder<T>) holder)
-                .orElseThrow();
+                .findFirst().orElse(null);
     }
 
+    @SneakyThrows
     @Override
-    public <T> void updateSetting(T object, Class<T> clazz) {
-        getSettingHolder(clazz).setValue(object);
+    public <T> T updateSetting(T object, Class<? extends Setting<T>> clazz) {
+        SettingHolder<T, ? extends Setting<T>> holder = getSettingHolder(clazz);
+        if (holder == null) {
+            holder = new SettingHolder<>(clazz.getDeclaredConstructor().newInstance(object));
+            settings.add(holder);
+        }
+        holder.setState(object);
+        UserManager.getInstance().cacheUser(this);
+        return object;
+    }
+
+    @SneakyThrows
+    @Override
+    public void putSettingIfEmpty(Object object, Class<? extends Setting<?>> clazz) {
+        SettingHolder<?, ? extends Setting<?>> holder = settings.stream()
+                .filter(c -> c.getValueClass().equals(clazz)).findFirst().orElse(null);
+        if (holder != null) return;
+        holder = new SettingHolder<>(clazz.getDeclaredConstructor().newInstance(object));
+        settings.add(holder);
         UserManager.getInstance().cacheUser(this);
     }
 

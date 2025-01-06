@@ -20,8 +20,8 @@ import java.util.List;
 @Configuration
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("FieldMayBeFinal")
-public class ProfilesConfig implements MenuConfig {
-    private static ProfilesConfig instance;
+public class SettingsConfig implements MenuConfig {
+    private static SettingsConfig instance;
     private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
             .charset(StandardCharsets.UTF_8)
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE).build();
@@ -88,21 +88,21 @@ public class ProfilesConfig implements MenuConfig {
 
     public static void reload() {
         instance = YamlConfigurations.load(
-                new File(Fadlc.i().getDataFolder(), "menus/profiles.yml").toPath(),
-                ProfilesConfig.class,
+                new File(Fadlc.i().getDataFolder(), "menus/settings.yml").toPath(),
+                SettingsConfig.class,
                 PROPERTIES
         );
-        Logger.info("profiles.yml automatically reloaded from disk.");
+        Logger.info("settings.yml automatically reloaded from disk.");
     }
 
-    public static ProfilesConfig i() {
+    public static SettingsConfig i() {
         if (instance == null) {
             instance = YamlConfigurations.update(
-                    new File(Fadlc.i().getDataFolder(), "menus/profiles.yml").toPath(),
-                    ProfilesConfig.class,
+                    new File(Fadlc.i().getDataFolder(), "menus/settings.yml").toPath(),
+                    SettingsConfig.class,
                     PROPERTIES
             );
-            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "menus/profiles.yml", ProfilesConfig::reload);
+            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "menus/settings.yml", SettingsConfig::reload);
         }
         return instance;
     }

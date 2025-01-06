@@ -2,8 +2,10 @@ package info.preva1l.fadlc.models.user;
 
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
+import info.preva1l.fadlc.models.user.settings.Setting;
 import info.preva1l.fadlc.models.user.settings.SettingHolder;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
@@ -24,11 +26,14 @@ public interface OnlineUser extends User {
 
     void sendMessage(String message, boolean prefixed);
 
-    List<SettingHolder<?>> getSettings();
+    List<SettingHolder<?, ?>> getSettings();
 
-    <T> T getSetting(Class<T> clazz);
+    <T> T getSetting(Class<? extends Setting<T>> clazz, T def);
 
-    <T> SettingHolder<T> getSettingHolder(Class<T> clazz);
+    <T> SettingHolder<T, ? extends Setting<T>> getSettingHolder(Class<? extends Setting<T>> clazz);
 
-    <T> void updateSetting(T object, Class<T> clazz);
+    <T> T updateSetting(T object, Class<? extends Setting<T>> clazz);
+
+    @ApiStatus.Internal
+    void putSettingIfEmpty(Object object, Class<? extends Setting<?>> clazz);
 }
