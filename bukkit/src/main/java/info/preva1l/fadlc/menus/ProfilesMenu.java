@@ -30,9 +30,13 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
     private void placeNavigationItems() {
         scheme.bindItem('B', config.getLang().getBack().itemStack(),
                 e -> Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getBack().getSound()));
+        scheme.bindItem('P', config.getLang().getPrevious().itemStack(),
+                e -> Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound()));
+        scheme.bindItem('N', config.getLang().getNext().itemStack(),
+                e -> Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound()));
     }
 
-    protected void fillPaginationItems() {
+    private void fillPaginationItems() {
         for (IClaimProfile profile : user.getClaim().getProfiles().values()) {
             List<String> lore = new ArrayList<>();
 

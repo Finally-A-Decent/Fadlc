@@ -36,30 +36,26 @@ public class ProfilesConfig implements MenuConfig {
     public static class Lang {
         private ConfigurableItem back = new ConfigurableItem(
                 Material.FEATHER, 0, "click",
-                "&3Buy Chunks", List.of("&fYou have &3%chunks% &fchunks", "&7Click to purchase more")
+                "&3Back", List.of("&7\u2192 Click to go back")
         );
-        private ConfigurableItem switchProfile = new ConfigurableItem(
-                Material.PAPER, 0, "click", "&3Switch Profile",
-                List.of(
-                        "&7→ Left Click to cycle up",
-                        "&7→ Right Click to cycle down",
-                        "&8-------------------------",
-                        "&f%previous%",
-                        "&8> &3%current%",
-                        "&f%next%",
-                        "&8-------------------------"
-                )
+        private ConfigurableItem previous = new ConfigurableItem(
+                Material.ARROW, 0, "click",
+                "&3Previous Page", List.of("&7\u2192 Click to go to the previous page")
+        );
+        private ConfigurableItem next = new ConfigurableItem(
+                Material.ARROW, 0, "click",
+                "&3Next Page", List.of("&7\u2192 Click to go to the next page")
         );
         private Profile profile = new Profile(
                 "click", "%profile%",
                 List.of(
                         "&3Info:",
-                        "&7‣ &3Members: &f%members%",
-                        "&7‣ &3Border: &f%border%",
-                        "&7‣ &3Chunks: &f%chunks%",
+                        "&7\u2023 &3Members: &f%members%",
+                        "&7\u2023 &3Border: &f%border%",
+                        "&7\u2023 &3Chunks: &f%chunks%",
                         "&3Flags:",
                         "%flags%"
-                ), new Flag("&aEnabled", "&cDisabled", "&7‣ &3%flag%: &r%status%")
+                ), new Flag("&aEnabled", "&cDisabled", "&7\u2023 &3%flag%: &r%status%")
         );
         public record Profile(String sound, String name, List<String> lore, Flag flag) {
             public SoundType getSound() {
@@ -70,20 +66,17 @@ public class ProfilesConfig implements MenuConfig {
     }
 
     @Comment({
-            "E = Empty (Gets filled with the chunks)",
             "0 = Filler",
-            "B = Buy Chunks",
-            "P = Switch Profile",
-            "M = Manage Profiles",
-            "S = Settings"
+            "B = Back",
+            "X = Profiles (Paginated)",
+            "N = Next Page",
+            "P = Previous Page",
     })
     private List<String> layout = List.of(
-            "EEEEEEEEE",
-            "EEEEEEEEE",
-            "EEEEEEEEE",
-            "EEEEEEEEE",
-            "EEEEEEEEE",
-            "0B0P0M0S0"
+            "000000000",
+            "0XXXXXXX0",
+            "0XXXXXXX0",
+            "B00P0N000"
     );
 
     public static void reload() {

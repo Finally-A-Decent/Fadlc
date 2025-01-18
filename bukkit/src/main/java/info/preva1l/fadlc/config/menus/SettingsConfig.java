@@ -26,7 +26,7 @@ public class SettingsConfig implements MenuConfig {
             .charset(StandardCharsets.UTF_8)
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE).build();
 
-    private String title = "&8Manage Profiles";
+    private String title = "&8Settings";
 
     private Lang lang = new Lang();
 
@@ -36,54 +36,75 @@ public class SettingsConfig implements MenuConfig {
     public static class Lang {
         private ConfigurableItem back = new ConfigurableItem(
                 Material.FEATHER, 0, "click",
-                "&3Buy Chunks", List.of("&fYou have &3%chunks% &fchunks", "&7Click to purchase more")
+                "&3Back", List.of("&7\u2192 Click to go back")
         );
-        private ConfigurableItem switchProfile = new ConfigurableItem(
-                Material.PAPER, 0, "click", "&3Switch Profile",
+        private ConfigurableItem previous = new ConfigurableItem(
+                Material.ARROW, 0, "click",
+                "&3Previous Page", List.of("&7\u2192 Click to go to the previous page")
+        );
+        private ConfigurableItem next = new ConfigurableItem(
+                Material.ARROW, 0, "click",
+                "&3Next Page", List.of("&7\u2192 Click to go to the next page")
+        );
+        private SettingToggle settingToggle = new SettingToggle(
+                "click", "%setting%",
                 List.of(
-                        "&7→ Left Click to cycle up",
-                        "&7→ Right Click to cycle down",
+                        "%description%",
+                        "",
+                        "&7\u2023 &3Status: &f%status%",
+                        "",
+                        "&7\u2192 Click to toggle"
+                ), "&aEnbaled", "&cDisabled"
+        );
+        private Setting settingCycle = new Setting(
+                "click", "%setting%",
+                List.of(
+                        "%description%",
+                        "",
                         "&8-------------------------",
                         "&f%previous%",
                         "&8> &3%current%",
                         "&f%next%",
-                        "&8-------------------------"
+                        "&8-------------------------",
+                        "",
+                        "&7\u2192 Left Click to cycle up",
+                        "&7\u2192 Right Click to cycle down"
                 )
         );
-        private Profile profile = new Profile(
-                "click", "%profile%",
+        private Setting settingInput = new Setting(
+                "click", "%setting%",
                 List.of(
-                        "&3Info:",
-                        "&7‣ &3Members: &f%members%",
-                        "&7‣ &3Border: &f%border%",
-                        "&7‣ &3Chunks: &f%chunks%",
-                        "&3Flags:",
-                        "%flags%"
-                ), new Flag("&aEnabled", "&cDisabled", "&7‣ &3%flag%: &r%status%")
+                        "%description%",
+                        "",
+                        "&7\u2023 &3Current: &f%current%",
+                        "",
+                        "&7\u2192 Click to edit"
+                )
         );
-        public record Profile(String sound, String name, List<String> lore, Flag flag) {
+        public record Setting(String sound, String name, List<String> description) {
             public SoundType getSound() {
                 return Sounds.getSound(sound);
             }
         }
-        public record Flag(String enabled, String disabled, String format) {}
+        public record SettingToggle(String sound, String name, List<String> description, String enabled, String disabled) {
+            public SoundType getSound() {
+                return Sounds.getSound(sound);
+            }
+        }
     }
 
     @Comment({
-            "E = Empty (Gets filled with the chunks)",
             "0 = Filler",
-            "B = Buy Chunks",
-            "P = Switch Profile",
-            "M = Manage Profiles",
-            "S = Settings"
+            "B = Back",
+            "X = Settings (Paginated)",
+            "N = Next Page",
+            "P = Previous Page",
     })
     private List<String> layout = List.of(
-            "EEEEEEEEE",
-            "EEEEEEEEE",
-            "EEEEEEEEE",
-            "EEEEEEEEE",
-            "EEEEEEEEE",
-            "0B0P0M0S0"
+            "000000000",
+            "0XXXXXXX0",
+            "0XXXXXXX0",
+            "B00P0N000"
     );
 
     public static void reload() {

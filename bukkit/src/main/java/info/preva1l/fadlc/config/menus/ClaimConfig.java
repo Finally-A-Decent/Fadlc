@@ -50,7 +50,7 @@ public class ClaimConfig implements MenuConfig {
                             "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%",
                             "&7&l‣ &3Claimed: &f%formatted_time% ago",
                             "",
-                            "&a→ Click &3to manage this claim!"
+                            "&a\u2192 Click &3to manage this claim!"
                     )
             );
             private ConfigurableItem claimedOther = new ConfigurableItem(
@@ -69,7 +69,7 @@ public class ClaimConfig implements MenuConfig {
                             "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%",
                             "&7&l‣ &3Cost: &f1 Claim Chunk &7(You have: &f%available%&7)",
                             "",
-                            "&a→ Click &3to claim this chunk!"
+                            "&a\u2192 Click &3to claim this chunk!"
                     )
             );
             private ConfigurableItem unclaimedExpensive = new ConfigurableItem(
@@ -79,7 +79,7 @@ public class ClaimConfig implements MenuConfig {
                             "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%",
                             "&7&l‣ &3Cost: &f1 Claim Chunk &7(You have: &f%available%&7)",
                             "",
-                            "&c→ You need more chunks!"
+                            "&c\u2192 You need more chunks!"
                     )
             );
             private ConfigurableItem worldDisabled = new ConfigurableItem(
@@ -88,7 +88,7 @@ public class ClaimConfig implements MenuConfig {
                     List.of(
                             "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%",
                             "",
-                            "&c→ &oClaiming is disabled in this world!"
+                            "&c\u2192 &oClaiming is disabled in this world!"
                     )
             );
             private ConfigurableItem restrictedRegion = new ConfigurableItem(
@@ -97,7 +97,7 @@ public class ClaimConfig implements MenuConfig {
                     List.of(
                             "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%",
                             "",
-                            "&c→ &oYou cannot claim in protected areas!"
+                            "&c\u2192 &oYou cannot claim in protected areas!"
                     )
             );
             @Comment("Hooks Into: AdvancedServerZones")
@@ -107,7 +107,7 @@ public class ClaimConfig implements MenuConfig {
                     List.of(
                             "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%",
                             "",
-                            "&c→ &oYou cannot claim near the zone border!"
+                            "&c\u2192 &oYou cannot claim near the zone border!"
                     )
             );
         }
@@ -118,8 +118,8 @@ public class ClaimConfig implements MenuConfig {
         private ConfigurableItem switchProfile = new ConfigurableItem(
                 Material.PAPER, 0, "click", "&3Switch Profile",
                 List.of(
-                        "&7→ Left Click to cycle up",
-                        "&7→ Right Click to cycle down",
+                        "&7\u2192 Left Click to cycle up",
+                        "&7\u2192 Right Click to cycle down",
                         "&8-------------------------",
                         "&f%previous%",
                         "&8> &3%current%",
@@ -129,11 +129,11 @@ public class ClaimConfig implements MenuConfig {
         );
         private ConfigurableItem manageProfiles = new ConfigurableItem(
                 Material.ANVIL, 0, "click",
-                "&3Manage Profiles", List.of("&7→ Click to manage your claim profiles")
+                "&3Manage Profiles", List.of("&7\u2192 Click to manage your claim profiles")
         );
         private ConfigurableItem settings = new ConfigurableItem(
                 Material.PLAYER_HEAD, 0, "click",
-                "&3Settings", List.of("&7→ Click to manage your settings")
+                "&3Settings", List.of("&7\u2192 Click to manage your settings")
         );
     }
 

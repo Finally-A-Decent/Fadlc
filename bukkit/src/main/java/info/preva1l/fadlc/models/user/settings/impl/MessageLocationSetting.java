@@ -1,6 +1,6 @@
 package info.preva1l.fadlc.models.user.settings.impl;
 
-import info.preva1l.fadlc.models.MessageLocation;
+import info.preva1l.fadlc.models.user.settings.MessageLocation;
 import info.preva1l.fadlc.models.user.settings.Setting;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

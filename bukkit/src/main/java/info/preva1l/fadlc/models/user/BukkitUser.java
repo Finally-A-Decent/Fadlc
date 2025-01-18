@@ -4,11 +4,10 @@ import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.managers.UserManager;
-import info.preva1l.fadlc.models.MessageLocation;
+import info.preva1l.fadlc.models.user.settings.MessageLocation;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.models.user.settings.Setting;
-import info.preva1l.fadlc.models.user.settings.SettingHolder;
 import info.preva1l.fadlc.registry.UserSettingsRegistry;
 import info.preva1l.fadlc.utils.Text;
 import lombok.Getter;
@@ -29,10 +28,10 @@ public class BukkitUser implements OnlineUser, CommandUser {
     private Player player = null;
     private int availableChunks;
     private int claimWithProfileId;
-    private final List<SettingHolder<?, ?>> settings;
+    private final List<Setting<?>> settings;
 
     public BukkitUser(String name, UUID uniqueId, int availableChunks,
-                      int claimWithProfileId, List<SettingHolder<?, ?>> settings) {
+                      int claimWithProfileId, List<Setting<?>> settings) {
         this.name = name;
         this.uniqueId = uniqueId;
         this.availableChunks = availableChunks;
@@ -100,28 +99,28 @@ public class BukkitUser implements OnlineUser, CommandUser {
 
     @Override
     public <T> T getSetting(Class<? extends Setting<T>> clazz, T def) {
-        T t = getSettingHolder(clazz).getState();
+        T t = getSettingAccess(clazz).getState();
         if (t == null) t = updateSetting(def, clazz);
         return t;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> SettingHolder<T, ? extends Setting<T>> getSettingHolder(Class<? extends Setting<T>> clazz) {
-        return (SettingHolder<T, ? extends Setting<T>>) settings.stream()
-                .filter(c -> c.getValueClass().equals(clazz))
+    public <T> Setting<T> getSettingAccess(Class<? extends Setting<T>> clazz) {
+        return (Setting<T>) settings.stream()
+                .filter(c -> c.getClass().equals(clazz))
                 .findFirst().orElse(null);
     }
 
     @SneakyThrows
     @Override
     public <T> T updateSetting(T object, Class<? extends Setting<T>> clazz) {
-        SettingHolder<T, ? extends Setting<T>> holder = getSettingHolder(clazz);
-        if (holder == null) {
-            holder = new SettingHolder<>(clazz.getDeclaredConstructor().newInstance(object));
-            settings.add(holder);
+        Setting<T> access = getSettingAccess(clazz);
+        if (access == null) {
+            access = clazz.getDeclaredConstructor().newInstance(object);
+            settings.add(access);
         }
-        holder.setState(object);
+        access.setState(object);
         UserManager.getInstance().cacheUser(this);
         return object;
     }
@@ -129,11 +128,11 @@ public class BukkitUser implements OnlineUser, CommandUser {
     @SneakyThrows
     @Override
     public void putSettingIfEmpty(Object object, Class<? extends Setting<?>> clazz) {
-        SettingHolder<?, ? extends Setting<?>> holder = settings.stream()
-                .filter(c -> c.getValueClass().equals(clazz)).findFirst().orElse(null);
-        if (holder != null) return;
-        holder = new SettingHolder<>(clazz.getDeclaredConstructor().newInstance(object));
-        settings.add(holder);
+       Setting<?> access = settings.stream()
+                .filter(c -> c.getClass().equals(clazz)).findFirst().orElse(null);
+        if (access != null) return;
+        access = clazz.getDeclaredConstructor().newInstance(object);
+        settings.add(access);
         UserManager.getInstance().cacheUser(this);
     }
 

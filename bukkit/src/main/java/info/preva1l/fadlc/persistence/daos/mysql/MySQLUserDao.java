@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.models.user.BukkitUser;
 import info.preva1l.fadlc.models.user.OnlineUser;
-import info.preva1l.fadlc.models.user.settings.SettingHolder;
+import info.preva1l.fadlc.models.user.settings.Setting;
 import info.preva1l.fadlc.persistence.Dao;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MySQLUserDao implements Dao<OnlineUser> {
     private final HikariDataSource dataSource;
-    private static final Type SETTINGS_TYPE = new TypeToken<List<SettingHolder<?, ?>>>(){}.getType();
+    private static final Type SETTINGS_TYPE = new TypeToken<List<Setting<?>>>(){}.getType();
 
     /**
      * Get an object from the database by its id.
@@ -43,7 +43,7 @@ public class MySQLUserDao implements Dao<OnlineUser> {
                     final UUID ownerUUID = id;
                     final String ownerName = resultSet.getString("username");
                     final int availableChunks = resultSet.getInt("availableChunks");
-                    final List<SettingHolder<?, ?>> settings =
+                    final List<Setting<?>> settings =
                             Fadlc.i().getGson().fromJson(resultSet.getString("settings"), SETTINGS_TYPE);
                     final int usingProfile = resultSet.getInt("usingProfile");
                     return Optional.of(new BukkitUser(ownerName, ownerUUID,

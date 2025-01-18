@@ -181,6 +181,15 @@ public class Lang {
         }
     }
 
+    private Words words = new Words();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Words {
+        private String none = "None";
+    }
+
     public static void sendMessage(CommandSender sender, String message) {
         if (message.isEmpty()) return;
         if (sender instanceof Player player) {

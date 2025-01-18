@@ -53,12 +53,12 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
 
         IClaimProfile previousProfile = user.getClaim().getProfiles().get(user.getClaimWithProfile().getId() - 1);
         String previous = previousProfile == null
-                ? "None"
+                ? Lang.i().getWords().getNone()
                 : previousProfile.getName();
         String current = user.getClaimWithProfile().getName();
         IClaimProfile nextProfile = user.getClaim().getProfiles().get(user.getClaimWithProfile().getId() + 1);
         String next = nextProfile == null
-                ? "None"
+                ? Lang.i().getWords().getNone()
                 : nextProfile.getName();
         scheme.bindItem('P', config.getLang().getSwitchProfile().easyItem()
                 .replaceAnywhere("%previous%", Text.legacyMessage(previous))
@@ -83,6 +83,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
         });
 
         scheme.bindItem('S', config.getLang().getSettings().easyItem().skullOwner(player).getBase(), e -> {
+            new SettingsMenu(player).open(player);
             Sounds.playSound(player, config.getLang().getSettings().getSound());
         });
     }

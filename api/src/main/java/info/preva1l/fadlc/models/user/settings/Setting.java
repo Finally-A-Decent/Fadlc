@@ -1,5 +1,7 @@
 package info.preva1l.fadlc.models.user.settings;
 
+import org.bukkit.Material;
+
 import java.util.List;
 
 public interface Setting<C> {
@@ -10,4 +12,6 @@ public interface Setting<C> {
     String getName();
 
     List<String> getDescription();
+
+    Material getIcon();
 }
