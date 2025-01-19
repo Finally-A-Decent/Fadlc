@@ -69,7 +69,7 @@ allprojects {
 
 subprojects {
     version rootProject.version
-    archivesBaseName = "${rootProject.name}-${project.name.capitalize()}"
+    archivesBaseName = "${rootProject.name}-${project.name}"
 
     shadowJar {
         destinationDirectory.set(file("$rootDir/target"))
