@@ -3,21 +3,21 @@ description: Finally a Decent Land Claim
 author: Preva1l
 version: '${version}'
 main: info.preva1l.fadlc.Fadlc
-api-version: 1.17
+api-version: 1.18
 
 libraries:
-  - redis.clients:jedis:5.1.0
-  - org.apache.commons:commons-pool2:2.12.0
-  - org.mongodb:mongodb-driver-sync:5.0.0
-  - org.xerial:sqlite-jdbc:3.45.2.0
-  - com.mysql:mysql-connector-j:8.3.0
-  - org.mariadb.jdbc:mariadb-java-client:3.3.3
-  - net.kyori:adventure-text-minimessage:4.17.0
-  - net.kyori:adventure-api:4.17.0
-  - net.kyori:adventure-platform-bukkit:4.3.3
-  - com.influxdb:influxdb-client-java:3.3.0
-  - de.exlll:configlib-yaml:4.5.0
-  - com.zaxxer:HikariCP:5.1.0
+  - 'redis.clients:jedis:${jedis_version}'
+  - 'org.apache.commons:commons-pool2:${acp2_version}'
+  - 'org.mongodb:mongodb-driver-sync:${mongo_version}'
+  - 'org.xerial:sqlite-jdbc:${sqlite_version}'
+  - 'com.mysql:mysql-connector-j:${mysql_version}'
+  - 'org.mariadb.jdbc:mariadb-java-client:${mariadb_version}'
+  - 'net.kyori:adventure-text-minimessage:${minimessage_version}'
+  - 'net.kyori:adventure-api:${minimessage_version}'
+  - 'net.kyori:adventure-platform-bukkit:${mm_platform_version}'
+  - 'com.influxdb:influxdb-client-java:${influxdb_version}'
+  - 'de.exlll:configlib-yaml:${configlib_version}'
+  - 'com.zaxxer:HikariCP:${hikari_version}'
 
 permissions:
   fadlc.claim:

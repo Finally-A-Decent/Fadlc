@@ -1,13 +1,28 @@
 plugins {
     id 'java'
-    id 'io.github.goooler.shadow' version '8.1.7'
+    id 'com.gradleup.shadow' version '8.3.0'
 }
 
 group = 'info.preva1l'
 version = "1.0.0"
 
+ext {
+    set 'version', version.toString()
+    set 'configlib_version', configlib_version.toString()
+    set 'acp2_version', acp2_version.toString()
+    set 'jedis_version', jedis_version.toString()
+    set 'hikari_version', hikari_version.toString()
+    set 'sqlite_version', sqlite_version.toString()
+    set 'mysql_version', mysql_version.toString()
+    set 'mariadb_version', mariadb_version.toString()
+    set 'mongo_version', mongo_version.toString()
+    set 'influxdb_version', influxdb_version.toString()
+    set 'minimessage_version', minimessage_version.toString()
+    set 'mm_platform_version', mm_platform_version.toString()
+}
+
 allprojects {
-    apply plugin: 'io.github.goooler.shadow'
+    apply plugin: 'com.gradleup.shadow'
     apply plugin: 'maven-publish'
     apply plugin: 'java'
 
@@ -45,11 +60,9 @@ allprojects {
     }
 
     processResources {
-        def props = [version: rootProject.version]
-        inputs.properties props
-        filteringCharset 'UTF-8'
-        filesMatching('plugin.yml') {
-            expand props
+        def tokenMap = rootProject.ext.properties
+        filesMatching(['**/*.json', '**/*.yml']) {
+            expand tokenMap
         }
     }
 }
@@ -61,7 +74,6 @@ subprojects {
     shadowJar {
         destinationDirectory.set(file("$rootDir/target"))
         archiveClassifier.set('')
-        //minimize()
     }
 
     task sourceJar(type: Jar) {
