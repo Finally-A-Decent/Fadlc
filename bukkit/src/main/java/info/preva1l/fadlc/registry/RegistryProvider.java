@@ -3,6 +3,7 @@ package info.preva1l.fadlc.registry;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.models.claim.settings.GroupSetting;
 import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
+import info.preva1l.fadlc.models.user.settings.impl.ClaimEnterNotificationSetting;
 import info.preva1l.fadlc.models.user.settings.impl.MessageLocationSetting;
 import info.preva1l.fadlc.models.user.settings.impl.ViewBordersSetting;
 
@@ -18,6 +19,7 @@ public interface RegistryProvider {
     private void loadUserSettingsRegistry() {
         UserSettingsRegistry.register(ViewBordersSetting.class, "view_borders");
         UserSettingsRegistry.register(MessageLocationSetting.class, "message_location");
+        UserSettingsRegistry.register(ClaimEnterNotificationSetting.class, "claim_enter_notification");
     }
 
     private void loadProfileFlagsRegistry() {

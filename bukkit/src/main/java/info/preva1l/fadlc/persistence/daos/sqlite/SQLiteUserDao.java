@@ -82,16 +82,13 @@ public class SQLiteUserDao implements Dao<OnlineUser> {
                     ON CONFLICT(`uniqueId`) DO UPDATE SET
                             `username` = excluded.`username`,
                             `availableChunks` = excluded.`availableChunks`,
-                            `showBorders` = excluded.`showBorders`,
-                            `showEnterMessages` = excluded.`showEnterMessages`,
-                            `showLeaveMessages` = excluded.`showLeaveMessages`,
-                            `messageLocation` = excluded.`messageLocation`,
+                            `settings` = excluded.`settings`,
                             `usingProfile` = excluded.`usingProfile`;""")) {
                 statement.setString(1, onlineUser.getUniqueId().toString());
                 statement.setString(2, onlineUser.getName());
                 statement.setInt(3, onlineUser.getAvailableChunks());
                 statement.setString(4, Fadlc.i().getGson().toJson(onlineUser.getSettings(), SETTINGS_TYPE));
-                statement.setInt(8, onlineUser.getClaimWithProfile().getId());
+                statement.setInt(5, onlineUser.getClaimWithProfile().getId());
                 statement.execute();
             } catch (Exception e) {
                 Logger.severe("Failed to save!", e);

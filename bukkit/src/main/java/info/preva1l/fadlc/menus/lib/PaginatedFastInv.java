@@ -8,13 +8,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Extension of {@link FastInv} to easily create paginated inventories.
  */
-public class PaginatedFastInv<C extends MenuConfig> extends FastInv<C> {
+public abstract class PaginatedFastInv<C extends MenuConfig> extends FastInv<C> implements PaginatedMenu {
     private final List<ItemStack> contentItems = new ArrayList<>();
     private final List<Consumer<InventoryClickEvent>> contentHandlers = new ArrayList<>();
 
@@ -28,8 +26,6 @@ public class PaginatedFastInv<C extends MenuConfig> extends FastInv<C> {
 
     public PaginatedFastInv(C config) {
         super(config);
-
-        this.contentSlots = IntStream.range(0, Math.max(9, getInventory().getSize() - 9)).boxed().collect(Collectors.toList());
     }
 
     /**
@@ -162,6 +158,7 @@ public class PaginatedFastInv<C extends MenuConfig> extends FastInv<C> {
      * @param page the page to open
      */
     public void openPage(int page) {
+        fillPaginationItems();
         int lastPage = lastPage();
 
         this.page = Math.max(1, Math.min(page, lastPage));
@@ -256,6 +253,7 @@ public class PaginatedFastInv<C extends MenuConfig> extends FastInv<C> {
      */
     @Override
     public void open(Player player) {
+        scheme.apply(this);
         openPage(this.page);
 
         super.open(player);

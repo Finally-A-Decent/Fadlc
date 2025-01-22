@@ -1,6 +1,6 @@
 package info.preva1l.fadlc.models.user.settings;
 
-import info.preva1l.fadlc.menus.lib.SettingsInventory;
+import info.preva1l.fadlc.menus.lib.PaginatedMenu;
 import info.preva1l.fadlc.models.Tuple;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -12,6 +12,5 @@ public interface Setting<C> {
 
     void setState(C state);
 
-
-    Tuple<ItemStack, TriConsumer<InventoryClickEvent, OnlineUser, SettingsInventory>> getItem();
+    Tuple<ItemStack, TriConsumer<InventoryClickEvent, OnlineUser, PaginatedMenu>> getItem();
 }

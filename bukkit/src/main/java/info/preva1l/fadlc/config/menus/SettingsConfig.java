@@ -96,14 +96,14 @@ public class SettingsConfig implements MenuConfig {
                     )
             );
             private Setting viewBorders = new Setting(
-                    Material.OAK_SIGN,
+                    Material.STRUCTURE_VOID,
                     "View Claim Borders",
                     List.of(
                             "Show claim border particles."
                     )
             );
             private Setting claimEnterNotification = new Setting(
-                    Material.OAK_SIGN,
+                    Material.NAME_TAG,
                     "Claim Enter Notification",
                     List.of(
                             "Get notified when entering a claim."

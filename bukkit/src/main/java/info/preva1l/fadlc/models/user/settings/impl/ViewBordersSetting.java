@@ -3,7 +3,7 @@ package info.preva1l.fadlc.models.user.settings.impl;
 import info.preva1l.fadlc.config.menus.SettingsConfig;
 import info.preva1l.fadlc.config.sounds.Sounds;
 import info.preva1l.fadlc.menus.lib.ItemBuilder;
-import info.preva1l.fadlc.menus.lib.SettingsInventory;
+import info.preva1l.fadlc.menus.lib.PaginatedMenu;
 import info.preva1l.fadlc.models.Tuple;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.settings.Setting;
@@ -11,6 +11,7 @@ import info.preva1l.fadlc.utils.Text;
 import info.preva1l.fadlc.utils.config.EasyItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.entity.Player;
@@ -23,17 +24,18 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ViewBordersSetting implements Setting<Boolean> {
-    private Boolean state;
+    private Boolean state = true;
 
     @Override
-    public Tuple<ItemStack, TriConsumer<InventoryClickEvent, OnlineUser, SettingsInventory>> getItem() {
+    public Tuple<ItemStack, TriConsumer<InventoryClickEvent, OnlineUser, PaginatedMenu>> getItem() {
         SettingsConfig config = SettingsConfig.i();
         ItemBuilder itemStack = new ItemBuilder(config.getLang().getSettings().getViewBorders().icon());
 
         List<String> lore = new ArrayList<>();
         int i = 0;
-        for (String line : config.getLang().getSettingCycle().description()) {
+        for (String line : config.getLang().getSettingToggle().description()) {
             if (line.contains("%description%")) {
                 for (String description : config.getLang().getSettings().getViewBorders().description()) {
                     lore.add(i, description);

@@ -4,13 +4,13 @@ import info.preva1l.fadlc.config.menus.SettingsConfig;
 import info.preva1l.fadlc.config.sounds.Sounds;
 import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.menus.lib.PaginatedFastInv;
-import info.preva1l.fadlc.menus.lib.SettingsInventory;
+import info.preva1l.fadlc.menus.lib.PaginatedMenu;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.settings.Setting;
 import org.bukkit.entity.Player;
 
 
-public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements SettingsInventory {
+public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements PaginatedMenu {
     private final OnlineUser user;
 
     public SettingsMenu(Player player) {
@@ -37,7 +37,9 @@ public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements Se
         });
     }
 
-    private void fillPaginationItems() {
+    @Override
+    public void fillPaginationItems() {
+        clearContent();
         for (Setting<?> setting : user.getSettings()) {
             addContent(setting.getItem().getFirst(), e -> setting.getItem().getSecond().accept(e, user, this));
         }

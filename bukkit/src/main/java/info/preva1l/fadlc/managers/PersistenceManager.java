@@ -52,7 +52,6 @@ public final class PersistenceManager {
             Logger.severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.completedFuture(Optional.empty());
         }
-        System.out.println("test");
         return CompletableFuture.supplyAsync(() -> handler.get(clazz, id), threadPool);
     }
 

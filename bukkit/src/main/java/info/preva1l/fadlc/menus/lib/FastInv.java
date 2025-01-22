@@ -40,7 +40,7 @@ public class FastInv<C extends MenuConfig> implements InventoryHolder {
     private Predicate<Player> closeFilter;
 
     public FastInv(C config) {
-        this(owner -> Bukkit.createInventory(owner, config.getSize(), config.title()), config);
+        this(owner -> Bukkit.createInventory(owner, config.getSize() * 9, config.title()), config);
     }
 
     public FastInv(Function<InventoryHolder, Inventory> inventoryFunction, C config) {
@@ -54,6 +54,7 @@ public class FastInv<C extends MenuConfig> implements InventoryHolder {
         this.inventory = inv;
         this.config = config;
         this.scheme = new InventoryScheme().masks(config.getLayout().toArray(new String[0])).bindItem('0', Menus.getInstance().getFiller().itemStack());
+        scheme.apply(this);
     }
 
     /**

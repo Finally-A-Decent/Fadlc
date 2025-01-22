@@ -4,9 +4,9 @@ import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.managers.UserManager;
-import info.preva1l.fadlc.models.user.settings.MessageLocation;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
+import info.preva1l.fadlc.models.user.settings.MessageLocation;
 import info.preva1l.fadlc.models.user.settings.Setting;
 import info.preva1l.fadlc.registry.UserSettingsRegistry;
 import info.preva1l.fadlc.utils.Text;
@@ -87,7 +87,7 @@ public class BukkitUser implements OnlineUser, CommandUser {
     @Override
     public void sendMessage(@NotNull String message, boolean prefixed) {
         if (message.isEmpty()) return;
-        switch (getSetting(UserSettingsRegistry.MESSAGE_LOCATION, MessageLocation.CHAT)) {
+        switch (getSetting(UserSettingsRegistry.MESSAGE_LOCATION.get(), MessageLocation.CHAT)) {
             case CHAT -> getAudience().sendMessage(Text.modernMessage(Lang.i().getPrefix() + message));
             case HOTBAR -> getAudience().sendActionBar(Text.modernMessage(Lang.i().getPrefix() + message));
             case TITLE -> {
@@ -117,7 +117,7 @@ public class BukkitUser implements OnlineUser, CommandUser {
     public <T> T updateSetting(T object, Class<? extends Setting<T>> clazz) {
         Setting<T> access = getSettingAccess(clazz);
         if (access == null) {
-            access = clazz.getDeclaredConstructor().newInstance(object);
+            access = clazz.getDeclaredConstructor(object.getClass()).newInstance(object);
             settings.add(access);
         }
         access.setState(object);
@@ -131,7 +131,11 @@ public class BukkitUser implements OnlineUser, CommandUser {
        Setting<?> access = settings.stream()
                 .filter(c -> c.getClass().equals(clazz)).findFirst().orElse(null);
         if (access != null) return;
-        access = clazz.getDeclaredConstructor().newInstance(object);
+        if (object == null) {
+            access = clazz.getDeclaredConstructor().newInstance();
+        } else {
+            access = clazz.getDeclaredConstructor(object.getClass()).newInstance(object);
+        }
         settings.add(access);
         UserManager.getInstance().cacheUser(this);
     }

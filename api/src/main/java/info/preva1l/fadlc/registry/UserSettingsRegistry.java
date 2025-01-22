@@ -6,11 +6,12 @@ import info.preva1l.fadlc.models.user.settings.Setting;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 public class UserSettingsRegistry {
-    public static final Class<Setting<MessageLocation>> MESSAGE_LOCATION = get("message_location");
-    public static final Class<Setting<Boolean>> VIEW_BORDERS = get("view_borders");
-    public static final Class<Setting<Boolean>> CLAIM_ENTER_NOTIFICATION = get("claim_enter_notification");
+    public static final Supplier<Class<Setting<MessageLocation>>> MESSAGE_LOCATION = () -> get("message_location");
+    public static final Supplier<Class<Setting<Boolean>>> VIEW_BORDERS = () -> get("view_borders");
+    public static final Supplier<Class<Setting<Boolean>>> CLAIM_ENTER_NOTIFICATION = () -> get("claim_enter_notification");
 
     private static Map<String, Class<? extends Setting<?>>> settings = new ConcurrentHashMap<>();
 

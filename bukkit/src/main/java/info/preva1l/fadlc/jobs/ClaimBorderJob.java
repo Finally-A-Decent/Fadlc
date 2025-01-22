@@ -27,7 +27,7 @@ public class ClaimBorderJob extends Job {
     protected void execute() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             OnlineUser user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
-            if (!user.getSetting(UserSettingsRegistry.VIEW_BORDERS, true)) continue;
+            if (!user.getSetting(UserSettingsRegistry.VIEW_BORDERS.get(), true)) continue;
             Location playerLocation = player.getLocation();
             int playerY = playerLocation.getBlockY();
 

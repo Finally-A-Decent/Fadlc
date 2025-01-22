@@ -39,7 +39,6 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
         placeNavigationButtons();
-        placeChunkItems();
 
         this.updateTask = TaskManager.runAsyncRepeat(Fadlc.i(), this::placeChunkItems, 20L);
         addCloseHandler((e) -> updateTask.cancel());

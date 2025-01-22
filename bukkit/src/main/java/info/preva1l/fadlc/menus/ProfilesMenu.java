@@ -36,7 +36,8 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
                 e -> Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound()));
     }
 
-    private void fillPaginationItems() {
+    @Override
+    public void fillPaginationItems() {
         for (IClaimProfile profile : user.getClaim().getProfiles().values()) {
             List<String> lore = new ArrayList<>();
 

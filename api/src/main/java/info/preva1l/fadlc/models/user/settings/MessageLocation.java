@@ -1,21 +1,22 @@
 package info.preva1l.fadlc.models.user.settings;
 
-import info.preva1l.fadlc.models.ScrollableEnum;
-
-public enum MessageLocation implements ScrollableEnum {
+public enum MessageLocation {
+    CHAT,
     HOTBAR,
-    TITLE,
-    CHAT;
+    TITLE
+    ;
 
-    @Override
-    public ScrollableEnum next() {
+    public String formattedName() {
+        return name().toLowerCase().substring(0, 1).toUpperCase() + name().toLowerCase().substring(1);
+    }
+
+    public MessageLocation next() {
         int currentOrd = this.ordinal();
         if (currentOrd + 1 >= values().length) return null;
         return values()[currentOrd + 1];
     }
 
-    @Override
-    public ScrollableEnum previous() {
+    public MessageLocation previous() {
         int currentOrd = this.ordinal();
         if (currentOrd - 1 < 0) return null;
         return values()[currentOrd - 1];

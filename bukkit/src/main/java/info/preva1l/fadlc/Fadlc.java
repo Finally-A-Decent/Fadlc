@@ -1,6 +1,7 @@
 package info.preva1l.fadlc;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dev.triumphteam.cmd.bukkit.BukkitCommandManager;
 import dev.triumphteam.cmd.bukkit.message.NoPermissionMessageContext;
 import dev.triumphteam.cmd.core.message.MessageKey;
@@ -15,13 +16,17 @@ import info.preva1l.fadlc.jobs.ClaimBorderJob;
 import info.preva1l.fadlc.jobs.SaveJobs;
 import info.preva1l.fadlc.listeners.ClaimListeners;
 import info.preva1l.fadlc.listeners.PlayerListeners;
-import info.preva1l.fadlc.managers.*;
+import info.preva1l.fadlc.managers.ClaimManager;
+import info.preva1l.fadlc.managers.PersistenceManager;
+import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.menus.lib.FastInvManager;
 import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.user.BukkitUser;
 import info.preva1l.fadlc.models.user.CommandUser;
 import info.preva1l.fadlc.models.user.ConsoleUser;
+import info.preva1l.fadlc.models.user.settings.Setting;
+import info.preva1l.fadlc.persistence.gson.SettingSerializer;
 import info.preva1l.fadlc.registry.RegistryProvider;
 import info.preva1l.fadlc.utils.*;
 import lombok.Getter;
@@ -55,7 +60,7 @@ public final class Fadlc extends JavaPlugin implements RegistryProvider {
     @Override
     public void onEnable() {
         audiences = BukkitAudiences.create(this);
-        gson = new Gson();
+        gson = new GsonBuilder().registerTypeHierarchyAdapter(Setting.class, new SettingSerializer()).create();
         random = new Random(System.currentTimeMillis());
         instance = this;
 
