@@ -56,7 +56,7 @@ public class SettingsConfig implements MenuConfig {
                         "&7\u2192 Click to toggle"
                 ), "&aEnbaled", "&cDisabled"
         );
-        private Setting settingCycle = new Setting(
+        private SettingButton settingCycle = new SettingButton(
                 "click", "%setting%",
                 List.of(
                         "%description%",
@@ -71,7 +71,7 @@ public class SettingsConfig implements MenuConfig {
                         "&7\u2192 Right Click to cycle down"
                 )
         );
-        private Setting settingInput = new Setting(
+        private SettingButton settingInput = new SettingButton(
                 "click", "%setting%",
                 List.of(
                         "%description%",
@@ -81,7 +81,39 @@ public class SettingsConfig implements MenuConfig {
                         "&7\u2192 Click to edit"
                 )
         );
-        public record Setting(String sound, String name, List<String> description) {
+
+        private Settings settings = new Settings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Settings {
+            private Setting messageLocation = new Setting(
+                    Material.OAK_SIGN,
+                    "Message Location",
+                    List.of(
+                            "Where all the claim messages get shown."
+                    )
+            );
+            private Setting viewBorders = new Setting(
+                    Material.OAK_SIGN,
+                    "View Claim Borders",
+                    List.of(
+                            "Show claim border particles."
+                    )
+            );
+            private Setting claimEnterNotification = new Setting(
+                    Material.OAK_SIGN,
+                    "Claim Enter Notification",
+                    List.of(
+                            "Get notified when entering a claim."
+                    )
+            );
+        }
+
+        public record Setting(Material icon, String name, List<String> description) {
+        }
+        public record SettingButton(String sound, String name, List<String> description) {
             public SoundType getSound() {
                 return Sounds.getSound(sound);
             }
