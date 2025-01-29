@@ -54,6 +54,7 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
 
     @Override
     public void fillPaginationItems() {
+        clearContent();
         for (IClaimProfile profile : user.getClaim().getProfiles().values()) {
             List<String> lore = new ArrayList<>();
 

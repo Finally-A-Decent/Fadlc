@@ -2,6 +2,7 @@ package info.preva1l.fadlc.utils;
 
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +55,7 @@ public final class Text {
             code = code.replace("&", "<");
             code = code + ">";
         }
-        return "<!i>" + message.replaceAll("&#[a-fA-F0-9]{6}", code);
+        return message.replaceAll("&#[a-fA-F0-9]{6}", code);
     }
 
     /**
@@ -104,7 +105,7 @@ public final class Text {
      * @return colorized component
      */
     public Component modernMessage(@NotNull String message) {
-        return MiniMessage.miniMessage().deserialize(legacyToMiniMessage(message));
+        return MiniMessage.miniMessage().deserialize(legacyToMiniMessage(message)).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE);
     }
 
     /**
