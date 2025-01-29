@@ -198,7 +198,7 @@ public class Lang {
             });
             return;
         }
-        sender.sendMessage(Text.legacyMessage(i().getPrefix() + message));
+        sender.sendMessage(Text.modernMessage(i().getPrefix() + message));
     }
 
     public static void reload() {

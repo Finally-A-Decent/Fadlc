@@ -66,7 +66,7 @@ public class MessageLocationSetting implements Setting<MessageLocation> {
                 .lore(Text.modernList(lore));
 
         return Tuple.of(new EasyItem(itemStack.build())
-                .replaceAnywhere("%setting%", config.getLang().getSettings().getViewBorders().name())
+                .replaceAnywhere("%setting%", config.getLang().getSettings().getMessageLocation().name())
                 .getBase(), (e, user, menu) -> {
             if (e.getClick().isLeftClick()) {
                 user.updateSetting(getState().previous(), getClass());

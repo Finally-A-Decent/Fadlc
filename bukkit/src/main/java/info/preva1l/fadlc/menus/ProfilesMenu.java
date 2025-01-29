@@ -35,11 +35,24 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
 
     private void placeNavigationItems() {
         scheme.bindItem('B', config.getLang().getBack().itemStack(),
-                e -> Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getBack().getSound()));
-        scheme.bindItem('P', config.getLang().getPrevious().itemStack(),
-                e -> Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound()));
-        scheme.bindItem('N', config.getLang().getNext().itemStack(),
-                e -> Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound()));
+                e -> {
+                    Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getBack().getSound());
+                    new ClaimMenu((Player) e.getWhoClicked());
+                });
+        if (!isFirstPage()) {
+            scheme.bindItem('P', config.getLang().getPrevious().itemStack(),
+                    e -> {
+                        Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound());
+                        openPrevious();
+                    });
+        }
+        if (!isLastPage()) {
+            scheme.bindItem('N', config.getLang().getNext().itemStack(),
+                    e -> {
+                        Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound());
+                        openNext();
+                    });
+        }
     }
 
     @Override
@@ -56,7 +69,7 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
                         String str = flagConf.format()
                                 .replace("%flag%", flag.getName())
                                 .replace("%status%", status ? flagConf.enabled() : flagConf.disabled());
-                        lore.add(i, Text.legacyMessage(str));
+                        lore.add(i, str);
                         i++;
                     }
                     continue;
@@ -69,9 +82,9 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
             }
 
             ItemBuilder itemStack = new ItemBuilder(profile.getIcon())
-                    .name(Text.legacyMessage(
+                    .name(Text.modernMessage(
                             config.getLang().getProfile().name().replace("%profile%", profile.getName())))
-                    .lore(lore);
+                    .lore(Text.modernList(lore));
 
             addContent(itemStack.build(), (e) -> {
                 Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getProfile().getSound());

@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
 @UtilityClass
 public final class Text {
     private final Pattern FINAL_LEGACY_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-fA-F])");
-    private static final Pattern LEGACY_HEX_PATTERN = Pattern.compile("&#[a-fA-F0-9]{6}");
-    private static final Pattern MODERN_HEX_PATTERN = Pattern.compile("<#[a-fA-F0-9]{6}>");
+    private final Pattern LEGACY_HEX_PATTERN = Pattern.compile("&#[a-fA-F0-9]{6}");
+    private final Pattern MODERN_HEX_PATTERN = Pattern.compile("<#[a-fA-F0-9]{6}>");
 
     /**
      * Converts legacy colour codes to MiniMessage.
@@ -104,7 +104,7 @@ public final class Text {
      * @return colorized component
      */
     public Component modernMessage(@NotNull String message) {
-        return MiniMessage.miniMessage().deserialize(legacyToMiniMessage(message));
+        return MiniMessage.miniMessage().deserialize(legacyToMiniMessage("<!i>" + message));
     }
 
     /**

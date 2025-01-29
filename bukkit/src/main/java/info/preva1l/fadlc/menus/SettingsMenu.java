@@ -34,14 +34,18 @@ public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements Pa
             Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getBack().getSound());
             new ClaimMenu(user.asPlayer());
         });
-        scheme.bindItem('P', config.getLang().getPrevious().itemStack(), e -> {
-            Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound());
-            openPrevious();
-        });
-        scheme.bindItem('N', config.getLang().getNext().itemStack(), e -> {
-            Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound());
-            openNext();
-        });
+        if (!isFirstPage()) {
+            scheme.bindItem('P', config.getLang().getPrevious().itemStack(), e -> {
+                Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound());
+                openPrevious();
+            });
+        }
+        if (!isLastPage()) {
+            scheme.bindItem('N', config.getLang().getNext().itemStack(), e -> {
+                Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound());
+                openNext();
+            });
+        }
     }
 
     @Override
