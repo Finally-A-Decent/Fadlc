@@ -13,7 +13,7 @@ import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.models.user.OnlineUser;
-import info.preva1l.fadlc.utils.FadlcThreadManager;
+import info.preva1l.fadlc.utils.FadlcExecutors;
 import info.preva1l.fadlc.utils.TaskManager;
 import info.preva1l.fadlc.utils.Text;
 import info.preva1l.fadlc.utils.Time;
@@ -40,7 +40,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
         this.player = player;
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
-        CompletableFuture.runAsync(this::buttons, FadlcThreadManager.VIRTUAL_THREAD_POOL).thenRun(() -> this.open(player));
+        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_POOL).thenRun(() -> this.open(player));
         this.updateTask = TaskManager.runAsyncRepeat(Fadlc.i(), this::placeChunkItems, 20L);
         addCloseHandler((e) -> updateTask.cancel());
     }
