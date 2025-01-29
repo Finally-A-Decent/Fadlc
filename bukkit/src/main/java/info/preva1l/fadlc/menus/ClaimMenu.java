@@ -40,7 +40,8 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
         this.player = player;
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
-        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_POOL).thenRun(() -> this.open(player));
+        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_POOL)
+                .thenRunAsync(() -> this.open(player), FadlcExecutors.MAIN_THREAD);
         this.updateTask = TaskManager.runAsyncRepeat(Fadlc.i(), this::placeChunkItems, 20L);
         addCloseHandler((e) -> updateTask.cancel());
     }
@@ -63,8 +64,8 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
         });
 
         scheme.bindItem('S', config.getLang().getSettings().easyItem().skullOwner(player).getBase(), e -> {
-            new SettingsMenu(player);
             Sounds.playSound(player, config.getLang().getSettings().getSound());
+            new SettingsMenu(player);
         });
     }
 

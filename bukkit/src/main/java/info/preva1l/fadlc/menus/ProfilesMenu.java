@@ -25,7 +25,8 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
         scheme.bindPagination('X');
-        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_POOL).thenRun(() -> this.open(player));
+        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_POOL)
+                .thenRunAsync(() -> this.open(player), FadlcExecutors.MAIN_THREAD);
     }
 
     private void buttons() {
@@ -39,20 +40,16 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
                     Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getBack().getSound());
                     new ClaimMenu((Player) e.getWhoClicked());
                 });
-        if (!isFirstPage()) {
-            scheme.bindItem('P', config.getLang().getPrevious().itemStack(),
-                    e -> {
-                        Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound());
-                        openPrevious();
-                    });
-        }
-        if (!isLastPage()) {
-            scheme.bindItem('N', config.getLang().getNext().itemStack(),
-                    e -> {
-                        Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound());
-                        openNext();
-                    });
-        }
+        scheme.bindItem('P', config.getLang().getPrevious().itemStack(),
+                e -> {
+                    Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound());
+                    openPrevious();
+                });
+        scheme.bindItem('N', config.getLang().getNext().itemStack(),
+                e -> {
+                    Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound());
+                    openNext();
+                });
     }
 
     @Override

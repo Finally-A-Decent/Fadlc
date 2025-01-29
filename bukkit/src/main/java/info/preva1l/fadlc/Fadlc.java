@@ -9,6 +9,7 @@ import dev.triumphteam.cmd.core.message.context.DefaultMessageContext;
 import info.preva1l.fadlc.api.FadlcAPI;
 import info.preva1l.fadlc.api.ImplFadlcAPI;
 import info.preva1l.fadlc.commands.ClaimCommand;
+import info.preva1l.fadlc.commands.admin.FadlcCommand;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.config.particles.Particles;
 import info.preva1l.fadlc.config.sounds.Sounds;
@@ -91,7 +92,8 @@ public final class Fadlc extends JavaPlugin implements RegistryProvider {
 
         Logger.info("Registering Commands...");
         Stream.of(
-                new ClaimCommand()
+                new ClaimCommand(),
+                new FadlcCommand()
         ).forEach(commandManager::registerCommand);
         Logger.info("Commands Registered!");
 

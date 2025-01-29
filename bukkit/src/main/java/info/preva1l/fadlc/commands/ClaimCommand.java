@@ -7,6 +7,7 @@ import dev.triumphteam.cmd.core.annotation.Default;
 import dev.triumphteam.cmd.core.annotation.SubCommand;
 import info.preva1l.fadlc.menus.ClaimMenu;
 import info.preva1l.fadlc.menus.ProfilesMenu;
+import info.preva1l.fadlc.menus.SettingsMenu;
 import info.preva1l.fadlc.models.user.CommandUser;
 
 @Command(value = "claim", alias = {"c", "claims"})
@@ -21,5 +22,11 @@ public class ClaimCommand extends BaseCommand {
     @Permission("fadlc.profiles")
     public void profile(CommandUser sender) {
         new ProfilesMenu(sender.asPlayer());
+    }
+
+    @SubCommand("settings")
+    @Permission("fadlc.settings")
+    public void settings(CommandUser sender) {
+        new SettingsMenu(sender.asPlayer());
     }
 }
