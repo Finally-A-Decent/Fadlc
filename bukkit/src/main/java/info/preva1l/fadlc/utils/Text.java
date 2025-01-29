@@ -54,7 +54,7 @@ public final class Text {
             code = code.replace("&", "<");
             code = code + ">";
         }
-        return message.replaceAll("&#[a-fA-F0-9]{6}", code);
+        return "<!i>" + message.replaceAll("&#[a-fA-F0-9]{6}", code);
     }
 
     /**
@@ -104,7 +104,7 @@ public final class Text {
      * @return colorized component
      */
     public Component modernMessage(@NotNull String message) {
-        return MiniMessage.miniMessage().deserialize(legacyToMiniMessage("<!i>" + message));
+        return MiniMessage.miniMessage().deserialize(legacyToMiniMessage(message));
     }
 
     /**
