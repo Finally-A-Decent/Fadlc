@@ -26,12 +26,17 @@ public class Claim implements IClaim {
 
     @Override
     public void claimChunk(@NotNull IClaimChunk claimChunk) {
+        var result = new ChunkClaimEvent(owner.getOnlineUser().asPlayer(), this, claimChunk).callEvent();
+        if (!result) return;
+
+        owner.getOnlineUser().setAvailableChunks(owner.getOnlineUser().getAvailableChunks() - 1);
+
         claimChunk.setClaimedSince(System.currentTimeMillis());
         claimChunk.setProfileId(owner.getOnlineUser().getClaimWithProfile().getId());
         claimedChunks.put(claimChunk.getLoc(), owner.getOnlineUser().getClaimWithProfile().getId());
+
         ClaimManager.getInstance().cacheChunk(claimChunk);
         ClaimManager.getInstance().updateClaim(this);
-        new ChunkClaimEvent(owner.getOnlineUser().asPlayer(), this, claimChunk).callEvent();
     }
 
     @Override
