@@ -54,7 +54,7 @@ public class ViewBordersSetting implements Setting<Boolean> {
                 .lore(Text.modernList(lore));
 
         return Tuple.of(new EasyItem(itemStack.build())
-                .replaceAnywhere("%setting%", config.getLang().getSettings().getViewBorders().name())
+                .replaceAnywhere("%setting%", Text.legacyMessage(config.getLang().getSettings().getViewBorders().name()))
                 .getBase(), (e, user, menu) -> {
             user.updateSetting(!getState(), getClass());
             menu.openPage(menu.currentPage());
