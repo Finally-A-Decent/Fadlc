@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public enum DatabaseType {
-    SQLITE("sqlite", "SQLite", "info.preva1l.fadfc.shaded.sqlite.jdbc.Driver"),
-    MYSQL("mysql", "MySQL", "info.preva1l.fadfc.shaded.mysql.jdbc.Driver"),
-    MARIADB("mariadb", "MariaDB", "info.preva1l.fadfc.shaded.mariadb.jdbc.Driver"),
+    SQLITE("sqlite", "SQLite", "org.sqlite.JDBC"),
+    MYSQL("mysql", "MySQL", "com.mysql.cj.jdbc.Driver"),
+    MARIADB("mariadb", "MariaDB", "org.mariadb.jdbc.Driver"),
     MONGO("mongodb", "MongoDB"),
     ;
 

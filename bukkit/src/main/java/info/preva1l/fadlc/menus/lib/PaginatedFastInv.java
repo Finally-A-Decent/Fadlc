@@ -252,7 +252,7 @@ public abstract class PaginatedFastInv<C extends MenuConfig> extends FastInv<C> 
      * {@inheritDoc}
      */
     @Override
-    public void open(Player player) {
+    protected void open(Player player) {
         scheme.apply(this);
         openPage(this.page);
 

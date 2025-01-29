@@ -7,7 +7,10 @@ import info.preva1l.fadlc.menus.lib.PaginatedFastInv;
 import info.preva1l.fadlc.menus.lib.PaginatedMenu;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.settings.Setting;
+import info.preva1l.fadlc.utils.FadlcThreadManager;
 import org.bukkit.entity.Player;
+
+import java.util.concurrent.CompletableFuture;
 
 
 public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements PaginatedMenu {
@@ -18,6 +21,10 @@ public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements Pa
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
         scheme.bindPagination('X');
+        CompletableFuture.runAsync(this::buttons, FadlcThreadManager.VIRTUAL_THREAD_POOL).thenRun(() -> this.open(player));
+    }
+
+    private void buttons() {
         fillPaginationItems();
         placeNavigationItems();
     }
@@ -25,7 +32,7 @@ public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements Pa
     private void placeNavigationItems() {
         scheme.bindItem('B', config.getLang().getBack().itemStack(), e -> {
             Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getBack().getSound());
-            new ClaimMenu(user.asPlayer()).open(user.asPlayer());
+            new ClaimMenu(user.asPlayer());
         });
         scheme.bindItem('P', config.getLang().getPrevious().itemStack(), e -> {
             Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound());

@@ -9,11 +9,13 @@ import info.preva1l.fadlc.menus.lib.PaginatedFastInv;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
 import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.utils.FadlcThreadManager;
 import info.preva1l.fadlc.utils.Text;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
     private final OnlineUser user;
@@ -23,6 +25,10 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
         scheme.bindPagination('X');
+        CompletableFuture.runAsync(this::buttons, FadlcThreadManager.VIRTUAL_THREAD_POOL).thenRun(() -> this.open(player));
+    }
+
+    private void buttons() {
         fillPaginationItems();
         placeNavigationItems();
     }

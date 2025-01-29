@@ -6,12 +6,12 @@ import info.preva1l.fadlc.persistence.DatabaseObject;
 import info.preva1l.fadlc.persistence.DatabaseType;
 import info.preva1l.fadlc.persistence.handlers.MySQLHandler;
 import info.preva1l.fadlc.persistence.handlers.SQLiteHandler;
+import info.preva1l.fadlc.utils.FadlcThreadManager;
 import info.preva1l.fadlc.utils.Logger;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public final class PersistenceManager {
     private static PersistenceManager instance;
@@ -22,7 +22,7 @@ public final class PersistenceManager {
 
     private PersistenceManager() {
         Logger.info("Connecting to Database and populating caches...");
-        threadPool = Executors.newVirtualThreadPerTaskExecutor();
+        threadPool = FadlcThreadManager.VIRTUAL_THREAD_POOL;
         databaseHandlers.put(DatabaseType.MARIADB, MySQLHandler.class);
         databaseHandlers.put(DatabaseType.MYSQL, MySQLHandler.class);
         databaseHandlers.put(DatabaseType.SQLITE, SQLiteHandler.class);

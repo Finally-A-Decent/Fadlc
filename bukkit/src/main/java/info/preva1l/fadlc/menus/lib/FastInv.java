@@ -290,7 +290,7 @@ public class FastInv<C extends MenuConfig> implements InventoryHolder {
      *
      * @param player the player to open the inventory to
      */
-    public void open(Player player) {
+    protected void open(Player player) {
         scheme.apply(this);
         MultiLib.getEntityScheduler(player).execute(Fadlc.i(), () -> player.openInventory(this.inventory), null, 0L);
     }

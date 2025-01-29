@@ -12,6 +12,7 @@ import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.persistence.Dao;
 import info.preva1l.fadlc.persistence.DatabaseHandler;
 import info.preva1l.fadlc.persistence.DatabaseObject;
+import info.preva1l.fadlc.persistence.DatabaseType;
 import info.preva1l.fadlc.persistence.daos.sqlite.*;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.Getter;
@@ -44,11 +45,11 @@ public class SQLiteHandler implements DatabaseHandler {
                 Logger.info("Created the SQLite database file");
             }
 
-            Class.forName("org.sqlite.JDBC");
+            Class.forName(DatabaseType.SQLITE.getDriverClass());
 
             HikariConfig config = new HikariConfig();
             config.setPoolName("FadlcHikariPool");
-            config.setDriverClassName("org.sqlite.JDBC");
+            config.setDriverClassName(DatabaseType.SQLITE.getDriverClass());
             config.setJdbcUrl("jdbc:sqlite:" + databaseFile.getAbsolutePath());
             config.setConnectionTestQuery("SELECT 1");
             config.setMaxLifetime(60000);

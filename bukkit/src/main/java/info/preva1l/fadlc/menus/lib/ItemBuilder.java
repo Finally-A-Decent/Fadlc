@@ -17,15 +17,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.*;
 import java.util.function.Consumer;
 
-/**
- * Simple {@link ItemStack} builder.
- *
- * @author MrMicky
- * @author Preva1l
- */
 @SuppressWarnings({"unused", "deprecation"})
 public class ItemBuilder {
     private final ItemStack item;
+    private ItemMeta cachedMeta;
 
     public ItemBuilder(Material material) {
         this(new ItemStack(material));
@@ -39,28 +34,39 @@ public class ItemBuilder {
         return new ItemBuilder(item.clone());
     }
 
+    private ItemMeta getMeta() {
+        if (cachedMeta == null) {
+            cachedMeta = item.getItemMeta();
+        }
+        return cachedMeta;
+    }
+
+    private void applyMeta() {
+        if (cachedMeta != null) {
+            item.setItemMeta(cachedMeta);
+            cachedMeta = null; // Prevent stale meta reference
+        }
+    }
+
     public ItemBuilder edit(Consumer<ItemStack> function) {
         function.accept(this.item);
         return this;
     }
 
     public ItemBuilder meta(Consumer<ItemMeta> metaConsumer) {
-        return edit(item -> {
-            ItemMeta meta = item.getItemMeta();
-
-            if (meta != null) {
-                metaConsumer.accept(meta);
-                item.setItemMeta(meta);
-            }
-        });
+        ItemMeta meta = getMeta();
+        if (meta != null) {
+            metaConsumer.accept(meta);
+        }
+        return this;
     }
 
     public <T extends ItemMeta> ItemBuilder meta(Class<T> metaClass, Consumer<T> metaConsumer) {
-        return meta(meta -> {
-            if (metaClass.isInstance(meta)) {
-                metaConsumer.accept(metaClass.cast(meta));
-            }
-        });
+        ItemMeta meta = getMeta();
+        if (metaClass.isInstance(meta)) {
+            metaConsumer.accept(metaClass.cast(meta));
+        }
+        return this;
     }
 
     public ItemBuilder type(Material material) {
@@ -71,7 +77,6 @@ public class ItemBuilder {
         return durability((short) data);
     }
 
-    @SuppressWarnings("deprecation")
     public ItemBuilder durability(short durability) {
         return edit(item -> item.setDurability(durability));
     }
@@ -80,12 +85,12 @@ public class ItemBuilder {
         return edit(item -> item.setAmount(amount));
     }
 
-    public void enchant(Enchantment enchantment) {
-        enchant(enchantment, 1);
+    public ItemBuilder enchant(Enchantment enchantment) {
+        return enchant(enchantment, 1);
     }
 
-    public void enchant(Enchantment enchantment, int level) {
-        meta(meta -> meta.addEnchant(enchantment, level, true));
+    public ItemBuilder enchant(Enchantment enchantment, int level) {
+        return meta(meta -> meta.addEnchant(enchantment, level, true));
     }
 
     public ItemBuilder removeEnchant(Enchantment enchantment) {
@@ -93,7 +98,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder removeEnchants() {
-        return meta(m -> m.getEnchants().keySet().forEach(m::removeEnchant));
+        return meta(meta -> meta.getEnchants().keySet().forEach(meta::removeEnchant));
     }
 
     public ItemBuilder name(String name) {
@@ -113,7 +118,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder lore(Collection<String> lore) {
-        return meta(meta -> meta.setLore(lore.stream().toList()));
+        return meta(meta -> meta.setLore(new ArrayList<>(lore)));
     }
 
     public ItemBuilder lore(List<Component> lore) {
@@ -123,14 +128,12 @@ public class ItemBuilder {
     public ItemBuilder addLore(String line) {
         return meta(meta -> {
             List<String> lore = meta.getLore();
-
             if (lore == null) {
                 meta.setLore(Collections.singletonList(line));
-                return;
+            } else {
+                lore.add(line);
+                meta.setLore(lore);
             }
-
-            lore.add(line);
-            meta.setLore(lore);
         });
     }
 
@@ -141,14 +144,12 @@ public class ItemBuilder {
     public ItemBuilder addLore(List<String> lines) {
         return meta(meta -> {
             List<String> lore = meta.getLore();
-
             if (lore == null) {
-                meta.setLore(lines);
-                return;
+                meta.setLore(new ArrayList<>(lines));
+            } else {
+                lore.addAll(lines);
+                meta.setLore(lore);
             }
-
-            lore.addAll(lines);
-            meta.setLore(lore);
         });
     }
 
@@ -172,20 +173,21 @@ public class ItemBuilder {
         return meta(LeatherArmorMeta.class, meta -> meta.setColor(color));
     }
 
-    public ItemStack build() {
-        return this.item;
-    }
-
     public ItemBuilder skullOwner(UUID player) {
         if (this.item.getType() != Material.PLAYER_HEAD) return this;
-        return meta(meta -> {
+        return meta(SkullMeta.class, meta -> {
             PlayerProfile profile = Bukkit.getServer().createProfile(player);
             profile.setProperty(new ProfileProperty("textures", Skins.getTexture(player)));
-            ((SkullMeta) meta).setPlayerProfile(profile);
+            meta.setPlayerProfile(profile);
         });
     }
 
     public ItemBuilder modelData(int modelData) {
         return meta(meta -> meta.setCustomModelData(modelData));
+    }
+
+    public ItemStack build() {
+        applyMeta();
+        return this.item;
     }
 }

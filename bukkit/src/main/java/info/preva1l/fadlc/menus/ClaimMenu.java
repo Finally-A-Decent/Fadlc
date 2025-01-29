@@ -13,6 +13,7 @@ import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.utils.FadlcThreadManager;
 import info.preva1l.fadlc.utils.TaskManager;
 import info.preva1l.fadlc.utils.Text;
 import info.preva1l.fadlc.utils.Time;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class ClaimMenu extends FastInv<ClaimConfig> {
     private final Player player;
@@ -38,10 +40,15 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
         this.player = player;
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
-        placeNavigationButtons();
-
+        CompletableFuture.runAsync(this::buttons, FadlcThreadManager.VIRTUAL_THREAD_POOL).thenRun(() -> this.open(player));
         this.updateTask = TaskManager.runAsyncRepeat(Fadlc.i(), this::placeChunkItems, 20L);
         addCloseHandler((e) -> updateTask.cancel());
+    }
+
+    private void buttons() {
+        placeChunkItems();
+        placeNavigationButtons();
+        placeProfileSwitchButton();
     }
 
     private void placeNavigationButtons() {
@@ -50,6 +57,18 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
             Sounds.playSound(player, config.getLang().getBuyChunks().getSound());
         });
 
+        scheme.bindItem('M', config.getLang().getManageProfiles().itemStack(), e -> {
+            Sounds.playSound(player, config.getLang().getManageProfiles().getSound());
+            new ProfilesMenu(player);
+        });
+
+        scheme.bindItem('S', config.getLang().getSettings().easyItem().skullOwner(player).getBase(), e -> {
+            new SettingsMenu(player);
+            Sounds.playSound(player, config.getLang().getSettings().getSound());
+        });
+    }
+
+    private void placeProfileSwitchButton() {
         IClaimProfile previousProfile = user.getClaim().getProfiles().get(user.getClaimWithProfile().getId() - 1);
         String previous = previousProfile == null
                 ? Lang.i().getWords().getNone()
@@ -73,17 +92,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                 user.setClaimWithProfile(nextProfile);
             }
 
-            placeNavigationButtons();
-        });
-
-        scheme.bindItem('M', config.getLang().getManageProfiles().itemStack(), e -> {
-            Sounds.playSound(player, config.getLang().getManageProfiles().getSound());
-            new ProfilesMenu(player).open(player);
-        });
-
-        scheme.bindItem('S', config.getLang().getSettings().easyItem().skullOwner(player).getBase(), e -> {
-            new SettingsMenu(player).open(player);
-            Sounds.playSound(player, config.getLang().getSettings().getSound());
+            placeProfileSwitchButton();
         });
     }
 
@@ -137,22 +146,18 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
     }
 
     private ItemStack getChunkItem(int index, IClaimChunk chunk) {
+        IClaim claim = ClaimManager.getInstance().getClaimAt(chunk).orElse(null);
+        boolean isOwned = claim != null && claim.getOwner().equals(user);
+
         ItemStack stack = switch (chunk.getStatus()) {
             case CLAIMABLE -> config.getLang().getChunks().getUnclaimed().easyItem()
                     .replaceAnywhere("%chunk_x%", chunk.getChunkX() + "")
                     .replaceAnywhere("%chunk_z%", chunk.getChunkZ() + "")
                     .replaceInLore("%available%", user.getAvailableChunks() + "").getBase();
             case CLAIMED -> {
-                IClaim claim = ClaimManager.getInstance().getClaimAt(chunk).orElseThrow();
-                if (claim.getOwner().equals(user)) {
-                    yield config.getLang().getChunks().getClaimedYou().easyItem().skullOwner(claim.getOwner().getUniqueId())
-                            .replaceAnywhere("%chunk_x%", chunk.getChunkX() + "")
-                            .replaceAnywhere("%chunk_z%", chunk.getChunkZ() + "")
-                            .replaceAnywhere("%claim_profile%", Text.legacyMessage(claim.getProfiles().get(chunk.getProfileId()).getName()))
-                            .replaceAnywhere("%owner%", claim.getOwner().getName())
-                            .replaceAnywhere("%formatted_time%", Time.formatTimeSince(chunk.getClaimedSince())).getBase();
-                }
-                yield config.getLang().getChunks().getClaimedOther().easyItem().skullOwner(claim.getOwner().getUniqueId())
+                if (claim == null) yield config.getLang().getChunks().getClaimedOther().easyItem().getBase();
+                yield (isOwned ? config.getLang().getChunks().getClaimedYou() : config.getLang().getChunks().getClaimedOther())
+                        .easyItem().skullOwner(claim.getOwner().getUniqueId())
                         .replaceAnywhere("%chunk_x%", chunk.getChunkX() + "")
                         .replaceAnywhere("%chunk_z%", chunk.getChunkZ() + "")
                         .replaceAnywhere("%claim_profile%", Text.legacyMessage(claim.getProfiles().get(chunk.getProfileId()).getName()))
@@ -170,23 +175,21 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                     .replaceAnywhere("%chunk_z%", chunk.getChunkZ() + "").getBase();
         };
 
-
-        if (index == 22) {
-            stack.setType(config.getLang().getChunks().getCurrent().icon());
-            ItemMeta meta = stack.getItemMeta();
-            if (meta == null) throw new RuntimeException("chunk itemstack meta is null");
-            if (meta.lore() != null) {
-                List<Component> newLore = new ArrayList<>();
-                List<Component> oldLore = meta.lore();
-                newLore.addAll(Text.modernList(config.getLang().getChunks().getCurrent().loreHeader()));
-                newLore.addAll(oldLore == null ? List.of() : oldLore);
-                meta.lore(newLore);
-                meta.setCustomModelData(config.getLang().getChunks().getCurrent().modelData());
-            }
-            stack.setItemMeta(meta);
-        }
-
+        if (index == 22) centerChunkItem(stack);
         return stack;
+    }
+
+    private void centerChunkItem(ItemStack stack) {
+        stack.setType(config.getLang().getChunks().getCurrent().icon());
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) return;
+
+        List<Component> newLore = new ArrayList<>(Text.modernList(config.getLang().getChunks().getCurrent().loreHeader()));
+        if (meta.lore() != null) newLore.addAll(meta.lore());
+
+        meta.lore(newLore);
+        meta.setCustomModelData(config.getLang().getChunks().getCurrent().modelData());
+        stack.setItemMeta(meta);
     }
 
     public List<IClaimChunk> getNearByChunksRelativeToPlayerAndMenu() {

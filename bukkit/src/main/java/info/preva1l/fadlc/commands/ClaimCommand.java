@@ -14,12 +14,12 @@ import info.preva1l.fadlc.models.user.CommandUser;
 public class ClaimCommand extends BaseCommand {
     @Default
     public void root(CommandUser sender) {
-        new ClaimMenu(sender.asPlayer()).open(sender.asPlayer());
+        new ClaimMenu(sender.asPlayer());
     }
 
     @SubCommand("profiles")
     @Permission("fadlc.profiles")
     public void profile(CommandUser sender) {
-        new ProfilesMenu(sender.asPlayer()).open(sender.asPlayer());
+        new ProfilesMenu(sender.asPlayer());
     }
 }
