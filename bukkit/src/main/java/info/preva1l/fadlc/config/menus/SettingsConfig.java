@@ -90,21 +90,21 @@ public class SettingsConfig implements MenuConfig {
         public static class Settings {
             private Setting messageLocation = new Setting(
                     Material.OAK_SIGN,
-                    "Message Location",
+                    "&fMessage Location",
                     List.of(
                             "&7Where all the claim messages get shown."
                     )
             );
             private Setting viewBorders = new Setting(
                     Material.STRUCTURE_VOID,
-                    "View Claim Borders",
+                    "&fView Claim Borders",
                     List.of(
                             "&7Show claim border particles."
                     )
             );
             private Setting claimEnterNotification = new Setting(
                     Material.NAME_TAG,
-                    "Claim Enter Notification",
+                    "&fClaim Enter Notification",
                     List.of(
                             "&7Get notified when entering a claim."
                     )
