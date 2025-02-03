@@ -1,8 +1,8 @@
 package info.preva1l.fadlc.api;
 
 import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.ILocation;
 import info.preva1l.fadlc.models.IPosition;
+import info.preva1l.fadlc.models.Location;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.User;
 import org.bukkit.Chunk;
@@ -21,7 +21,7 @@ public interface IAdapter {
 
     IPosition location(org.bukkit.Location location);
 
-    ILocation vector(org.bukkit.Location location);
+    Location vector(org.bukkit.Location location);
 
-    ILocation vector(Vector location);
+    Location vector(Vector location);
 }

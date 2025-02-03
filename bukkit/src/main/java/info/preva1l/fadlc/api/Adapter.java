@@ -50,12 +50,12 @@ public class Adapter implements IAdapter {
     }
 
     @Override
-    public ILocation vector(org.bukkit.Location location) {
+    public Location vector(org.bukkit.Location location) {
         return new Location(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Override
-    public ILocation vector(Vector location) {
+    public Location vector(Vector location) {
         return new Location(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 }
