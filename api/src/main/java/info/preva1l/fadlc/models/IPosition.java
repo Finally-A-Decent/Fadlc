@@ -2,7 +2,7 @@ package info.preva1l.fadlc.models;
 
 import info.preva1l.fadlc.models.user.User;
 
-public interface ILoc extends ILocRef {
+public interface IPosition extends ILocation {
     String getServer();
 
     String getWorld();

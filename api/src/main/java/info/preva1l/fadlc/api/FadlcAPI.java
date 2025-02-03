@@ -2,7 +2,7 @@ package info.preva1l.fadlc.api;
 
 import info.preva1l.fadlc.managers.IClaimManager;
 import info.preva1l.fadlc.managers.IUserManager;
-import info.preva1l.fadlc.models.ILoc;
+import info.preva1l.fadlc.models.IPosition;
 import info.preva1l.fadlc.models.claim.settings.GroupSetting;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import lombok.Getter;
@@ -31,7 +31,7 @@ public abstract class FadlcAPI {
     /**
      * The adapter to adapt bukkit types/values to Fadlc objects.
      * <p>
-     *     Example: {@link org.bukkit.Location} -> {@link info.preva1l.fadlc.models.ILoc}
+     *     Example: {@link org.bukkit.Location} -> {@link IPosition}
      * </p>
      * @return the adapter instance.
      */
@@ -45,7 +45,7 @@ public abstract class FadlcAPI {
      * @param setting the action to check
      * @return true if the action is allowed false if not
      */
-    public abstract boolean isActionAllowed(OnlineUser user, ILoc location, GroupSetting setting);
+    public abstract boolean isActionAllowed(OnlineUser user, IPosition location, GroupSetting setting);
 
     @ApiStatus.Internal
     public static void setInstance(@NotNull FadlcAPI newInstance) {

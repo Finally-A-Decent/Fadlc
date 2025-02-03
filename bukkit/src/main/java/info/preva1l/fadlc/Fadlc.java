@@ -15,7 +15,7 @@ import info.preva1l.fadlc.config.particles.Particles;
 import info.preva1l.fadlc.config.sounds.Sounds;
 import info.preva1l.fadlc.jobs.ClaimBorderJob;
 import info.preva1l.fadlc.jobs.SaveJobs;
-import info.preva1l.fadlc.listeners.ClaimListeners;
+import info.preva1l.fadlc.listeners.ClaimGroupSettingsListeners;
 import info.preva1l.fadlc.listeners.PlayerListeners;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.managers.PersistenceManager;
@@ -99,7 +99,7 @@ public final class Fadlc extends JavaPlugin implements RegistryProvider {
 
         Logger.info("Registering Listeners...");
         Stream.of(
-                new ClaimListeners(ClaimManager.getInstance()),
+                new ClaimGroupSettingsListeners(ClaimManager.getInstance()),
                 new PlayerListeners(UserManager.getInstance())
         ).forEach(e -> getServer().getPluginManager().registerEvents(e, this));
         Logger.info("Listeners Registered!");

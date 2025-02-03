@@ -38,7 +38,7 @@ public final class ClaimManager implements IClaimManager {
     }
 
     @Override
-    public Optional<IClaim> getClaimAt(ILoc loc) {
+    public Optional<IClaim> getClaimAt(IPosition loc) {
         return claimCache.values().stream().filter(claim -> claim.getClaimedChunks().containsKey(loc.getChunk().getLoc())).findFirst();
     }
 
@@ -78,7 +78,7 @@ public final class ClaimManager implements IClaimManager {
     }
 
     @Override
-    public IClaimChunk getChunkAt(ILoc loc) {
+    public IClaimChunk getChunkAt(IPosition loc) {
         ChunkLoc chunkLoc = new ChunkLoc(loc.getX() >> 4, loc.getZ() >> 4, loc.getWorld(), ServerSettings.getInstance().getName());
         IClaimChunk chunk = chunkCache.get(chunkLoc);
 

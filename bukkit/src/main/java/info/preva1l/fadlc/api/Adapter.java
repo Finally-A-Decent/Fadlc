@@ -7,7 +7,6 @@ import info.preva1l.fadlc.models.user.OfflineUser;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.User;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -38,22 +37,22 @@ public class Adapter implements IAdapter {
     }
 
     @Override
-    public ILoc location(Location location, String server) {
-        return Loc.fromBukkit(location, server);
+    public IPosition location(org.bukkit.Location location, String server) {
+        return Position.fromBukkit(location, server);
     }
 
     @Override
-    public ILoc location(Location location) {
-        return Loc.fromBukkit(location);
+    public IPosition location(org.bukkit.Location location) {
+        return Position.fromBukkit(location);
     }
 
     @Override
-    public ILocRef vector(Location location) {
-        return new LocRef(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    public ILocation vector(org.bukkit.Location location) {
+        return new Location(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Override
-    public ILocRef vector(Vector location) {
-        return new LocRef(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    public ILocation vector(Vector location) {
+        return new Location(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 }

@@ -7,8 +7,8 @@ import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.ILoc;
-import info.preva1l.fadlc.models.Loc;
+import info.preva1l.fadlc.models.IPosition;
+import info.preva1l.fadlc.models.Position;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.settings.GroupSetting;
 import info.preva1l.fadlc.models.user.OnlineUser;
@@ -27,17 +27,17 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 @AllArgsConstructor
-public class ClaimListeners implements Listener {
+public class ClaimGroupSettingsListeners implements Listener {
     private final ClaimManager claimManager;
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean isActionAllowed(OnlineUser user, ILoc location, GroupSetting setting) {
+    private boolean isActionAllowed(OnlineUser user, IPosition location, GroupSetting setting) {
         return FadlcAPI.getInstance().isActionAllowed(user, location, setting);
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        ILoc loc = Loc.fromBukkit(event.getBlock().getLocation());
+        IPosition loc = Position.fromBukkit(event.getBlock().getLocation());
         OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
         if (isActionAllowed(user, loc, GroupSettingsRegistry.PLACE_BLOCKS.get())) {
             return;
@@ -51,7 +51,7 @@ public class ClaimListeners implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        ILoc loc = Loc.fromBukkit(event.getBlock().getLocation());
+        IPosition loc = Position.fromBukkit(event.getBlock().getLocation());
         OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
         if (isActionAllowed(user, loc, GroupSettingsRegistry.BREAK_BLOCKS.get())) {
             return;
@@ -69,7 +69,7 @@ public class ClaimListeners implements Listener {
                 || !(event.getClickedBlock().getBlockData() instanceof Door)
                 || !(event.getClickedBlock().getBlockData() instanceof TrapDoor)
                 || event.getAction().isRightClick()) return;
-        ILoc loc = Loc.fromBukkit(event.getClickedBlock().getLocation());
+        IPosition loc = Position.fromBukkit(event.getClickedBlock().getLocation());
         OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
         if (isActionAllowed(user, loc, GroupSettingsRegistry.USE_DOORS.get())) {
             return;
@@ -86,7 +86,7 @@ public class ClaimListeners implements Listener {
         if (event.getClickedBlock() == null
                 || !(event.getClickedBlock().getType().toString().endsWith("_BUTTON"))
                 || event.getAction().isRightClick()) return;
-        ILoc loc = Loc.fromBukkit(event.getClickedBlock().getLocation());
+        IPosition loc = Position.fromBukkit(event.getClickedBlock().getLocation());
         OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
         if (isActionAllowed(user, loc, GroupSettingsRegistry.USE_BUTTONS.get())) {
             return;
@@ -111,7 +111,7 @@ public class ClaimListeners implements Listener {
         OnlineUser user = UserManager.getInstance().getUser(e.getPlayer().getUniqueId()).orElseThrow();
 
         if (toClaim != null) {
-            if (!isActionAllowed(user, Loc.fromBukkit(e.getTo()), GroupSettingsRegistry.ENTER.get())) {
+            if (!isActionAllowed(user, Position.fromBukkit(e.getTo()), GroupSettingsRegistry.ENTER.get())) {
                 e.setCancelled(true);
 
                 Lang.sendMessage(e.getPlayer(), Lang.i().getGroupSettings().getEnter().getMessage()

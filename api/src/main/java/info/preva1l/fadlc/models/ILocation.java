@@ -1,6 +1,6 @@
 package info.preva1l.fadlc.models;
 
-public interface ILocRef {
+public interface ILocation {
     int getX();
 
     int getY();

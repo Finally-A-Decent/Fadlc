@@ -1,12 +1,11 @@
 package info.preva1l.fadlc.api;
 
 import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.ILoc;
-import info.preva1l.fadlc.models.ILocRef;
+import info.preva1l.fadlc.models.ILocation;
+import info.preva1l.fadlc.models.IPosition;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.User;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -18,11 +17,11 @@ public interface IAdapter {
 
     IClaimChunk chunk(Chunk chunk);
 
-    ILoc location(Location location, String server);
+    IPosition location(org.bukkit.Location location, String server);
 
-    ILoc location(Location location);
+    IPosition location(org.bukkit.Location location);
 
-    ILocRef vector(Location location);
+    ILocation vector(org.bukkit.Location location);
 
-    ILocRef vector(Vector location);
+    ILocation vector(Vector location);
 }

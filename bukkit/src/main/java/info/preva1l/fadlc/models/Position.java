@@ -5,27 +5,26 @@ import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.models.user.User;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 @Getter
-public class Loc extends LocRef implements ILoc {
+public class Position extends Location implements IPosition {
     private final String server;
     private final String world;
 
-    public Loc(String server, String world, int x, int y, int z) {
+    public Position(String server, String world, int x, int y, int z) {
         super(x, y, z);
         this.server = server;
         this.world = world;
     }
 
-    public static ILoc fromBukkit(Location location) {
-        return new Loc(ServerSettings.getInstance().getName(), location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    public static IPosition fromBukkit(org.bukkit.Location location) {
+        return new Position(ServerSettings.getInstance().getName(), location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
-    public static ILoc fromBukkit(Location location, String server) {
-        return new Loc(server, location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    public static IPosition fromBukkit(org.bukkit.Location location, String server) {
+        return new Position(server, location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Override
@@ -40,6 +39,6 @@ public class Loc extends LocRef implements ILoc {
             return;
         }
         World world = Bukkit.getWorld(getWorld());
-        player.teleport(new Location(world, getX(), getY(), getZ()));
+        player.teleport(new org.bukkit.Location(world, getX(), getY(), getZ()));
     }
 }
