@@ -2,9 +2,12 @@ package info.preva1l.fadlc.api;
 
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.managers.UserManager;
-import info.preva1l.fadlc.models.*;
+import info.preva1l.fadlc.models.IClaimChunk;
+import info.preva1l.fadlc.models.IPosition;
+import info.preva1l.fadlc.models.Location;
 import info.preva1l.fadlc.models.user.OfflineUser;
 import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.models.user.Position;
 import info.preva1l.fadlc.models.user.User;
 import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;

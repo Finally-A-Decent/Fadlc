@@ -2,12 +2,16 @@ package info.preva1l.fadlc.models;
 
 import info.preva1l.fadlc.models.user.User;
 
-public interface IPosition extends ILocation {
-    String getServer();
+public abstract class IPosition extends Location {
+    protected IPosition(int x, int y, int z) {
+        super(x, y, z);
+    }
 
-    String getWorld();
+    public abstract String getServer();
 
-    IClaimChunk getChunk();
+    public abstract String getWorld();
 
-    void teleport(User user);
+    public abstract IClaimChunk getChunk();
+
+    public abstract void teleport(User user);
 }

@@ -1,15 +1,16 @@
-package info.preva1l.fadlc.models;
+package info.preva1l.fadlc.models.user;
 
 import info.preva1l.fadlc.config.ServerSettings;
 import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.models.user.User;
+import info.preva1l.fadlc.models.IClaimChunk;
+import info.preva1l.fadlc.models.IPosition;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 @Getter
-public class Position extends Location implements IPosition {
+public class Position extends IPosition {
     private final String server;
     private final String world;
 

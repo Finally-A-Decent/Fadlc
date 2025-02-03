@@ -3,7 +3,7 @@ package info.preva1l.fadlc.models;
 import lombok.Getter;
 
 @Getter
-public class Location implements ILocation {
+public class Location {
     private final int x;
     private final int y;
     private final int z;
