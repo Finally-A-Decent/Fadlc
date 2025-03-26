@@ -1,45 +1,67 @@
 package info.preva1l.fadlc.config.sounds;
 
+import de.exlll.configlib.*;
 import info.preva1l.fadlc.Fadlc;
-import info.preva1l.fadlc.utils.config.BasicConfig;
-import lombok.experimental.UtilityClass;
+import info.preva1l.fadlc.config.AutoReload;
+import info.preva1l.fadlc.utils.Logger;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Blocking;
 
-import java.util.HashMap;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-@UtilityClass
+@Getter
+@Configuration
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@SuppressWarnings("FieldMayBeFinal")
 public class Sounds {
-    private final BasicConfig soundsFile = new BasicConfig(Fadlc.i(), "sounds.yml");
-    private Map<String, SoundType> sounds = new ConcurrentHashMap<>();
+    private static Sounds instance;
 
-    public void update() {
-        sounds = getSoundsFromFile();
+    private static final String FILE_NAME = "sounds.yml";
+    private static final String CONFIG_HEADER = """
+            ##########################################
+            #                  Fadlc                 #
+            #            Sound Configuration         #
+            ##########################################
+            """;
+
+    private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
+            .charset(StandardCharsets.UTF_8)
+            .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
+            .header(CONFIG_HEADER).build();
+
+    @Comment({"The sounds that can be used throughout the plugins configuration files.", "You can add as many as you want."})
+    private Map<String, SoundType> sounds = Map.of(
+            "click", new SoundType("minecraft:ui.button.click", 1.0f, 1.2f),
+            "success", new SoundType("minecraft:block.note_block.bell", 1.0f, 1.2f),
+            "fail", new SoundType("minecraft:block.note_block.didgeridoo", 1.0f, 0.5f),
+            "example-custom", new SoundType("minecraft:ui.button.click", 0.5f, 2f)
+    );
+
+    public static SoundType getSound(String name) {
+        return Sounds.i().sounds.get(name);
     }
 
-    public SoundType getSound(String name) {
-        return sounds.get(name);
-    }
-
-    @Blocking
-    public Map<String, SoundType> getSoundsFromFile() {
-        Map<String, SoundType> list = new HashMap<>();
-        for (String key : soundsFile.getConfiguration().getKeys(false)) {
-            if (soundsFile.getString(key + ".value").equals("none")) continue;
-            String bukkit = soundsFile.getString(key + ".value");
-            float volume = soundsFile.getFloat(key + ".volume");
-            float pitch = soundsFile.getFloat(key + ".pitch");
-
-            list.put(key, new SoundType(key, bukkit, volume, pitch));
-        }
-        return list;
-    }
-
-    public void playSound(Player player, SoundType soundType) {
+    public static void playSound(Player player, SoundType soundType) {
         if (soundType == null) return;
-        player.playSound(player.getLocation(), soundType.getBukkit(), SoundCategory.MASTER, soundType.getVolume(), soundType.getPitch());
+        player.playSound(player.getLocation(), soundType.value(), SoundCategory.MASTER, soundType.volume(), soundType.pitch());
+    }
+
+    public static void reload() {
+        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Sounds.class, PROPERTIES);
+        Logger.info("Configuration '%s' automatically reloaded from disk.".formatted(FILE_NAME));
+    }
+
+    public static Sounds i() {
+        if (instance == null) {
+            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Sounds.class, PROPERTIES);
+            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), FILE_NAME, Sounds::reload);
+        }
+
+        return instance;
     }
 }

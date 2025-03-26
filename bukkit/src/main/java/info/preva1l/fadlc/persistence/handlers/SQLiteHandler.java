@@ -10,7 +10,7 @@ import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.models.claim.IProfileGroup;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.persistence.Dao;
-import info.preva1l.fadlc.persistence.DatabaseHandler;
+import info.preva1l.fadlc.persistence.DataHandler;
 import info.preva1l.fadlc.persistence.DatabaseObject;
 import info.preva1l.fadlc.persistence.DatabaseType;
 import info.preva1l.fadlc.persistence.daos.sqlite.*;
@@ -25,9 +25,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
-public class SQLiteHandler implements DatabaseHandler {
+public class SQLiteHandler implements DataHandler {
     private final Map<Class<?>, Dao<?>> daos = new HashMap<>();
 
     @Getter private boolean connected = false;
@@ -124,48 +126,7 @@ public class SQLiteHandler implements DatabaseHandler {
     }
 
     @Override
-    public <T extends DatabaseObject> List<T> getAll(Class<T> clazz) {
-        return (List<T>) getDao(clazz).getAll();
-    }
-
-    @Override
-    public <T extends DatabaseObject> Optional<T> get(Class<T> clazz, UUID id) {
-        return (Optional<T>) getDao(clazz).get(id);
-    }
-
-    @Override
-    public <T extends DatabaseObject> Optional<T> search(Class<T> clazz, String name) {
-        return (Optional<T>) getDao(clazz).get(name);
-    }
-
-    @Override
-    public <T extends DatabaseObject> void save(Class<T> clazz, T t) {
-        getDao(clazz).save(t);
-    }
-
-    @Override
-    public <T extends DatabaseObject> void update(Class<T> clazz, T t, String[] params) {
-        getDao(clazz).update(t, params);
-    }
-
-    @Override
-    public <T extends DatabaseObject> void delete(Class<T> clazz, T t) {
-        getDao(clazz).delete(t);
-    }
-
-    @Override
-    public <T extends DatabaseObject> void deleteSpecific(Class<T> clazz, T t, Object o) {
-        getDao(clazz).deleteSpecific(t, o);
-    }
-
-    /**
-     * Gets the DAO for a specific class.
-     *
-     * @param clazz The class to get the DAO for.
-     * @param <T>   The type of the class.
-     * @return The DAO for the specified class.
-     */
-    private <T extends DatabaseObject> Dao<T> getDao(Class<?> clazz) {
+    public <T extends DatabaseObject> Dao<T> getDao(Class<?> clazz) {
         if (!daos.containsKey(clazz))
             throw new IllegalArgumentException("No DAO registered for class " + clazz.getName());
         return (Dao<T>) daos.get(clazz);

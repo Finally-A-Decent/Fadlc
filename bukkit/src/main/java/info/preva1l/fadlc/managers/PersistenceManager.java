@@ -1,28 +1,29 @@
 package info.preva1l.fadlc.managers;
 
 import info.preva1l.fadlc.config.Config;
-import info.preva1l.fadlc.persistence.DatabaseHandler;
+import info.preva1l.fadlc.persistence.DataHandler;
 import info.preva1l.fadlc.persistence.DatabaseObject;
 import info.preva1l.fadlc.persistence.DatabaseType;
 import info.preva1l.fadlc.persistence.handlers.MySQLHandler;
 import info.preva1l.fadlc.persistence.handlers.SQLiteHandler;
 import info.preva1l.fadlc.utils.FadlcExecutors;
 import info.preva1l.fadlc.utils.Logger;
+import lombok.Getter;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 public final class PersistenceManager {
-    private static PersistenceManager instance;
+    @Getter private static final PersistenceManager instance = new PersistenceManager();
 
     private final ExecutorService threadPool;
-    private final Map<DatabaseType, Class<? extends DatabaseHandler>> databaseHandlers = new HashMap<>();
-    private final DatabaseHandler handler;
+    private final Map<DatabaseType, Class<? extends DataHandler>> databaseHandlers = new HashMap<>();
+    private final DataHandler handler;
 
     private PersistenceManager() {
         Logger.info("Connecting to Database and populating caches...");
-        threadPool = FadlcExecutors.VIRTUAL_THREAD_POOL;
+        threadPool = FadlcExecutors.VIRTUAL_THREAD_PER_TASK;
         databaseHandlers.put(DatabaseType.MARIADB, MySQLHandler.class);
         databaseHandlers.put(DatabaseType.MYSQL, MySQLHandler.class);
         databaseHandlers.put(DatabaseType.SQLITE, SQLiteHandler.class);
@@ -31,12 +32,8 @@ public final class PersistenceManager {
         Logger.info("Connected to Database and populated caches!");
     }
 
-    public static PersistenceManager getInstance() {
-        if (instance == null) {
-            instance = new PersistenceManager();
-            instance.handler.connect();
-        }
-        return instance;
+    public void connect() {
+        instance.handler.connect();
     }
 
     public <T extends DatabaseObject> CompletableFuture<List<T>> getAll(Class<T> clazz) {
@@ -53,14 +50,6 @@ public final class PersistenceManager {
             return CompletableFuture.completedFuture(Optional.empty());
         }
         return CompletableFuture.supplyAsync(() -> handler.get(clazz, id), threadPool);
-    }
-
-    public <T extends DatabaseObject> CompletableFuture<Optional<T>> search(Class<T> clazz, String search) {
-        if (!isConnected()) {
-            Logger.severe("Tried to perform database action when the database is not connected!");
-            return CompletableFuture.completedFuture(Optional.empty());
-        }
-        return CompletableFuture.supplyAsync(() -> handler.search(clazz, search), threadPool);
     }
 
     public <T extends DatabaseObject> CompletableFuture<Void> save(Class<T> clazz, T t) {
@@ -96,17 +85,6 @@ public final class PersistenceManager {
         }, threadPool);
     }
 
-    public <T extends DatabaseObject> CompletableFuture<Void> deleteSpecific(Class<T> clazz, T t, Object o) {
-        if (!isConnected()) {
-            Logger.severe("Tried to perform database action when the database is not connected!");
-            return CompletableFuture.completedFuture(null);
-        }
-        return CompletableFuture.supplyAsync(() -> {
-            handler.deleteSpecific(clazz, t, o);
-            return null;
-        }, threadPool);
-    }
-
     public boolean isConnected() {
         return handler.isConnected();
     }
@@ -115,11 +93,11 @@ public final class PersistenceManager {
         handler.destroy();
     }
 
-    private DatabaseHandler initHandler() {
+    private DataHandler initHandler() {
         DatabaseType type = Config.i().getStorage().getType();
         Logger.info("DB Type: %s".formatted(type.getFriendlyName()));
         try {
-            Class<? extends DatabaseHandler> handlerClass = databaseHandlers.get(type);
+            Class<? extends DataHandler> handlerClass = databaseHandlers.get(type);
             if (handlerClass == null) {
                 throw new IllegalStateException("No handler for database type %s registered!".formatted(type.getFriendlyName()));
             }

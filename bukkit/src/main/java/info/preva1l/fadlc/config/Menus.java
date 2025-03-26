@@ -23,6 +23,7 @@ import java.util.List;
 public class Menus {
     private static Menus instance;
 
+    private static final String FILE_NAME = "menus/misc.yml";
     private static final String CONFIG_HEADER = """
             ##########################################
             #                  Fadlc                 #
@@ -41,14 +42,14 @@ public class Menus {
     );
 
     public static void reload() {
-        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), "menus/misc.yml").toPath(), Menus.class, PROPERTIES);
-        Logger.info("Configuration '%s' automatically reloaded from disk.".formatted("menus/misc.yml"));
+        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Menus.class, PROPERTIES);
+        Logger.info("Configuration '%s' automatically reloaded from disk.".formatted(FILE_NAME));
     }
 
     public static Menus getInstance() {
         if (instance == null) {
-            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), "menus/misc.yml").toPath(), Menus.class, PROPERTIES);
-            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "menus/misc.yml", Menus::reload);
+            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Menus.class, PROPERTIES);
+            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), FILE_NAME, Menus::reload);
         }
 
         return instance;

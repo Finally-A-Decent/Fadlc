@@ -25,6 +25,7 @@ import java.util.List;
 public class Lang {
     private static Lang instance;
 
+    private static final String FILE_NAME = "lang.yml";
     private static final String CONFIG_HEADER = """
             ##########################################
             #                  Fadlc                 #
@@ -38,7 +39,7 @@ public class Lang {
             .header(CONFIG_HEADER).build();
 
 
-    private String prefix = "&#9555ff&lFADLC &8&l» &r";
+    private String prefix = "&#9555ff&lFADLC &8&l\u00bb &r";
 
     private ClaimMessages claimMessages = new ClaimMessages();
 
@@ -202,14 +203,14 @@ public class Lang {
     }
 
     public static void reload() {
-        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), "lang.yml").toPath(), Lang.class, PROPERTIES);
-        Logger.info("Language automatically reloaded from disk.");
+        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Lang.class, PROPERTIES);
+        Logger.info("Configuration '%s' automatically reloaded from disk.".formatted(FILE_NAME));
     }
 
     public static Lang i() {
         if (instance == null) {
-            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), "lang.yml").toPath(), Lang.class, PROPERTIES);
-            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "lang.yml", Lang::reload);
+            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Lang.class, PROPERTIES);
+            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), FILE_NAME, Lang::reload);
         }
 
         return instance;

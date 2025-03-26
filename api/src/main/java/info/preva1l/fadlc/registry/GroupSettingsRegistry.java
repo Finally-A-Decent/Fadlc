@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-public class GroupSettingsRegistry {
+public final class GroupSettingsRegistry {
     public static final Supplier<GroupSetting> PLACE_BLOCKS = () -> get("place_blocks");
     public static final Supplier<GroupSetting> BREAK_BLOCKS = () -> get("break_blocks");
     public static final Supplier<GroupSetting> USE_DOORS = () -> get("use_doors");

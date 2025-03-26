@@ -1,14 +1,13 @@
 package info.preva1l.fadlc.config.sounds;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 
-@Getter
-@AllArgsConstructor
-public class SoundType {
-    private final String name;
-    private final String bukkit;
-    private final float volume;
-    private final float pitch;
+public record SoundType(
+    String value,
+    float volume,
+    float pitch
+) {
+    public void play(Player player) {
+        Sounds.playSound(player, this);
+    }
 }

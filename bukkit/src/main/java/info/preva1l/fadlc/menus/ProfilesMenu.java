@@ -2,7 +2,6 @@ package info.preva1l.fadlc.menus;
 
 import info.preva1l.fadlc.config.menus.ProfilesConfig;
 import info.preva1l.fadlc.config.particles.Particles;
-import info.preva1l.fadlc.config.sounds.Sounds;
 import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.menus.lib.ItemBuilder;
 import info.preva1l.fadlc.menus.lib.PaginatedFastInv;
@@ -10,6 +9,7 @@ import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.utils.FadlcExecutors;
+import info.preva1l.fadlc.utils.TaskManager;
 import info.preva1l.fadlc.utils.Text;
 import org.bukkit.entity.Player;
 
@@ -25,8 +25,8 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
         scheme.bindPagination('X');
-        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_POOL)
-                .thenRunAsync(() -> this.open(player), FadlcExecutors.MAIN_THREAD);
+        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_PER_TASK)
+                .thenRun(() -> TaskManager.runSync(player, () -> this.open(player)));
     }
 
     private void buttons() {
@@ -37,17 +37,17 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
     private void placeNavigationItems() {
         scheme.bindItem('B', config.getLang().getBack().itemStack(),
                 e -> {
-                    Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getBack().getSound());
+                    config.getLang().getBack().getSound().play((Player) e.getWhoClicked());
                     new ClaimMenu((Player) e.getWhoClicked());
                 });
         scheme.bindItem('P', config.getLang().getPrevious().itemStack(),
                 e -> {
-                    Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound());
+                    config.getLang().getPrevious().getSound().play((Player) e.getWhoClicked());
                     openPrevious();
                 });
         scheme.bindItem('N', config.getLang().getNext().itemStack(),
                 e -> {
-                    Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound());
+                    config.getLang().getNext().getSound().play((Player) e.getWhoClicked());
                     openNext();
                 });
     }
@@ -73,7 +73,7 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
                     continue;
                 }
                 line = line.replace("%members%", profile.getMembers().size() + "");
-                line = line.replace("%border%", Particles.getParticle(profile.getBorder()).getDisplayName());
+                line = line.replace("%border%", Particles.getParticle(profile.getBorder()).display());
                 line = line.replace("%chunks%", profile.getClaimedChunks().size() + "");
                 lore.add(i, line);
                 i++;
@@ -85,7 +85,7 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
                     .lore(Text.modernList(lore));
 
             addContent(itemStack.build(), (e) -> {
-                Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getProfile().getSound());
+                config.getLang().getProfile().getSound().play((Player) e.getWhoClicked());
             });
         }
     }

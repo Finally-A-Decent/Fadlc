@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-public class UserSettingsRegistry {
+public final class UserSettingsRegistry {
     public static final Supplier<Class<Setting<MessageLocation>>> MESSAGE_LOCATION = () -> get("message_location");
     public static final Supplier<Class<Setting<Boolean>>> VIEW_BORDERS = () -> get("view_borders");
     public static final Supplier<Class<Setting<Boolean>>> CLAIM_ENTER_NOTIFICATION = () -> get("claim_enter_notification");

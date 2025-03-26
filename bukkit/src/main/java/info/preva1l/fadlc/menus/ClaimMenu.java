@@ -1,10 +1,8 @@
 package info.preva1l.fadlc.menus;
 
 import com.github.puregero.multilib.regionized.RegionizedTask;
-import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.config.menus.ClaimConfig;
-import info.preva1l.fadlc.config.sounds.Sounds;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.menus.lib.FastInv;
@@ -40,9 +38,9 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
         this.player = player;
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
-        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_POOL)
-                .thenRunAsync(() -> this.open(player), FadlcExecutors.MAIN_THREAD);
-        this.updateTask = TaskManager.runAsyncRepeat(Fadlc.i(), this::placeChunkItems, 20L);
+        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_PER_TASK)
+                .thenRun(() -> TaskManager.runSync(player, () -> this.open(player)));
+        this.updateTask = TaskManager.runAsyncRepeat(this::placeChunkItems, 20L);
         addCloseHandler((e) -> updateTask.cancel());
     }
 
@@ -55,16 +53,16 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
     private void placeNavigationButtons() {
         scheme.bindItem('B', config.getLang().getBuyChunks().easyItem()
                 .replaceAnywhere("%chunks%", user.getAvailableChunks() + "").getBase(), e -> {
-            Sounds.playSound(player, config.getLang().getBuyChunks().getSound());
+            config.getLang().getBuyChunks().getSound().play(player);
         });
 
         scheme.bindItem('M', config.getLang().getManageProfiles().itemStack(), e -> {
-            Sounds.playSound(player, config.getLang().getManageProfiles().getSound());
+            config.getLang().getManageProfiles().getSound().play(player);
             new ProfilesMenu(player);
         });
 
         scheme.bindItem('S', config.getLang().getSettings().easyItem().skullOwner(player).getBase(), e -> {
-            Sounds.playSound(player, config.getLang().getSettings().getSound());
+            config.getLang().getSettings().getSound().play(player);
             new SettingsMenu(player);
         });
     }
@@ -80,10 +78,10 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                 ? Lang.i().getWords().getNone()
                 : nextProfile.getName();
         scheme.bindItem('P', config.getLang().getSwitchProfile().easyItem()
-                .replaceAnywhere("%previous%", Text.legacyMessage(previous))
-                .replaceAnywhere("%current%", Text.legacyMessage(current))
-                .replaceAnywhere("%next%", Text.legacyMessage(next)).getBase(), e -> {
-            Sounds.playSound(player, config.getLang().getSwitchProfile().getSound());
+                .replaceAnywhere("%previous%", Text.modernMessage(previous))
+                .replaceAnywhere("%current%", Text.modernMessage(current))
+                .replaceAnywhere("%next%", Text.modernMessage(next)).getBase(), e -> {
+            config.getLang().getSwitchProfile().getSound().play(player);
 
             if (e.isLeftClick() && previousProfile != null) {
                 user.setClaimWithProfile(previousProfile);
@@ -109,24 +107,24 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                     case CLAIMED -> {
                         Optional<IClaim> claim = ClaimManager.getInstance().getClaimAt(chunk);
                         if (claim.orElseThrow().getOwner().equals(user)) {
-                            Sounds.playSound(player, config.getLang().getChunks().getClaimedYou().getSound());
+                            config.getLang().getChunks().getClaimedYou().getSound().play(player);
                             return;
                         }
 
                         user.sendMessage("&cChunk is already claimed!");
-                        Sounds.playSound(player, config.getLang().getChunks().getClaimedOther().getSound());
+                        config.getLang().getChunks().getClaimedOther().getSound().play(player);
                     }
                     case WORLD_DISABLED -> {
                         user.sendMessage("&cClaiming is disabled in this world!");
-                        Sounds.playSound(player, config.getLang().getChunks().getWorldDisabled().getSound());
+                        config.getLang().getChunks().getWorldDisabled().getSound().play(player);
                     }
                     case BLOCKED_WORLD_GUARD -> {
                         user.sendMessage("&cThis chunk is protected by world guard!");
-                        Sounds.playSound(player, config.getLang().getChunks().getRestrictedRegion().getSound());
+                        config.getLang().getChunks().getRestrictedRegion().getSound().play(player);
                     }
                     case BLOCKED_ZONE_BORDER -> {
                         user.sendMessage("&cYou cannot claim within 3 chunks of the zone border!");
-                        Sounds.playSound(player, config.getLang().getChunks().getZoneBorder().getSound());
+                        config.getLang().getChunks().getZoneBorder().getSound().play(player);
                     }
                 }
             });
@@ -137,13 +135,13 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
     private void claimChunk(IClaimChunk chunk) {
         if (user.getAvailableChunks() <= 0) {
             user.sendMessage(Lang.i().getClaimMessages().getFail().getNotEnoughChunks());
-            Sounds.playSound(player, config.getLang().getChunks().getUnclaimedExpensive().getSound());
+            config.getLang().getChunks().getUnclaimedExpensive().getSound().play(player);
             return;
         }
 
         user.getClaim().claimChunk(chunk);
         placeChunkItems();
-        Sounds.playSound(player, config.getLang().getChunks().getUnclaimed().getSound());
+        config.getLang().getChunks().getUnclaimed().getSound().play(player);
     }
 
     private ItemStack getChunkItem(int index, IClaimChunk chunk) {
@@ -161,7 +159,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                         .easyItem().skullOwner(claim.getOwner().getUniqueId())
                         .replaceAnywhere("%chunk_x%", chunk.getChunkX() + "")
                         .replaceAnywhere("%chunk_z%", chunk.getChunkZ() + "")
-                        .replaceAnywhere("%claim_profile%", Text.legacyMessage(claim.getProfiles().get(chunk.getProfileId()).getName()))
+                        .replaceAnywhere("%claim_profile%", Text.modernMessage(claim.getProfiles().get(chunk.getProfileId()).getName()))
                         .replaceAnywhere("%owner%", claim.getOwner().getName())
                         .replaceAnywhere("%formatted_time%", Time.formatTimeSince(chunk.getClaimedSince())).getBase();
             }

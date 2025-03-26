@@ -17,6 +17,7 @@ import java.util.concurrent.Executors;
 
 /**
  * A class for interfacing with the <a href="https://mclo.gs/">mclo.gs</a> website API.
+ *
  * @author Preva1l
  */
 @UtilityClass

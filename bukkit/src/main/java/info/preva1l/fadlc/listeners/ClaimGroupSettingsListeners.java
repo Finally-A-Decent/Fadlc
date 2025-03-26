@@ -1,6 +1,6 @@
 package info.preva1l.fadlc.listeners;
 
-import info.preva1l.fadlc.api.FadlcAPI;
+import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.api.events.ClaimEnterEvent;
 import info.preva1l.fadlc.api.events.ClaimLeaveEvent;
 import info.preva1l.fadlc.config.Lang;
@@ -9,7 +9,6 @@ import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.IPosition;
 import info.preva1l.fadlc.models.claim.IClaim;
-import info.preva1l.fadlc.models.claim.settings.GroupSetting;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.Position;
 import info.preva1l.fadlc.registry.GroupSettingsRegistry;
@@ -28,22 +27,19 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 @AllArgsConstructor
 public class ClaimGroupSettingsListeners implements Listener {
+    private final Fadlc plugin;
+    private final UserManager userManager;
     private final ClaimManager claimManager;
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean isActionAllowed(OnlineUser user, IPosition location, GroupSetting setting) {
-        return FadlcAPI.getInstance().isActionAllowed(user, location, setting);
-    }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         IPosition loc = Position.fromBukkit(event.getBlock().getLocation());
-        OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (isActionAllowed(user, loc, GroupSettingsRegistry.PLACE_BLOCKS.get())) {
+        OnlineUser user = userManager.getUser(event.getPlayer().getUniqueId()).orElseThrow();
+        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.PLACE_BLOCKS.get())) {
             return;
         }
         event.setCancelled(true);
-        IClaim claimAtLocation = ClaimManager.getInstance().getClaimAt(loc).orElseThrow();
+        IClaim claimAtLocation = claimManager.getClaimAt(loc).orElseThrow();
 
         Lang.sendMessage(event.getPlayer(), Lang.i().getGroupSettings().getPlaceBlocks().getMessage()
                 .replace("%player%", claimAtLocation.getOwner().getName()));
@@ -52,12 +48,12 @@ public class ClaimGroupSettingsListeners implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         IPosition loc = Position.fromBukkit(event.getBlock().getLocation());
-        OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (isActionAllowed(user, loc, GroupSettingsRegistry.BREAK_BLOCKS.get())) {
+        OnlineUser user = userManager.getUser(event.getPlayer().getUniqueId()).orElseThrow();
+        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.BREAK_BLOCKS.get())) {
             return;
         }
         event.setCancelled(true);
-        IClaim claimAtLocation = ClaimManager.getInstance().getClaimAt(loc).orElseThrow();
+        IClaim claimAtLocation = claimManager.getClaimAt(loc).orElseThrow();
 
         Lang.sendMessage(event.getPlayer(), Lang.i().getGroupSettings().getBreakBlocks().getMessage()
                 .replace("%player%", claimAtLocation.getOwner().getName()));
@@ -70,12 +66,12 @@ public class ClaimGroupSettingsListeners implements Listener {
                 || !(event.getClickedBlock().getBlockData() instanceof TrapDoor)
                 || event.getAction().isRightClick()) return;
         IPosition loc = Position.fromBukkit(event.getClickedBlock().getLocation());
-        OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (isActionAllowed(user, loc, GroupSettingsRegistry.USE_DOORS.get())) {
+        OnlineUser user = userManager.getUser(event.getPlayer().getUniqueId()).orElseThrow();
+        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.USE_DOORS.get())) {
             return;
         }
         event.setCancelled(true);
-        IClaim claimAtLocation = ClaimManager.getInstance().getClaimAt(loc).orElseThrow();
+        IClaim claimAtLocation = claimManager.getClaimAt(loc).orElseThrow();
 
         Lang.sendMessage(event.getPlayer(), Lang.i().getGroupSettings().getUseDoors().getMessage()
                 .replace("%player%", claimAtLocation.getOwner().getName()));
@@ -87,17 +83,16 @@ public class ClaimGroupSettingsListeners implements Listener {
                 || !(event.getClickedBlock().getType().toString().endsWith("_BUTTON"))
                 || event.getAction().isRightClick()) return;
         IPosition loc = Position.fromBukkit(event.getClickedBlock().getLocation());
-        OnlineUser user = UserManager.getInstance().getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (isActionAllowed(user, loc, GroupSettingsRegistry.USE_BUTTONS.get())) {
+        OnlineUser user = userManager.getUser(event.getPlayer().getUniqueId()).orElseThrow();
+        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.USE_BUTTONS.get())) {
             return;
         }
         event.setCancelled(true);
-        IClaim claimAtLocation = ClaimManager.getInstance().getClaimAt(loc).orElseThrow();
+        IClaim claimAtLocation = claimManager.getClaimAt(loc).orElseThrow();
 
         Lang.sendMessage(event.getPlayer(), Lang.i().getGroupSettings().getUseButtons().getMessage()
                 .replace("%player%", claimAtLocation.getOwner().getName()));
     }
-
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMove(PlayerMoveEvent e) {
@@ -108,10 +103,10 @@ public class ClaimGroupSettingsListeners implements Listener {
         IClaimChunk toChunk = claimManager.getChunkAt(to.getChunk().getX(), to.getChunk().getZ(), to.getWorld().getName());
         IClaim fromClaim = claimManager.getClaimAt(fromChunk).orElse(null);
         IClaim toClaim = claimManager.getClaimAt(toChunk).orElse(null);
-        OnlineUser user = UserManager.getInstance().getUser(e.getPlayer().getUniqueId()).orElseThrow();
+        OnlineUser user = userManager.getUser(e.getPlayer().getUniqueId()).orElseThrow();
 
         if (toClaim != null) {
-            if (!isActionAllowed(user, Position.fromBukkit(e.getTo()), GroupSettingsRegistry.ENTER.get())) {
+            if (!plugin.isActionAllowed(user, Position.fromBukkit(e.getTo()), GroupSettingsRegistry.ENTER.get())) {
                 e.setCancelled(true);
 
                 Lang.sendMessage(e.getPlayer(), Lang.i().getGroupSettings().getEnter().getMessage()

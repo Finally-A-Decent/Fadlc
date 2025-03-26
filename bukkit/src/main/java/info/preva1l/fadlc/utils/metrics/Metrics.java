@@ -19,7 +19,7 @@
  * Thank your for your understanding.
  */
 
-package info.preva1l.fadlc.utils;
+package info.preva1l.fadlc.utils.metrics;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;

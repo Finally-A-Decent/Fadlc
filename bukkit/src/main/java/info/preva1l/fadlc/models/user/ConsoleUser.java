@@ -1,17 +1,19 @@
 package info.preva1l.fadlc.models.user;
 
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.Audience;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-@RequiredArgsConstructor
 public final class ConsoleUser implements CommandUser {
-    @NotNull private final Audience audience;
+    public static final ConsoleUser SELF = new ConsoleUser();
+
+    private ConsoleUser() {}
+
+    private final Audience audience = Bukkit.getConsoleSender();
 
     @Override
-    @NotNull
-    public Audience getAudience() {
+    public @NotNull Audience getAudience() {
         return audience;
     }
 
@@ -22,6 +24,6 @@ public final class ConsoleUser implements CommandUser {
 
     @Override
     public Player asPlayer() {
-        return null;
+        throw new IllegalStateException("ConsoleUser is not a player");
     }
 }

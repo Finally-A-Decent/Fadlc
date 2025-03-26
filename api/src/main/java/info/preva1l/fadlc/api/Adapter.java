@@ -9,8 +9,10 @@ import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface IAdapter {
+@ApiStatus.NonExtendable
+public interface Adapter {
     OnlineUser player(Player player);
 
     User offlinePlayer(OfflinePlayer offlinePlayer);

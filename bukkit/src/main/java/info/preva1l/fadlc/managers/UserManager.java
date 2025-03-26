@@ -2,6 +2,7 @@ package info.preva1l.fadlc.managers;
 
 import info.preva1l.fadlc.models.user.OnlineUser;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
@@ -9,17 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UserManager implements IUserManager {
-    private static UserManager instance;
+    @Getter private static final UserManager instance = new UserManager();
 
     private final Map<String, OnlineUser> usersCacheName = new ConcurrentHashMap<>();
     private final Map<UUID, OnlineUser> usersCacheUuid = new ConcurrentHashMap<>();
-
-    public static UserManager getInstance() {
-        if (instance == null) {
-            instance = new UserManager();
-        }
-        return instance;
-    }
 
     public void cacheUser(OnlineUser user) {
         usersCacheUuid.put(user.getUniqueId(), user);

@@ -14,12 +14,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class Adapter implements IAdapter {
-    private static Adapter instance;
+public class ImplAdapter implements Adapter {
+    private static ImplAdapter instance;
 
-    public static Adapter getInstance() {
+    public static ImplAdapter getInstance() {
         if (instance == null) {
-            instance = new Adapter();
+            instance = new ImplAdapter();
         }
         return instance;
     }

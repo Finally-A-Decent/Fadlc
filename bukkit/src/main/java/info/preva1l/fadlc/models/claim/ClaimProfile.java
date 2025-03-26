@@ -1,6 +1,6 @@
 package info.preva1l.fadlc.models.claim;
 
-import info.preva1l.fadlc.Fadlc;
+import info.preva1l.fadlc.config.Config;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.models.ChunkLoc;
 import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
@@ -10,9 +10,12 @@ import info.preva1l.fadlc.registry.ProfileFlagsRegistry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 @AllArgsConstructor
@@ -40,43 +43,48 @@ public class ClaimProfile implements IClaimProfile {
                 4, ProfileGroup.rankFour(),
                 5, ProfileGroup.rankFive()
         );
-        return new ClaimProfile(user.getUniqueId(), UUID.randomUUID(), "&7%s's Claim".formatted(user.getName()), id, getRandomMaterial(), groups, flags, "default"); // todo: config
+        return new ClaimProfile(
+                user.getUniqueId(),
+                UUID.randomUUID(),
+                Config.i().getProfileDefaults().getName().replace("%username%", user.getName()),
+                id,
+                getRandomMaterial(),
+                groups,
+                flags,
+                Config.i().getProfileDefaults().getBorder()
+        );
     }
 
     private static Material getRandomMaterial() {
-        for (int i = 0; i < 2; i++) {
+        Material material;
+        do {
             Material[] materials = Material.values();
-            Material material = materials[Fadlc.i().getRandom().nextInt(materials.length)];
-            if (material.isAir() || !material.isItem() || material.isLegacy()) {
-                --i;
-                continue;
-            }
-            return material;
-        }
-        return Material.BLACK_WOOL;
+            material = materials[ThreadLocalRandom.current().nextInt(materials.length)];
+        } while (material == null
+                || material.isAir()
+                || !material.isItem()
+                || material.isEmpty());
+        return material;
     }
 
     @Override
     public IClaim getParent() {
-        return ClaimManager.getInstance().getByUUID(parentUUID);
+        return ClaimManager.getInstance().getClaimByUUID(parentUUID);
     }
 
     @Override
     public void setName(String name) {
         this.name = name;
-        getParent().updateProfile(this);
     }
 
     @Override
     public void setIcon(Material icon) {
         this.icon = icon;
-        getParent().updateProfile(this);
     }
 
     @Override
     public void setBorder(String border) {
         this.border = border;
-        getParent().updateProfile(this);
     }
 
     /**
@@ -89,29 +97,54 @@ public class ClaimProfile implements IClaimProfile {
      * @return the group they are in
      */
     @Override
-    public IProfileGroup getPlayerGroup(User user) {
+    public @NotNull IProfileGroup getPlayerGroup(User user) {
+        return Objects.requireNonNull(getPlayerGroup(user, true));
+    }
+
+    /**
+     * Uses a dirty cache technique, its kinda goofy, but it works ong.
+     * <p>
+     *     If the user somehow ends up in more than 1 group it takes them out of the lowest priority.
+     * </p>
+     *
+     * @param user the user to get
+     * @return the group they are in
+     */
+    @Override
+    public @Nullable IProfileGroup getPlayerGroup(User user, boolean useDefault) {
         IProfileGroup cachedGroup = groupCache.get(user);
-        if (cachedGroup != null) {
-            return cachedGroup;
-        }
-        List<IProfileGroup> usersGroups = new ArrayList<>(groups.values().stream()
-                .filter(g -> g.getUsers().contains(user))
-                .sorted(Comparator.comparing(IProfileGroup::getId)).toList());
+        if (cachedGroup != null) return cachedGroup;
+
+        List<IProfileGroup> usersGroups = new ArrayList<>(
+                groups.values().stream()
+                        .filter(g -> g.getUsers().contains(user))
+                        .sorted(Comparator.comparing(IProfileGroup::getId)).toList()
+        );
 
         IProfileGroup group = usersGroups.isEmpty() ? null : usersGroups.getLast();
 
-        if (usersGroups.size() > 1) {
-            while (usersGroups.size() > 1) {
-                IProfileGroup g = usersGroups.removeFirst();
-                groups.get(g.getId()).getUsers().remove(user);
-            }
+        while (usersGroups.size() > 1) {
+            IProfileGroup g = usersGroups.removeFirst();
+            groups.get(g.getId()).getUsers().remove(user);
         }
 
         if (group == null) {
+            if (!useDefault) return null;
             return groups.get(1);
         }
+
         groupCache.put(user, group);
         return group;
+    }
+
+    @Override
+    public void setPlayerGroup(User user, int groupId) {
+        IProfileGroup oldGroup = getPlayerGroup(user, false);
+        if (oldGroup != null) oldGroup.getUsers().remove(user);
+
+        IProfileGroup group = groups.get(groupId);
+        group.getUsers().add(user);
+        groupCache.put(user, group);
     }
 
     @Override

@@ -1,25 +1,33 @@
 package info.preva1l.fadlc.models;
 
+import info.preva1l.fadlc.config.Config;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.models.claim.IClaim;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class ClaimChunk implements IClaimChunk {
+    private final UUID uniqueId;
     private final ChunkLoc loc;
     private long claimedSince; // -1 if not claimed
     private int profileId; // -1 if not claimed
 
-    public ClaimChunk(ChunkLoc chunkLoc, long claimedSince, int profileId) {
-        this.loc = chunkLoc;
-        this.claimedSince = claimedSince;
-        this.profileId = profileId;
+    public static ClaimChunk unclaimed(ChunkLoc loc) {
+        return new ClaimChunk(
+                UUID.nameUUIDFromBytes(loc.toString().getBytes()),
+                loc,
+                -1,
+                -1
+        );
     }
 
     @Override
@@ -54,8 +62,7 @@ public class ClaimChunk implements IClaimChunk {
             return ChunkStatus.CLAIMED;
         }
 
-        // todo: check if world is restricted
-        if (false) {
+        if (Config.i().getGeneral().getDisabledWorlds().contains(loc.getWorld())) {
             return ChunkStatus.WORLD_DISABLED;
         }
 

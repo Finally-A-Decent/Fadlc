@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -23,6 +24,7 @@ import java.util.Map;
 public class Config {
     private static Config instance;
 
+    private static final String FILE_NAME = "config.yml";
     private static final String CONFIG_HEADER = """
             ##########################################
             #                  Fadlc                 #
@@ -35,29 +37,22 @@ public class Config {
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
 
-    private int maxProfiles = 10;
-
-    private Formatting formatting = new Formatting();
+    private General general = new General();
 
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Formatting {
-        private String numbers = "#,###.00";
+    public static class General {
+        @Comment("How many chunks a user should receive upon their first time joining.")
+        private int startingChunks = 1;
 
-        private Time time = new Time();
+        @Comment("How many profiles a user should be able to create.")
+        private int maxProfiles = 10;
 
-        @Getter
-        @Configuration
-        @NoArgsConstructor(access = AccessLevel.PRIVATE)
-        public static class Time {
-            private String seconds = "%ds";
-            private String minutes = "%dm, %ds";
-            private String hours = "%dh, %dm, %ds";
-            private String days = "%dd, %dh, %dm, %ds";
-            private String months = "%dm, %dd, %dh, %dm, %ds";
-            private String years = "%dy, %dm, %dd, %dh, %dm, %ds";
-        }
+        private List<String> disabledWorlds = List.of(
+                "world_the_end",
+                "world_nether"
+        );
     }
 
     private Optimization optimization = new Optimization();
@@ -74,7 +69,41 @@ public class Config {
         private PerformanceMode performanceMode = PerformanceMode.TICK_TIME;
 
         private int particleFrequencyMillis = 200;
-        private int particleDistance = 30;
+        private int particleViewDistance = 30;
+    }
+
+    private Formatting formatting = new Formatting();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Formatting {
+        private String numbers = "#,###.00";
+        private String date = "dd/MM/yyyy HH:mm";
+
+        private Time time = new Time();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Time {
+            private String seconds = "%ds";
+            private String minutes = "%dm, %ds";
+            private String hours = "%dh, %dm, %ds";
+            private String days = "%dd, %dh, %dm, %ds";
+            private String months = "%dm, %dd, %dh, %dm, %ds";
+            private String years = "%dy, %dm, %dd, %dh, %dm, %ds";
+        }
+    }
+
+    private Profiles profileDefaults = new Profiles();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Profiles {
+        private String name = "&7%username%'s Claim";
+        private String border = "default";
     }
 
     private Groups groupDefaults = new Groups();
@@ -193,14 +222,14 @@ public class Config {
     }
 
     public static void reload() {
-        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), "config.yml").toPath(), Config.class, PROPERTIES);
-        Logger.info("Configuration automatically reloaded from disk.");
+        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Config.class, PROPERTIES);
+        Logger.info("Configuration '%s' automatically reloaded from disk.".formatted(FILE_NAME));
     }
 
     public static Config i() {
         if (instance == null) {
-            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), "config.yml").toPath(), Config.class, PROPERTIES);
-            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "config.yml", Config::reload);
+            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Config.class, PROPERTIES);
+            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), FILE_NAME, Config::reload);
         }
 
         return instance;

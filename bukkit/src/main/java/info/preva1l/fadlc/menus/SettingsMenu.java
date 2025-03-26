@@ -1,13 +1,13 @@
 package info.preva1l.fadlc.menus;
 
 import info.preva1l.fadlc.config.menus.SettingsConfig;
-import info.preva1l.fadlc.config.sounds.Sounds;
 import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.menus.lib.PaginatedFastInv;
 import info.preva1l.fadlc.menus.lib.PaginatedMenu;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.settings.Setting;
 import info.preva1l.fadlc.utils.FadlcExecutors;
+import info.preva1l.fadlc.utils.TaskManager;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.CompletableFuture;
@@ -21,8 +21,8 @@ public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements Pa
         this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
 
         scheme.bindPagination('X');
-        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_POOL)
-                .thenRunAsync(() -> this.open(player), FadlcExecutors.MAIN_THREAD);
+        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_PER_TASK)
+                .thenRun(() -> TaskManager.runSync(player, () -> this.open(player)));
     }
 
     private void buttons() {
@@ -30,21 +30,13 @@ public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements Pa
         placeNavigationItems();
     }
 
-    private void placeNavigationItems() {
+    @Override
+    protected void placeNavigationItems() {
+        super.placeNavigationItems();
+
         scheme.bindItem('B', config.getLang().getBack().itemStack(), e -> {
-            Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getBack().getSound());
+            config.getLang().getBack().getSound().play((Player) e.getWhoClicked());
             new ClaimMenu(user.asPlayer());
-        });
-
-        scheme.bindItem('P', config.getLang().getPrevious().itemStack(), e -> {
-            Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getPrevious().getSound());
-            openPrevious();
-        });
-
-
-        scheme.bindItem('N', config.getLang().getNext().itemStack(), e -> {
-            Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getNext().getSound());
-            openNext();
         });
     }
 

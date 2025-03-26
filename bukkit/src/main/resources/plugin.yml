@@ -6,21 +6,28 @@ main: info.preva1l.fadlc.Fadlc
 api-version: 1.18
 
 libraries:
-  - 'redis.clients:jedis:${jedis_version}'
-  - 'org.apache.commons:commons-pool2:${acp2_version}'
-  - 'org.mongodb:mongodb-driver-sync:${mongo_version}'
-  - 'org.xerial:sqlite-jdbc:${sqlite_version}'
-  - 'com.mysql:mysql-connector-j:${mysql_version}'
-  - 'org.mariadb.jdbc:mariadb-java-client:${mariadb_version}'
-  - 'net.kyori:adventure-text-minimessage:${minimessage_version}'
-  - 'net.kyori:adventure-api:${minimessage_version}'
-  - 'net.kyori:adventure-platform-bukkit:${mm_platform_version}'
-  - 'com.influxdb:influxdb-client-java:${influxdb_version}'
-  - 'de.exlll:configlib-yaml:${configlib_version}'
-  - 'com.zaxxer:HikariCP:${hikari_version}'
+  - 'org.redisson:redisson:${redissonVersion}'
+  - 'org.apache.commons:commons-pool2:${acp2Version}'
+  - 'org.mongodb:mongodb-driver-sync:${mongoVersion}'
+  - 'org.xerial:sqlite-jdbc:${sqliteVersion}'
+  - 'com.mysql:mysql-connector-j:${mysqlVersion}'
+  - 'org.mariadb.jdbc:mariadb-java-client:${mariadbVersion}'
+  - 'com.influxdb:influxdb-client-java:${influxdbVersion}'
+  - 'de.exlll:configlib-yaml:${configlibVersion}'
+  - 'com.zaxxer:HikariCP:${hikariVersion}'
 
 permissions:
+  fadlc.user:
+    children:
+      - fadlc.claim
+      - fadlc.profiles
+      - fadlc.settings
+      - fadlc.particle.default
   fadlc.claim:
+    default: true
+  fadlc.profiles:
+    default: true
+  fadlc.settings:
     default: true
   fadlc.particle.default:
     default: true

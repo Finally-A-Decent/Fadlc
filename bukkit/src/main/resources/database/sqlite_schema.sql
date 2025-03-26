@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS claims
 
 CREATE TABLE IF NOT EXISTS chunks
 (
-    location    TEXT    NOT NULL PRIMARY KEY,
+    uuid        TEXT    NOT NULL PRIMARY KEY,
+    location    TEXT    NOT NULL,
     timeClaimed INTEGER NOT NULL,
     profile     INTEGER NOT NULL
 );

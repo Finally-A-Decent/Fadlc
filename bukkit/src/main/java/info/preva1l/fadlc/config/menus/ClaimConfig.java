@@ -63,7 +63,7 @@ public class ClaimConfig implements MenuConfig {
                     )
             );
             private ConfigurableItem unclaimed = new ConfigurableItem(
-                    Material.GRAY_STAINED_GLASS_PANE, 0, "sucess",
+                    Material.GRAY_STAINED_GLASS_PANE, 0, "success",
                     "&7Unclaimed Chunk",
                     List.of(
                             "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%",
@@ -73,7 +73,7 @@ public class ClaimConfig implements MenuConfig {
                     )
             );
             private ConfigurableItem unclaimedExpensive = new ConfigurableItem(
-                    Material.GRAY_STAINED_GLASS_PANE, 0, "sucess",
+                    Material.GRAY_STAINED_GLASS_PANE, 0, "fail",
                     "&7Unclaimed Chunk",
                     List.of(
                             "&7&l‣ &3Chunk: &f%chunk_x%, %chunk_z%",

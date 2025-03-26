@@ -2,7 +2,7 @@ package info.preva1l.fadlc.menus.lib;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import info.preva1l.fadlc.utils.Skins;
+import info.preva1l.fadlc.persistence.Skins;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;

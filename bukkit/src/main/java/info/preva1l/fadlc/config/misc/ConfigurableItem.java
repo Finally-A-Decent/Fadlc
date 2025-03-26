@@ -4,7 +4,6 @@ import info.preva1l.fadlc.config.sounds.SoundType;
 import info.preva1l.fadlc.config.sounds.Sounds;
 import info.preva1l.fadlc.menus.lib.ItemBuilder;
 import info.preva1l.fadlc.utils.Text;
-import info.preva1l.fadlc.utils.config.EasyItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

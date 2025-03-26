@@ -1,9 +1,7 @@
 package info.preva1l.fadlc.models.user;
 
-import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.models.user.settings.MessageLocation;
@@ -13,6 +11,8 @@ import info.preva1l.fadlc.utils.Text;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -41,7 +41,7 @@ public class BukkitUser implements OnlineUser, CommandUser {
 
     @Override
     public @NotNull Audience getAudience() {
-        return Fadlc.i().getAudiences().player(asPlayer());
+        return asPlayer();
     }
 
     @Override
@@ -53,6 +53,8 @@ public class BukkitUser implements OnlineUser, CommandUser {
     public Player asPlayer() {
         if (player == null) {
             player = Bukkit.getPlayer(uniqueId);
+
+            if (player == null) throw new IllegalStateException("You cannot access a stale OnlineUser instance!");
         }
         return player;
     }
@@ -60,7 +62,6 @@ public class BukkitUser implements OnlineUser, CommandUser {
     @Override
     public void setAvailableChunks(int newAmount) {
         this.availableChunks = newAmount;
-        UserManager.getInstance().cacheUser(this);
     }
 
     @Override
@@ -74,25 +75,35 @@ public class BukkitUser implements OnlineUser, CommandUser {
     }
 
     @Override
+    public void setClaimWithProfile(IClaimProfile profile) {
+        this.claimWithProfileId = profile.getId();
+    }
+
+    @Override
     public void sendMessage(@NotNull String message) {
         sendMessage(message, true);
     }
 
     @Override
-    public void setClaimWithProfile(IClaimProfile profile) {
-        this.claimWithProfileId = profile.getId();
-        UserManager.getInstance().cacheUser(this);
+    public void sendMessage(@NotNull String message, boolean prefixed) {
+        sendMessage(Text.modernMessage(message), prefixed);
     }
 
     @Override
-    public void sendMessage(@NotNull String message, boolean prefixed) {
-        if (message.isEmpty()) return;
+    public void sendMessage(@NotNull Component component) {
+        sendMessage(component, true);
+    }
+
+    @Override
+    public void sendMessage(@NotNull Component component, boolean prefixed) {
+        if (!(component instanceof TextComponent message)) return;
+        if (message.content().isEmpty()) return;
         switch (getSetting(UserSettingsRegistry.MESSAGE_LOCATION.get(), MessageLocation.CHAT)) {
-            case CHAT -> getAudience().sendMessage(Text.modernMessage(Lang.i().getPrefix() + message));
-            case HOTBAR -> getAudience().sendActionBar(Text.modernMessage(Lang.i().getPrefix() + message));
+            case CHAT -> asPlayer().sendMessage(prefixed ? Text.modernMessage(Lang.i().getPrefix()).append(message) : message);
+            case HOTBAR -> asPlayer().sendActionBar(prefixed ? Text.modernMessage(Lang.i().getPrefix()).append(message) : message);
             case TITLE -> {
-                getAudience().sendTitlePart(TitlePart.TITLE, Text.modernMessage(Lang.i().getPrefix()));
-                getAudience().sendTitlePart(TitlePart.SUBTITLE, Text.modernMessage(message));
+                if (prefixed) asPlayer().sendTitlePart(TitlePart.TITLE, Text.modernMessage(Lang.i().getPrefix()));
+                asPlayer().sendTitlePart(TitlePart.SUBTITLE, message);
             }
         }
     }
@@ -121,7 +132,6 @@ public class BukkitUser implements OnlineUser, CommandUser {
             settings.add(access);
         }
         access.setState(object);
-        UserManager.getInstance().cacheUser(this);
         return object;
     }
 
@@ -137,7 +147,6 @@ public class BukkitUser implements OnlineUser, CommandUser {
             access = clazz.getDeclaredConstructor(object.getClass()).newInstance(object);
         }
         settings.add(access);
-        UserManager.getInstance().cacheUser(this);
     }
 
     @Override

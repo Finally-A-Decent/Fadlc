@@ -1,20 +1,18 @@
 package info.preva1l.fadlc.models.user.settings.impl;
 
 import info.preva1l.fadlc.config.menus.SettingsConfig;
-import info.preva1l.fadlc.config.sounds.Sounds;
+import info.preva1l.fadlc.config.misc.EasyItem;
 import info.preva1l.fadlc.menus.lib.ItemBuilder;
 import info.preva1l.fadlc.menus.lib.PaginatedMenu;
 import info.preva1l.fadlc.models.Tuple;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.settings.Setting;
 import info.preva1l.fadlc.utils.Text;
-import info.preva1l.fadlc.utils.config.EasyItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.logging.log4j.util.TriConsumer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,11 +52,11 @@ public class ViewBordersSetting implements Setting<Boolean> {
                 .lore(Text.modernList(lore));
 
         return Tuple.of(new EasyItem(itemStack.build())
-                .replaceAnywhere("%setting%", Text.legacyMessage(config.getLang().getSettings().getViewBorders().name()))
+                .replaceAnywhere("%setting%", Text.modernMessage(config.getLang().getSettings().getViewBorders().name()))
                 .getBase(), (e, user, menu) -> {
             user.updateSetting(!getState(), getClass());
             menu.openPage(menu.currentPage());
-            Sounds.playSound((Player) e.getWhoClicked(), config.getLang().getSettingToggle().getSound());
+            config.getLang().getSettingToggle().getSound().play(user.asPlayer());
         });
     }
 }

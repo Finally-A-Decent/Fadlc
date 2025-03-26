@@ -1,7 +1,6 @@
 package info.preva1l.fadlc.models.claim;
 
 import info.preva1l.fadlc.api.events.ChunkClaimEvent;
-import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.models.ChunkLoc;
 import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.user.User;
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
@@ -34,14 +34,14 @@ public class Claim implements IClaim {
         claimChunk.setClaimedSince(System.currentTimeMillis());
         claimChunk.setProfileId(owner.getOnlineUser().getClaimWithProfile().getId());
         claimedChunks.put(claimChunk.getLoc(), owner.getOnlineUser().getClaimWithProfile().getId());
+    }
 
-        ClaimManager.getInstance().cacheChunk(claimChunk);
-        ClaimManager.getInstance().updateClaim(this);
+    public void updateProfile(IClaimProfile profile) {
+        profiles.put(profile.getId(), profile);
     }
 
     @Override
-    public void updateProfile(IClaimProfile profile) {
-        profiles.put(profile.getId(), profile);
-        ClaimManager.getInstance().updateClaim(this);
+    public UUID getUniqueId() {
+        return owner.getUniqueId();
     }
 }

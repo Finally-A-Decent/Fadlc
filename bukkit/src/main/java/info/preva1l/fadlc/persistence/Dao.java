@@ -18,15 +18,6 @@ public interface Dao<T extends DatabaseObject> {
     Optional<T> get(UUID id);
 
     /**
-     * Search for an object by a name or other string relation.
-     * @param search the query to search for.
-     * @return an optional containing the object if it exists, or an empty optional if it does not.
-     */
-    default Optional<T> get(String search) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * Get all objects of type T from the database.
      * @return a list of all objects of type T in the database.
      */
@@ -50,13 +41,4 @@ public interface Dao<T extends DatabaseObject> {
      * @param t the object to delete.
      */
     void delete(T t);
-
-    /**
-     * Delete o from t if t is a collection
-     * @param t the collection to delete from.
-     * @param o the object to delete
-     */
-    default void deleteSpecific(T t, Object o) {
-        throw new UnsupportedOperationException();
-    }
 }

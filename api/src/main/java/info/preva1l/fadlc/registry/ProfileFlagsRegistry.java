@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
-public class ProfileFlagsRegistry {
+public final class ProfileFlagsRegistry {
     public static final Supplier<ProfileFlag> EXPLOSION_DAMAGE = () -> get("explosion_damage");
     public static final Supplier<ProfileFlag> PVP = () -> get("pvp");
     public static final Supplier<ProfileFlag> ENTITY_GRIEFING = () -> get("entity_griefing");

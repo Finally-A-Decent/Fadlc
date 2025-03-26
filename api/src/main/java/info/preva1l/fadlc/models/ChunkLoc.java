@@ -26,4 +26,9 @@ public class ChunkLoc {
     public int hashCode() {
         return Objects.hash(x, z, world, server);
     }
+
+    @Override
+    public String toString() {
+        return "ChunkLoc{%s, %s, %s, %s}".formatted(x, z, world, server);
+    }
 }

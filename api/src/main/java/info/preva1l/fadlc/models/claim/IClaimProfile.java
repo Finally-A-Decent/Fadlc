@@ -5,15 +5,16 @@ import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
 import info.preva1l.fadlc.models.user.User;
 import info.preva1l.fadlc.persistence.DatabaseObject;
 import org.bukkit.Material;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
+@ApiStatus.NonExtendable
 public interface IClaimProfile extends DatabaseObject {
     IClaim getParent();
-
-    UUID getUniqueId();
 
     int getId();
 
@@ -33,7 +34,11 @@ public interface IClaimProfile extends DatabaseObject {
 
     void setBorder(String border);
 
-    IProfileGroup getPlayerGroup(User user);
+    @NotNull IProfileGroup getPlayerGroup(User user);
+
+    @Nullable IProfileGroup getPlayerGroup(User user, boolean useDefault);
+
+    void setPlayerGroup(User user, int groupId);
 
     List<ChunkLoc> getClaimedChunks();
 

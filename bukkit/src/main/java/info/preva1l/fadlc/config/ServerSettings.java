@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class ServerSettings {
     private static ServerSettings instance;
 
+    private static final String FILE_NAME = "server.yml";
     private static final String CONFIG_HEADER = """
             ##########################################
             #                  Fadlc                 #
@@ -33,14 +34,14 @@ public class ServerSettings {
     private String name = "my-server";
 
     public static void reload() {
-        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), "server.yml").toPath(), ServerSettings.class, PROPERTIES);
-        Logger.info("server.yml automatically reloaded from disk.");
+        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), ServerSettings.class, PROPERTIES);
+        Logger.info("Configuration '%s' automatically reloaded from disk.".formatted(FILE_NAME));
     }
 
     public static ServerSettings getInstance() {
         if (instance == null) {
-            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), "server.yml").toPath(), ServerSettings.class, PROPERTIES);
-            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "server.yml", ServerSettings::reload);
+            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), ServerSettings.class, PROPERTIES);
+            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), FILE_NAME, ServerSettings::reload);
         }
 
         return instance;

@@ -1,64 +1,96 @@
 package info.preva1l.fadlc.config.particles;
 
+import de.exlll.configlib.Configuration;
+import de.exlll.configlib.NameFormatters;
+import de.exlll.configlib.YamlConfigurationProperties;
+import de.exlll.configlib.YamlConfigurations;
 import info.preva1l.fadlc.Fadlc;
-import info.preva1l.fadlc.utils.config.BasicConfig;
-import lombok.experimental.UtilityClass;
-import org.bukkit.Color;
+import info.preva1l.fadlc.config.AutoReload;
+import info.preva1l.fadlc.utils.Logger;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-@UtilityClass
+@Getter
+@Configuration
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@SuppressWarnings("FieldMayBeFinal")
 public class Particles {
-    private Map<String, ParticleType> particles = new ConcurrentHashMap<>();
-    private final BasicConfig particlesFile = new BasicConfig(Fadlc.i(), "particles.yml");
+    private static Particles instance;
 
-    public void update() {
-        particles = getParticlesFromFile();
-    }
+    private static final String FILE_NAME = "particles.yml";
+    private static final String CONFIG_HEADER = """
+            ##########################################
+            #                  Fadlc                 #
+            #      Claim Borders Configuration       #
+            ##########################################
+            """;
 
-    public ParticleType getParticle(String name) {
-        ParticleType type = particles.get(name);
+    private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
+            .charset(StandardCharsets.UTF_8)
+            .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
+            .header(CONFIG_HEADER).build();
+
+    private Map<String, ParticleType> particles = Map.of(
+
+    );
+
+    public static ParticleType getParticle(String name) {
+        ParticleType type = Particles.i().particles.get(name);
         if (type == null) {
-            type = particles.values().stream().findFirst().orElse(new ParticleType("default",
-                    "Fix Your Config", List.of("issue"), List.of("errm"),
-                    Particle.VILLAGER_HAPPY, Color.RED, 1, 1));
+            type = Particles.i().particles.values().stream().findFirst()
+                    .orElse(new ParticleType(
+                            "Fix Your Config",
+                            new ParticleType.Description(
+                                    List.of("issue"), List.of("errm")
+                            ),
+                            "fadlc.particle.default",
+                            "VILLAGER_HAPPY",
+                            new ParticleType.ParticleColor(255, 0, 0),
+                            1,
+                            1
+                    ));
         }
         return type;
     }
 
-    public Map<String, ParticleType> getParticlesFromFile() {
-        Map<String, ParticleType> list = new HashMap<>();
-        for (String key : particlesFile.getConfiguration().getKeys(false)) {
-            Particle bukkit = Particle.valueOf(particlesFile.getString(key + ".value"));
-            List<String> unlockedDesc = particlesFile.getStringList(key + ".description.unlocked");
-            List<String> lockedDesc = particlesFile.getStringList(key + ".description.locked");
-            String display = particlesFile.getString(key + ".display");
-            Color color = Color.fromRGB(
-                    particlesFile.getInt(key + ".color.red"),
-                    particlesFile.getInt(key + ".color.green"),
-                    particlesFile.getInt(key + ".color.blue")
-            );
-            int size = particlesFile.getInt(key + ".size");
-            int amount = particlesFile.getInt(key + ".amount");
-
-            list.put(key, new ParticleType(key, display, lockedDesc, unlockedDesc, bukkit, color, size, amount));
-        }
-        return list;
-    }
-
-    public void showParticle(Player player, String border, Location location) {
+    public static void showParticle(Player player, String border, Location location) {
         ParticleType particleType = getParticle(border);
-        if (particleType.getBukkit() == Particle.REDSTONE) {
-            Particle.DustOptions options = new Particle.DustOptions(particleType.getColor(), particleType.getSize());
-            player.spawnParticle(particleType.getBukkit(), location, particleType.getAmount(), options);
+
+        Particle bukkit;
+        try {
+            bukkit = Particle.valueOf(particleType.value());
+        } catch (IllegalArgumentException e) {
+            bukkit = Particle.VILLAGER_HAPPY;
+        }
+
+        if (bukkit == Particle.REDSTONE) {
+            Particle.DustOptions options = new Particle.DustOptions(particleType.color().toBukkit(), particleType.size());
+            player.spawnParticle(bukkit, location, particleType.amount(), options);
             return;
         }
-        player.spawnParticle(particleType.getBukkit(), location, particleType.getAmount(), 0, 0, 0);
+        player.spawnParticle(bukkit, location, particleType.amount(), 0, 0, 0);
+    }
+
+    public static void reload() {
+        instance = YamlConfigurations.load(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Particles.class, PROPERTIES);
+        Logger.info("Configuration '%s' automatically reloaded from disk.".formatted(FILE_NAME));
+    }
+
+    public static Particles i() {
+        if (instance == null) {
+            instance = YamlConfigurations.update(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Particles.class, PROPERTIES);
+            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), FILE_NAME, Particles::reload);
+        }
+
+        return instance;
     }
 }

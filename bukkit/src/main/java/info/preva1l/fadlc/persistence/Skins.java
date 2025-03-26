@@ -1,4 +1,4 @@
-package info.preva1l.fadlc.utils;
+package info.preva1l.fadlc.persistence;
 
 import info.preva1l.fadlc.Fadlc;
 import lombok.experimental.UtilityClass;

@@ -10,10 +10,8 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class OfflineUser implements User {
-    @Expose
-    private final UUID uniqueId;
-    @Expose
-    private final String name;
+    @Expose private final UUID uniqueId;
+    @Expose private final String name;
 
     @Override
     public int hashCode() {

@@ -28,6 +28,19 @@ public abstract class PaginatedFastInv<C extends MenuConfig> extends FastInv<C> 
         super(config);
     }
 
+    protected void placeNavigationItems() {
+        scheme.bindItem('P', config.getLang().getPrevious().itemStack(), e -> {
+            config.getLang().getPrevious().getSound().play((Player) e.getWhoClicked());
+            openPrevious();
+        });
+
+
+        scheme.bindItem('N', config.getLang().getNext().itemStack(), e -> {
+            config.getLang().getNext().getSound().play((Player) e.getWhoClicked());
+            openNext();
+        });
+    }
+
     /**
      * Add an item to the paginated content with no click handler, the item will be added to the next available slot.
      *
@@ -150,6 +163,8 @@ public abstract class PaginatedFastInv<C extends MenuConfig> extends FastInv<C> 
     public void openNext() {
         openPage(this.page + 1);
     }
+
+    protected abstract void fillPaginationItems();
 
     /**
      * Replace the inventory items with the content of the specified page.

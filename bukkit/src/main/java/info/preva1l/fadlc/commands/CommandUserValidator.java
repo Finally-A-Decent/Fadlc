@@ -1,4 +1,4 @@
-package info.preva1l.fadlc.utils;
+package info.preva1l.fadlc.commands;
 
 import dev.triumphteam.cmd.bukkit.message.BukkitMessageKey;
 import dev.triumphteam.cmd.core.SubCommand;
