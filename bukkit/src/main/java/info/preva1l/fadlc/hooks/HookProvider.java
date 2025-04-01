@@ -7,7 +7,7 @@ public interface HookProvider {
     default void loadHooks() {
         Hooker.register(
                 getPlugin(),
-                "info.preva1l.fadlc.hooks"
+                "info.preva1l.fadlc.hooks.impl"
         );
 
         Hooker.requirement("config", value -> switch (value) {

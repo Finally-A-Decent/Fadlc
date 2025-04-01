@@ -3,6 +3,7 @@ package info.preva1l.fadlc.config.menus;
 import de.exlll.configlib.*;
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.AutoReload;
+import info.preva1l.fadlc.config.menus.lang.PaginatedLang;
 import info.preva1l.fadlc.config.misc.ConfigurableItem;
 import info.preva1l.fadlc.config.sounds.SoundType;
 import info.preva1l.fadlc.config.sounds.Sounds;
@@ -20,7 +21,7 @@ import java.util.List;
 @Configuration
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("FieldMayBeFinal")
-public class SettingsConfig implements MenuConfig {
+public class SettingsConfig implements MenuConfig<PaginatedLang> {
     private static SettingsConfig instance;
     private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
             .charset(StandardCharsets.UTF_8)
@@ -33,7 +34,7 @@ public class SettingsConfig implements MenuConfig {
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Lang {
+    public static class Lang implements PaginatedLang {
         private ConfigurableItem back = new ConfigurableItem(
                 Material.FEATHER, 0, "click",
                 "&3Back", List.of("&7\u2192 Click to go back")
@@ -56,7 +57,7 @@ public class SettingsConfig implements MenuConfig {
                         "&7\u2192 Click to toggle"
                 ), "&aEnbaled", "&cDisabled"
         );
-        private SettingButton settingCycle = new SettingButton(
+        private SettingCycle settingCycle = new SettingCycle(
                 "click", "%setting%",
                 List.of(
                         "%description%",
@@ -71,7 +72,7 @@ public class SettingsConfig implements MenuConfig {
                         "&7\u2192 Right Click to cycle down"
                 )
         );
-        private SettingButton settingInput = new SettingButton(
+        private SettingInput settingInput = new SettingInput(
                 "click", "%setting%",
                 List.of(
                         "%description%",
@@ -79,7 +80,9 @@ public class SettingsConfig implements MenuConfig {
                         "&7\u2023 &3Current: &f%current%",
                         "",
                         "&7\u2192 Click to edit"
-                )
+                ),
+                "&8Editing setting: %setting%",
+                "&cYour input was not valid for this setting!"
         );
 
         private Settings settings = new Settings();
@@ -102,22 +105,29 @@ public class SettingsConfig implements MenuConfig {
                             "&7Show claim border particles."
                     )
             );
-            private Setting claimEnterNotification = new Setting(
+            private Setting claimLeaveEnterNotification = new Setting(
                     Material.NAME_TAG,
-                    "&fClaim Enter Notification",
+                    "&fClaim Leave/Enter Notification",
                     List.of(
-                            "&7Get notified when entering a claim."
+                            "&7Get notified when entering or leaving a claim."
                     )
             );
         }
 
-        public record Setting(Material icon, String name, List<String> description) {
-        }
-        public record SettingButton(String sound, String name, List<String> description) {
+        public record Setting(Material icon, String name, List<String> description) {}
+
+        public record SettingInput(String sound, String name, List<String> description, String prompt, String invalid) {
             public SoundType getSound() {
                 return Sounds.getSound(sound);
             }
         }
+
+        public record SettingCycle(String sound, String name, List<String> description) {
+            public SoundType getSound() {
+                return Sounds.getSound(sound);
+            }
+        }
+
         public record SettingToggle(String sound, String name, List<String> description, String enabled, String disabled) {
             public SoundType getSound() {
                 return Sounds.getSound(sound);

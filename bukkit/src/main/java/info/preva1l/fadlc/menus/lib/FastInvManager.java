@@ -62,7 +62,7 @@ public final class FastInvManager {
 
         @EventHandler
         public void onInventoryClick(InventoryClickEvent e) {
-            if (e.getInventory().getHolder() instanceof FastInv inv && e.getClickedInventory() != null) {
+            if (e.getInventory().getHolder(false) instanceof FastInv<?> inv && e.getClickedInventory() != null) {
                 boolean wasCancelled = e.isCancelled();
                 e.setCancelled(true);
 
@@ -77,7 +77,7 @@ public final class FastInvManager {
 
         @EventHandler
         public void onInventoryDrag(InventoryDragEvent e) {
-            if (e.getInventory().getHolder() instanceof FastInv inv) {
+            if (e.getInventory().getHolder(false) instanceof FastInv<?> inv) {
                 boolean wasCancelled = e.isCancelled();
                 e.setCancelled(true);
 
@@ -92,14 +92,14 @@ public final class FastInvManager {
 
         @EventHandler
         public void onInventoryOpen(InventoryOpenEvent e) {
-            if (e.getInventory().getHolder() instanceof FastInv inv) {
+            if (e.getInventory().getHolder(false) instanceof FastInv<?> inv) {
                 inv.handleOpen(e);
             }
         }
 
         @EventHandler
         public void onInventoryClose(InventoryCloseEvent e) {
-            if (e.getInventory().getHolder() instanceof FastInv inv) {
+            if (e.getInventory().getHolder(false) instanceof FastInv<?> inv) {
                 if (inv.handleClose(e)) {
                     Bukkit.getScheduler().runTask(this.plugin, () -> inv.open((Player) e.getPlayer()));
                 }
@@ -109,8 +109,6 @@ public final class FastInvManager {
         @EventHandler
         public void onPluginDisable(PluginDisableEvent e) {
             if (e.getPlugin() == this.plugin) {
-                closeAll(e.getPlugin());
-
                 REGISTERED.set(false);
             }
         }

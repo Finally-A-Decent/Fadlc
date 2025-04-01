@@ -27,7 +27,7 @@ public class ClaimBorderJob extends Job {
     protected void execute() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             OnlineUser user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
-            if (!user.getSetting(UserSettingsRegistry.VIEW_BORDERS.get(), true)) continue;
+            if (!user.getSetting(UserSettingsRegistry.VIEW_BORDERS, true)) continue;
             Location playerLocation = player.getLocation();
             int playerY = playerLocation.getBlockY();
 
@@ -35,7 +35,7 @@ public class ClaimBorderJob extends Job {
             int playerChunkX = playerChunk.getX();
             int playerChunkZ = playerChunk.getZ();
 
-            int chunkRadius = Config.i().getOptimization().getParticleDistance() / 16 + 1;
+            int chunkRadius = Config.i().getOptimization().getParticleViewDistance() / 16 + 1;
 
             for (int chunkX = playerChunkX - chunkRadius; chunkX <= playerChunkX + chunkRadius; chunkX++) {
                 for (int chunkZ = playerChunkZ - chunkRadius; chunkZ <= playerChunkZ + chunkRadius; chunkZ++) {
@@ -89,6 +89,7 @@ public class ClaimBorderJob extends Job {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isConnectingChunk(Chunk chnk1, Chunk chnk2) {
         IClaimChunk chunk1 = ClaimManager.getInstance().getChunkAt(chnk1.getX(), chnk1.getZ(), chnk1.getWorld().getName());
         IClaimChunk chunk2 = ClaimManager.getInstance().getChunkAt(chnk2.getX(), chnk2.getZ(), chnk2.getWorld().getName());
@@ -105,7 +106,7 @@ public class ClaimBorderJob extends Job {
 
     private boolean isWithinViewDistance(Location playerLocation, int x, int z) {
         double distance = playerLocation.distance(new Location(playerLocation.getWorld(), x, playerLocation.getY(), z));
-        return distance <= Config.i().getOptimization().getParticleDistance();
+        return distance <= Config.i().getOptimization().getParticleViewDistance();
     }
 
     private void spawnParticleAt(Player player, Location loc, IClaimProfile profile) {

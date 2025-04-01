@@ -3,11 +3,7 @@ package info.preva1l.fadlc.menus.lib;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class InventoryScheme {
@@ -100,7 +96,7 @@ public class InventoryScheme {
      *
      * @param inv the FastInv instance to apply this scheme to
      */
-    public void apply(FastInv inv) {
+    public void apply(FastInv<?> inv) {
         List<Integer> paginationSlots = new ArrayList<>();
 
         for (int line = 0; line < this.masks.size(); line++) {
@@ -123,8 +119,8 @@ public class InventoryScheme {
             }
         }
 
-        if (inv instanceof PaginatedFastInv && !paginationSlots.isEmpty()) {
-            ((PaginatedFastInv) inv).setContentSlots(paginationSlots);
+        if (inv instanceof PaginatedFastInv<?> && !paginationSlots.isEmpty()) {
+            ((PaginatedFastInv<?>) inv).setContentSlots(paginationSlots);
         }
     }
 }

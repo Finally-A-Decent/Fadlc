@@ -60,15 +60,6 @@ public class Lang {
         }
     }
 
-    private Prevention prevention = new Prevention();
-
-    @Getter
-    @Configuration
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Prevention {
-        private String enter = "&cYou cannot enter &e%player%'s&c claim!";
-    }
-
     private Command command = new Command();
 
     @Getter
@@ -157,6 +148,7 @@ public class Lang {
             private String name = "Entity Griefing";
             private List<String> description = List.of("Whether or not to allow", "creepers, endermen,", "wither & enderdragon to break blocks.");
             private boolean enabledByDefault = false;
+            private String message = "&cYou cannot use frost walker in &e%player%'s&c claim!";
         }
 
         private ExplosionDamage explosionDamage = new ExplosionDamage();
@@ -170,15 +162,38 @@ public class Lang {
             private boolean enabledByDefault = false;
         }
 
-        private Pvp pvp = new Pvp();
+        private PvP pvp = new PvP();
 
         @Getter
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
-        public static class Pvp {
+        public static class PvP {
             private String name = "PvP";
             private List<String> description = List.of("Whether or not to allow", "players to fight each other.");
             private boolean enabledByDefault = false;
+            private String message = "&cYou cannot attack players in &e%player%'s&c claim!";
+        }
+
+        private HostileMobSpawn hostileMobSpawn = new HostileMobSpawn();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class HostileMobSpawn {
+            private String name = "Monster Spawning";
+            private List<String> description = List.of("Whether or not to allow", "hostile mobs to spawn.");
+            private boolean enabledByDefault = false;
+        }
+
+        private PassiveMobSpawn passiveMobSpawn = new PassiveMobSpawn();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class PassiveMobSpawn {
+            private String name = "Animal Spawning";
+            private List<String> description = List.of("Whether or not to allow", "passive mobs to spawn.");
+            private boolean enabledByDefault = true;
         }
     }
 
@@ -194,12 +209,10 @@ public class Lang {
     public static void sendMessage(CommandSender sender, String message) {
         if (message.isEmpty()) return;
         if (sender instanceof Player player) {
-            UserManager.getInstance().getUser(player.getUniqueId()).ifPresent(user -> {
-                user.sendMessage(message);
-            });
+            UserManager.getInstance().getUser(player.getUniqueId()).ifPresent(user -> user.sendMessage(message));
             return;
         }
-        sender.sendMessage(Text.modernMessage(i().getPrefix() + message));
+        sender.sendMessage(Text.text(i().getPrefix() + message));
     }
 
     public static void reload() {

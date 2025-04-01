@@ -26,18 +26,17 @@ public class Claim implements IClaim {
 
     @Override
     public void claimChunk(@NotNull IClaimChunk claimChunk) {
-        var result = new ChunkClaimEvent(owner.getOnlineUser().asPlayer(), this, claimChunk).callEvent();
+        var onlineUser = owner.getOnlineUser();
+        if (onlineUser == null) throw new IllegalStateException("Cannot claim a chunk when the claim owner is not online!");
+
+        var result = new ChunkClaimEvent(onlineUser.asPlayer(), this, claimChunk).callEvent();
         if (!result) return;
 
-        owner.getOnlineUser().setAvailableChunks(owner.getOnlineUser().getAvailableChunks() - 1);
+        onlineUser.setAvailableChunks(onlineUser.getAvailableChunks() - 1);
 
         claimChunk.setClaimedSince(System.currentTimeMillis());
-        claimChunk.setProfileId(owner.getOnlineUser().getClaimWithProfile().getId());
-        claimedChunks.put(claimChunk.getLoc(), owner.getOnlineUser().getClaimWithProfile().getId());
-    }
-
-    public void updateProfile(IClaimProfile profile) {
-        profiles.put(profile.getId(), profile);
+        claimChunk.setProfileId(onlineUser.getClaimWithProfile().getId());
+        claimedChunks.put(claimChunk.getLoc(), onlineUser.getClaimWithProfile().getId());
     }
 
     @Override

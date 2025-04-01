@@ -2,7 +2,9 @@ package info.preva1l.fadlc.config.misc;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import info.preva1l.fadlc.models.Tuple;
 import info.preva1l.fadlc.persistence.Skins;
+import info.preva1l.fadlc.utils.Text;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -21,10 +23,8 @@ import java.util.UUID;
 public class EasyItem {
     private final ItemStack base;
     private ItemMeta cachedMeta;
-    private String cachedName;
-    private List<String> cachedLore;
-    private Component cachedNameMiniMessage;
-    private List<Component> cachedLoreMiniMessage;
+    private Component cachedName;
+    private List<Component> cachedLore;
 
     private ItemMeta getMeta() {
         if (cachedMeta == null) {
@@ -33,33 +33,18 @@ public class EasyItem {
         return cachedMeta;
     }
 
-    private List<String> getCachedLore() {
+    private List<Component> getCachedLore() {
         if (cachedLore == null) {
-            cachedLore = Optional.ofNullable(getMeta().getLore()).map(ArrayList::new).orElse(new ArrayList<>());
+            cachedLore = Optional.ofNullable(getMeta().lore()).map(ArrayList::new).orElse(new ArrayList<>());
         }
         return cachedLore;
     }
 
-    private List<Component> getCachedLoreMiniMessage() {
-        if (cachedLoreMiniMessage == null) {
-            cachedLoreMiniMessage = Optional.ofNullable(getMeta().lore()).map(ArrayList::new).orElse(new ArrayList<>());
-        }
-        return cachedLoreMiniMessage;
-    }
-
-    private String getCachedName() {
+    private Component getCachedName() {
         if (cachedName == null) {
-            cachedName = getMeta().getDisplayName();
+            cachedName = getMeta().displayName();
         }
         return cachedName;
-    }
-
-    private Component getCachedNameMiniMessage() {
-        if (cachedNameMiniMessage == null) {
-            cachedNameMiniMessage = getMeta().displayName();
-        }
-
-        return cachedNameMiniMessage;
     }
 
     public EasyItem skullOwner(Player player) {
@@ -76,33 +61,23 @@ public class EasyItem {
         return this;
     }
 
-    public EasyItem replaceInName(String match, String replacement) {
-        cachedName = getCachedName().replace(match, replacement);
-        return this;
-    }
-
     public EasyItem replaceInName(@RegExp String match, Component replacement) {
-        cachedNameMiniMessage = getCachedNameMiniMessage()
-                .replaceText(builder -> builder.match(match).replacement(replacement));
+        cachedName = Text.replace(getCachedName(), Tuple.of(match, replacement));
         return this;
     }
 
-    public EasyItem replaceInLore(String match, String replacement) {
-        getCachedLore().replaceAll(s -> s.replace(match, replacement));
+    public EasyItem replaceInLore(@RegExp String match, String replacement) {
+        replaceInLore(match, Text.text(replacement));
         return this;
     }
 
     public EasyItem replaceInLore(@RegExp String match, Component replacement) {
-        List<Component> lore = new ArrayList<>();
-        for (Component line : getCachedLoreMiniMessage()) {
-            lore.add(line.replaceText(b -> b.match(match).replacement(replacement)));
-        }
-        cachedLoreMiniMessage = lore;
+        cachedLore = Text.replace(getCachedLore(), Tuple.of(match, replacement));
         return this;
     }
 
-    public EasyItem replaceAnywhere(String match, String replacement) {
-        return replaceInName(match, replacement).replaceInLore(match, replacement);
+    public EasyItem replaceAnywhere(@RegExp String match, String replacement) {
+        return replaceAnywhere(match, Text.text(replacement));
     }
 
     public EasyItem replaceAnywhere(@RegExp String match, Component replacement) {
@@ -112,11 +87,11 @@ public class EasyItem {
     public ItemStack getBase() {
         if (cachedMeta != null) {
             if (cachedLore != null) {
-                cachedMeta.setLore(cachedLore.isEmpty() ? null : new ArrayList<>(cachedLore));
+                cachedMeta.lore(cachedLore.isEmpty() ? null : new ArrayList<>(cachedLore));
                 cachedLore = null;
             }
             if (cachedName != null) {
-                cachedMeta.setDisplayName(cachedName);
+                cachedMeta.displayName(cachedName);
                 cachedName = null;
             }
             base.setItemMeta(cachedMeta);

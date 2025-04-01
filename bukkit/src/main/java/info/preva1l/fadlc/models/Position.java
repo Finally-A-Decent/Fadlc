@@ -1,9 +1,8 @@
-package info.preva1l.fadlc.models.user;
+package info.preva1l.fadlc.models;
 
 import info.preva1l.fadlc.config.ServerSettings;
 import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.IPosition;
+import info.preva1l.fadlc.models.user.User;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

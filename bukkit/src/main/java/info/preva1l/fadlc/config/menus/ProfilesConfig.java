@@ -3,6 +3,7 @@ package info.preva1l.fadlc.config.menus;
 import de.exlll.configlib.*;
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.AutoReload;
+import info.preva1l.fadlc.config.menus.lang.PaginatedLang;
 import info.preva1l.fadlc.config.misc.ConfigurableItem;
 import info.preva1l.fadlc.config.sounds.SoundType;
 import info.preva1l.fadlc.config.sounds.Sounds;
@@ -20,7 +21,7 @@ import java.util.List;
 @Configuration
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("FieldMayBeFinal")
-public class ProfilesConfig implements MenuConfig {
+public class ProfilesConfig implements MenuConfig<PaginatedLang> {
     private static ProfilesConfig instance;
     private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
             .charset(StandardCharsets.UTF_8)
@@ -33,7 +34,7 @@ public class ProfilesConfig implements MenuConfig {
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Lang {
+    public static class Lang implements PaginatedLang {
         private ConfigurableItem back = new ConfigurableItem(
                 Material.FEATHER, 0, "click",
                 "&3Back", List.of("&7\u2192 Click to go back")

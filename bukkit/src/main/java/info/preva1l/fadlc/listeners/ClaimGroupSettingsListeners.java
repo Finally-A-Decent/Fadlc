@@ -8,10 +8,11 @@ import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.IPosition;
+import info.preva1l.fadlc.models.Position;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.user.OnlineUser;
-import info.preva1l.fadlc.models.user.Position;
 import info.preva1l.fadlc.registry.GroupSettingsRegistry;
+import info.preva1l.fadlc.registry.UserSettingsRegistry;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,9 +36,8 @@ public class ClaimGroupSettingsListeners implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         IPosition loc = Position.fromBukkit(event.getBlock().getLocation());
         OnlineUser user = userManager.getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.PLACE_BLOCKS.get())) {
-            return;
-        }
+        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.PLACE_BLOCKS.get())) return;
+
         event.setCancelled(true);
         IClaim claimAtLocation = claimManager.getClaimAt(loc).orElseThrow();
 
@@ -49,9 +49,8 @@ public class ClaimGroupSettingsListeners implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         IPosition loc = Position.fromBukkit(event.getBlock().getLocation());
         OnlineUser user = userManager.getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.BREAK_BLOCKS.get())) {
-            return;
-        }
+        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.BREAK_BLOCKS.get())) return;
+
         event.setCancelled(true);
         IClaim claimAtLocation = claimManager.getClaimAt(loc).orElseThrow();
 
@@ -67,9 +66,8 @@ public class ClaimGroupSettingsListeners implements Listener {
                 || event.getAction().isRightClick()) return;
         IPosition loc = Position.fromBukkit(event.getClickedBlock().getLocation());
         OnlineUser user = userManager.getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.USE_DOORS.get())) {
-            return;
-        }
+        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.USE_DOORS.get())) return;
+
         event.setCancelled(true);
         IClaim claimAtLocation = claimManager.getClaimAt(loc).orElseThrow();
 
@@ -84,9 +82,8 @@ public class ClaimGroupSettingsListeners implements Listener {
                 || event.getAction().isRightClick()) return;
         IPosition loc = Position.fromBukkit(event.getClickedBlock().getLocation());
         OnlineUser user = userManager.getUser(event.getPlayer().getUniqueId()).orElseThrow();
-        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.USE_BUTTONS.get())) {
-            return;
-        }
+        if (plugin.isActionAllowed(user, loc, GroupSettingsRegistry.USE_BUTTONS.get())) return;
+
         event.setCancelled(true);
         IClaim claimAtLocation = claimManager.getClaimAt(loc).orElseThrow();
 
@@ -125,8 +122,10 @@ public class ClaimGroupSettingsListeners implements Listener {
                 return;
             }
 
-            Lang.sendMessage(e.getPlayer(), Lang.i().getClaimMessages().getEnter()
-                    .replace("%player%", toClaim.getOwner().getName()));
+            if (user.getSetting(UserSettingsRegistry.CLAIM_LEAVE_ENTER_NOTIFICATION, true)) {
+                Lang.sendMessage(e.getPlayer(), Lang.i().getClaimMessages().getEnter()
+                        .replace("%player%", toClaim.getOwner().getName()));
+            }
         }
 
         if (fromClaim != null) {
@@ -137,8 +136,10 @@ public class ClaimGroupSettingsListeners implements Listener {
             ClaimLeaveEvent leaveEvent = new ClaimLeaveEvent(e.getPlayer(), fromClaim, fromChunk);
             Bukkit.getPluginManager().callEvent(leaveEvent);
 
-            Lang.sendMessage(e.getPlayer(), Lang.i().getClaimMessages().getLeave()
-                    .replace("%player%", fromClaim.getOwner().getName()));
+            if (user.getSetting(UserSettingsRegistry.CLAIM_LEAVE_ENTER_NOTIFICATION, true)) {
+                Lang.sendMessage(e.getPlayer(), Lang.i().getClaimMessages().getLeave()
+                        .replace("%player%", fromClaim.getOwner().getName()));
+            }
         }
     }
 }

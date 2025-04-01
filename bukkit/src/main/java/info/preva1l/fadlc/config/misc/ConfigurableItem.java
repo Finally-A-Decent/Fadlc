@@ -13,8 +13,8 @@ public record ConfigurableItem(Material material, int modelData, String sound, S
     public ItemStack itemStack() {
         return new ItemBuilder(material())
                 .modelData(modelData())
-                .name(Text.modernMessage(name()))
-                .lore(Text.modernList(lore())).build();
+                .name(Text.text(name()))
+                .lore(Text.list(lore())).build();
     }
 
     public EasyItem easyItem() {

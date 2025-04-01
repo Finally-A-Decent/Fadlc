@@ -26,8 +26,7 @@ import java.util.stream.Stream;
 public final class Fadlc extends JavaPlugin implements RegistryProvider, CommandProvider, MetricsProvider,
         DataProvider, JobProvider, UpdatesProvider, HookProvider {
     private static final String PURCHASER = "%%__USERNAME__%%";
-    @SuppressWarnings("ConstantValue")
-    private static final boolean VALID_PURCHASE = !PURCHASER.contains("__USERNAME__");
+    public static final @SuppressWarnings("ConstantValue") boolean VALID_PURCHASE = !PURCHASER.contains("__USERNAME__");
 
     private static Fadlc instance;
 
@@ -61,10 +60,10 @@ public final class Fadlc extends JavaPlugin implements RegistryProvider, Command
 
         setupMetrics();
 
-        Bukkit.getConsoleSender().sendMessage(Text.modernMessage("&2&l------------------------------"));
-        Bukkit.getConsoleSender().sendMessage(Text.modernMessage("&a  Finally a Decent Land Claim"));
-        Bukkit.getConsoleSender().sendMessage(Text.modernMessage("&a   has successfully started!"));
-        Bukkit.getConsoleSender().sendMessage(Text.modernMessage("&2&l------------------------------"));
+        Bukkit.getConsoleSender().sendMessage(Text.text("&2&l------------------------------"));
+        Bukkit.getConsoleSender().sendMessage(Text.text("&a  Finally a Decent Land Claim"));
+        Bukkit.getConsoleSender().sendMessage(Text.text("&a   has successfully started!"));
+        Bukkit.getConsoleSender().sendMessage(Text.text("&2&l------------------------------"));
 
         Bukkit.getScheduler().runTaskLater(this, this::checkForUpdates, 60L);
     }

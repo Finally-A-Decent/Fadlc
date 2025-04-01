@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,11 @@ public class Config {
             .charset(StandardCharsets.UTF_8)
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
+
+    @Comment({"Toggle with /fadlc toggle",
+            "When the plugin is disabled, claim protection will still be in place,",
+            "but modifying & creating claims is disabled."})
+    private boolean enabled = true;
 
     private General general = new General();
 
@@ -94,6 +100,10 @@ public class Config {
             private String months = "%dm, %dd, %dh, %dm, %ds";
             private String years = "%dy, %dm, %dd, %dh, %dm, %ds";
         }
+
+        public DecimalFormat numbers() {
+            return new DecimalFormat(numbers);
+        }
     }
 
     private Profiles profileDefaults = new Profiles();
@@ -122,6 +132,8 @@ public class Config {
             private Map<String, Boolean> settings = Map.of(
                     GroupSettingsRegistry.BREAK_BLOCKS.get().getId(), false,
                     GroupSettingsRegistry.PLACE_BLOCKS.get().getId(), false,
+                    GroupSettingsRegistry.USE_DOORS.get().getId(), false,
+                    GroupSettingsRegistry.USE_BUTTONS.get().getId(), false,
                     GroupSettingsRegistry.ENTER.get().getId(), true
             );
         }
@@ -136,6 +148,8 @@ public class Config {
             private Map<String, Boolean> settings = Map.of(
                     GroupSettingsRegistry.BREAK_BLOCKS.get().getId(), false,
                     GroupSettingsRegistry.PLACE_BLOCKS.get().getId(), false,
+                    GroupSettingsRegistry.USE_DOORS.get().getId(), true,
+                    GroupSettingsRegistry.USE_BUTTONS.get().getId(), false,
                     GroupSettingsRegistry.ENTER.get().getId(), true
             );
         }
@@ -150,6 +164,8 @@ public class Config {
             private Map<String, Boolean> settings = Map.of(
                     GroupSettingsRegistry.BREAK_BLOCKS.get().getId(), true,
                     GroupSettingsRegistry.PLACE_BLOCKS.get().getId(), true,
+                    GroupSettingsRegistry.USE_DOORS.get().getId(), true,
+                    GroupSettingsRegistry.USE_BUTTONS.get().getId(), true,
                     GroupSettingsRegistry.ENTER.get().getId(), true
             );
         }
@@ -164,6 +180,8 @@ public class Config {
             private Map<String, Boolean> settings = Map.of(
                     GroupSettingsRegistry.BREAK_BLOCKS.get().getId(), true,
                     GroupSettingsRegistry.PLACE_BLOCKS.get().getId(), true,
+                    GroupSettingsRegistry.USE_DOORS.get().getId(), true,
+                    GroupSettingsRegistry.USE_BUTTONS.get().getId(), true,
                     GroupSettingsRegistry.ENTER.get().getId(), true
             );
         }
@@ -178,6 +196,8 @@ public class Config {
             private Map<String, Boolean> settings = Map.of(
                     GroupSettingsRegistry.BREAK_BLOCKS.get().getId(), true,
                     GroupSettingsRegistry.PLACE_BLOCKS.get().getId(), true,
+                    GroupSettingsRegistry.USE_DOORS.get().getId(), true,
+                    GroupSettingsRegistry.USE_BUTTONS.get().getId(), true,
                     GroupSettingsRegistry.ENTER.get().getId(), true
             );
         }

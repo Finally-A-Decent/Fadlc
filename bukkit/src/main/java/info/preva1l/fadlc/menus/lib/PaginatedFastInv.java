@@ -1,6 +1,7 @@
 package info.preva1l.fadlc.menus.lib;
 
 import info.preva1l.fadlc.config.menus.MenuConfig;
+import info.preva1l.fadlc.config.menus.lang.PaginatedLang;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +13,7 @@ import java.util.function.IntFunction;
 /**
  * Extension of {@link FastInv} to easily create paginated inventories.
  */
-public abstract class PaginatedFastInv<C extends MenuConfig> extends FastInv<C> implements PaginatedMenu {
+public abstract class PaginatedFastInv<C extends MenuConfig<? extends PaginatedLang>> extends FastInv<C> implements PaginatedMenu {
     private final List<ItemStack> contentItems = new ArrayList<>();
     private final List<Consumer<InventoryClickEvent>> contentHandlers = new ArrayList<>();
 

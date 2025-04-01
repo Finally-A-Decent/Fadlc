@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @ApiStatus.NonExtendable
 public interface IClaimProfile extends DatabaseObject {
@@ -29,6 +30,12 @@ public interface IClaimProfile extends DatabaseObject {
     Map<Integer, IProfileGroup> getGroups();
 
     Map<ProfileFlag, Boolean> getFlags();
+
+    boolean getFlag(ProfileFlag flag);
+
+    default boolean getFlag(Supplier<ProfileFlag> flag) {
+        return getFlag(flag.get());
+    }
 
     String getBorder();
 

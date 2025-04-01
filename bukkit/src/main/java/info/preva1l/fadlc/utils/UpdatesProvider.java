@@ -36,7 +36,7 @@ public interface UpdatesProvider {
         var checked = UpdatesHolder.self.completed;
         if (checked.isUpToDate()) return;
 
-        recipient.sendMessage(Text.modernMessage(
+        recipient.sendMessage(Text.text(
                 "&7[Fadlc]&f Fadlc is &#D63C3COUTDATED&f! &7Current: &#D63C3C%s &7Latest: &#18D53A%s %s"
                         .formatted(checked.getCurrentVersion(),
                                 checked.getLatestVersion(),
@@ -58,7 +58,8 @@ public interface UpdatesProvider {
         private static final UpdatesHolder self = new UpdatesHolder();
         private static final int POLYMART_ID = 6616;
 
-        private final Version pluginVersion = Version.fromString(Fadlc.i().getDescription().getVersion());
+        @SuppressWarnings("UnstableApiUsage")
+        private final Version pluginVersion = Version.fromString(Fadlc.i().getPluginMeta().getVersion());
         private UpdateChecker.Completed completed;
     }
 }

@@ -3,7 +3,7 @@ package info.preva1l.fadlc.registry;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.models.claim.settings.GroupSetting;
 import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
-import info.preva1l.fadlc.models.user.settings.impl.ClaimEnterNotificationSetting;
+import info.preva1l.fadlc.models.user.settings.impl.ClaimLeaveEnterNotificationSetting;
 import info.preva1l.fadlc.models.user.settings.impl.MessageLocationSetting;
 import info.preva1l.fadlc.models.user.settings.impl.ViewBordersSetting;
 
@@ -19,7 +19,7 @@ public interface RegistryProvider {
     private void loadUserSettingsRegistry() {
         UserSettingsRegistry.register(ViewBordersSetting.class, "view_borders");
         UserSettingsRegistry.register(MessageLocationSetting.class, "message_location");
-        UserSettingsRegistry.register(ClaimEnterNotificationSetting.class, "claim_enter_notification");
+        UserSettingsRegistry.register(ClaimLeaveEnterNotificationSetting.class, "claim_leave_enter_notification");
     }
 
     private void loadProfileFlagsRegistry() {
@@ -39,6 +39,16 @@ public interface RegistryProvider {
                         conf.getPvp().getName(),
                         conf.getPvp().getDescription(),
                         conf.getPvp().isEnabledByDefault()
+                ),
+                new ProfileFlag("passive_mob_spawn",
+                        conf.getPassiveMobSpawn().getName(),
+                        conf.getPassiveMobSpawn().getDescription(),
+                        conf.getPassiveMobSpawn().isEnabledByDefault()
+                ),
+                new ProfileFlag("hostile_mob_spawn",
+                        conf.getHostileMobSpawn().getName(),
+                        conf.getHostileMobSpawn().getDescription(),
+                        conf.getHostileMobSpawn().isEnabledByDefault()
                 )
         ).forEach(ProfileFlagsRegistry::register);
     }

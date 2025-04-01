@@ -20,8 +20,7 @@ public class OfflineUser implements User {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof OfflineUser || o instanceof BukkitUser)) return false;
-        User other = (User) o;
+        if (!(o instanceof OfflineUser other)) return false;
         return uniqueId.equals(other.getUniqueId());
     }
 

@@ -78,9 +78,9 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                 ? Lang.i().getWords().getNone()
                 : nextProfile.getName();
         scheme.bindItem('P', config.getLang().getSwitchProfile().easyItem()
-                .replaceAnywhere("%previous%", Text.modernMessage(previous))
-                .replaceAnywhere("%current%", Text.modernMessage(current))
-                .replaceAnywhere("%next%", Text.modernMessage(next)).getBase(), e -> {
+                .replaceAnywhere("%previous%", previous)
+                .replaceAnywhere("%current%", Text.text(current))
+                .replaceAnywhere("%next%", Text.text(next)).getBase(), e -> {
             config.getLang().getSwitchProfile().getSound().play(player);
 
             if (e.isLeftClick() && previousProfile != null) {
@@ -159,9 +159,9 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                         .easyItem().skullOwner(claim.getOwner().getUniqueId())
                         .replaceAnywhere("%chunk_x%", chunk.getChunkX() + "")
                         .replaceAnywhere("%chunk_z%", chunk.getChunkZ() + "")
-                        .replaceAnywhere("%claim_profile%", Text.modernMessage(claim.getProfiles().get(chunk.getProfileId()).getName()))
+                        .replaceAnywhere("%claim_profile%", Text.text(claim.getProfiles().get(chunk.getProfileId()).getName()))
                         .replaceAnywhere("%owner%", claim.getOwner().getName())
-                        .replaceAnywhere("%formatted_time%", Time.formatTimeSince(chunk.getClaimedSince())).getBase();
+                        .replaceInLore("%formatted_time%", Time.formatTimeSince(chunk.getClaimedSince())).getBase();
             }
             case WORLD_DISABLED -> config.getLang().getChunks().getWorldDisabled().easyItem()
                     .replaceAnywhere("%chunk_x%", chunk.getChunkX() + "")
@@ -174,21 +174,23 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                     .replaceAnywhere("%chunk_z%", chunk.getChunkZ() + "").getBase();
         };
 
-        if (index == 22) centerChunkItem(stack);
+        if (index == 22) return centerChunkItem(stack);
         return stack;
     }
 
-    private void centerChunkItem(ItemStack stack) {
-        stack.setType(config.getLang().getChunks().getCurrent().icon());
+    private ItemStack centerChunkItem(ItemStack stack) {
+        stack = stack.withType(config.getLang().getChunks().getCurrent().icon());
         ItemMeta meta = stack.getItemMeta();
-        if (meta == null) return;
+        if (meta == null) return stack;
 
-        List<Component> newLore = new ArrayList<>(Text.modernList(config.getLang().getChunks().getCurrent().loreHeader()));
-        if (meta.lore() != null) newLore.addAll(meta.lore());
+        List<Component> newLore = new ArrayList<>(Text.list(config.getLang().getChunks().getCurrent().loreHeader()));
+        List<Component> oldLore = meta.lore();
+        if (oldLore != null) newLore.addAll(oldLore);
 
         meta.lore(newLore);
         meta.setCustomModelData(config.getLang().getChunks().getCurrent().modelData());
         stack.setItemMeta(meta);
+        return stack;
     }
 
     public List<IClaimChunk> getNearByChunksRelativeToPlayerAndMenu() {

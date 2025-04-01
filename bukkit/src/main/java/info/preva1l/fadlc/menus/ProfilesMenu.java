@@ -34,21 +34,13 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
         placeNavigationItems();
     }
 
-    private void placeNavigationItems() {
+    @Override
+    protected void placeNavigationItems() {
+        super.placeNavigationItems();
         scheme.bindItem('B', config.getLang().getBack().itemStack(),
                 e -> {
                     config.getLang().getBack().getSound().play((Player) e.getWhoClicked());
                     new ClaimMenu((Player) e.getWhoClicked());
-                });
-        scheme.bindItem('P', config.getLang().getPrevious().itemStack(),
-                e -> {
-                    config.getLang().getPrevious().getSound().play((Player) e.getWhoClicked());
-                    openPrevious();
-                });
-        scheme.bindItem('N', config.getLang().getNext().itemStack(),
-                e -> {
-                    config.getLang().getNext().getSound().play((Player) e.getWhoClicked());
-                    openNext();
                 });
     }
 
@@ -80,9 +72,9 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
             }
 
             ItemBuilder itemStack = new ItemBuilder(profile.getIcon())
-                    .name(Text.modernMessage(
+                    .name(Text.text(
                             config.getLang().getProfile().name().replace("%profile%", profile.getName())))
-                    .lore(Text.modernList(lore));
+                    .lore(Text.list(lore));
 
             addContent(itemStack.build(), (e) -> {
                 config.getLang().getProfile().getSound().play((Player) e.getWhoClicked());

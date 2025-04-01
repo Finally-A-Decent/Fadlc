@@ -15,26 +15,17 @@ public final class GroupSettingsRegistry {
     public static final Supplier<GroupSetting> USE_BUTTONS = () -> get("use_buttons");
     public static final Supplier<GroupSetting> ENTER = () -> get("enter");
 
-    private static Map<String, GroupSetting> settings = new ConcurrentHashMap<>();
+    private static final Map<String, GroupSetting> settings = new ConcurrentHashMap<>();
 
     public static void register(GroupSetting value) {
-        if (settings == null) {
-            settings = new ConcurrentHashMap<>();
-        }
         settings.put(value.getId().toLowerCase(), value);
     }
 
     public static GroupSetting get(String name) {
-        if (settings == null) {
-            settings = new ConcurrentHashMap<>();
-        }
         return settings.get(name.toLowerCase());
     }
 
     public static Collection<GroupSetting> getAll() {
-        if (settings == null) {
-            settings = new ConcurrentHashMap<>();
-        }
         return settings.values();
     }
 

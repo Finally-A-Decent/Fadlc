@@ -26,10 +26,6 @@ dependencies {
     implementation(project(":api"))
     compileOnly("io.papermc.paper:paper-api:$minecraftVersion")
 
-    // Support mini message format
-    compileOnly("net.kyori:adventure-text-minimessage:$minimessageVersion")
-    compileOnly("net.kyori:adventure-api:$minimessageVersion")
-
     implementation("com.github.puregero:multilib:1.2.4") // Folia & Shreddedpaper support
     implementation("dev.triumphteam:triumph-cmd-bukkit:2.0.0-SNAPSHOT") // Command lib
     implementation("net.william278:desertwell:2.0.4") // Update Checker & About Page
@@ -37,6 +33,7 @@ dependencies {
     // Cross Server Support
     compileOnly("org.redisson:redisson:$redissonVersion")
     compileOnly("org.apache.commons:commons-pool2:$acp2Version")
+    compileOnly("net.kyori:adventure-text-serializer-gson:$minimessageVersion")
 
     compileOnly("me.clip:placeholderapi:2.11.6") // Placeholder support
 
@@ -54,8 +51,8 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7") // Economy Hook
 
     // Extra Hooks
-    annotationProcessor("info.preva1l.hooker:Hooker:1.0.1")
-    implementation("info.preva1l.hooker:Hooker:1.0.1")
+    annotationProcessor("info.preva1l.hooker:Hooker:1.0.2")
+    implementation("info.preva1l.hooker:Hooker:1.0.2")
     compileOnly("com.influxdb:influxdb-client-java:$influxdbVersion") // InfluxDB logging
 }
 

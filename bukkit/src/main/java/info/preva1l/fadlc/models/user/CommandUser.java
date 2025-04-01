@@ -17,7 +17,7 @@ public interface CommandUser {
     }
 
     default void sendMessage(@NotNull String message, boolean prefixed) {
-        getAudience().sendMessage(Text.modernMessage((prefixed ? Lang.i().getPrefix() : "") + message));
+        getAudience().sendMessage(Text.text((prefixed ? Lang.i().getPrefix() : "") + message));
     }
 
     default void sendMessage(@NotNull Component message) {

@@ -4,6 +4,7 @@ import info.preva1l.fadlc.models.user.OnlineUser;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,5 +42,10 @@ public final class UserManager implements IUserManager {
     @Override
     public Optional<OnlineUser> getUser(UUID uniqueId) {
         return Optional.ofNullable(usersCacheUuid.get(uniqueId));
+    }
+
+    @Override
+    public Optional<OnlineUser> getUser(Player player) {
+        return Optional.ofNullable(usersCacheUuid.get(player.getUniqueId()));
     }
 }

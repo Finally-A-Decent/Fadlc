@@ -12,12 +12,11 @@ import org.bukkit.World;
 import java.util.Optional;
 import java.util.UUID;
 
-@Getter
 @Setter
 @AllArgsConstructor
 public class ClaimChunk implements IClaimChunk {
-    private final UUID uniqueId;
-    private final ChunkLoc loc;
+    @Getter private final UUID uniqueId;
+    @Getter private final ChunkLoc loc;
     private long claimedSince; // -1 if not claimed
     private int profileId; // -1 if not claimed
 
@@ -28,6 +27,18 @@ public class ClaimChunk implements IClaimChunk {
                 -1,
                 -1
         );
+    }
+
+    @Override
+    public long getClaimedSince() {
+        if (claimedSince == -1) throw new IllegalStateException("Cannot get claimed since date when the chunk is not claimed!");
+        return claimedSince;
+    }
+
+    @Override
+    public int getProfileId() {
+        if (profileId == -1) throw new IllegalStateException("Cannot get the profile id when the chunk is not claimed!");
+        return profileId;
     }
 
     @Override

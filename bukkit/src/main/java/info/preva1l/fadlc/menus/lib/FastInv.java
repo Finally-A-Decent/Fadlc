@@ -4,6 +4,8 @@ import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.Menus;
 import info.preva1l.fadlc.config.menus.MenuConfig;
+import info.preva1l.fadlc.config.menus.lang.MenuLang;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -28,7 +30,7 @@ import java.util.stream.IntStream;
  * @author MrMicky
  * @version 3.1.1
  */
-public class FastInv<C extends MenuConfig> implements InventoryHolder {
+public class FastInv<C extends MenuConfig<? extends MenuLang>> implements InventoryHolder {
     protected final C config;
     protected final InventoryScheme scheme;
     private final Map<Integer, Consumer<InventoryClickEvent>> itemHandlers = new HashMap<>();
@@ -37,7 +39,7 @@ public class FastInv<C extends MenuConfig> implements InventoryHolder {
     private final List<Consumer<InventoryClickEvent>> clickHandlers = new ArrayList<>();
     private final List<Consumer<InventoryDragEvent>> dragHandlers = new ArrayList<>();
     private final Inventory inventory;
-    private Predicate<Player> closeFilter;
+    @Setter private Predicate<Player> closeFilter;
 
     public FastInv(C config) {
         this(owner -> Bukkit.createInventory(owner, config.getSize() * 9, config.title()), config);
@@ -237,16 +239,6 @@ public class FastInv<C extends MenuConfig> implements InventoryHolder {
     public void clearItems() {
         this.inventory.clear();
         this.itemHandlers.clear();
-    }
-
-    /**
-     * Add a close filter to prevent players from closing the inventory.
-     * To prevent a player from closing the inventory the predicate should return {@code true}.
-     *
-     * @param closeFilter The close filter
-     */
-    public void setCloseFilter(Predicate<Player> closeFilter) {
-        this.closeFilter = closeFilter;
     }
 
     /**

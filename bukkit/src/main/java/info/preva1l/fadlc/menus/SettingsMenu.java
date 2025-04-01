@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.CompletableFuture;
 
-
 public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements PaginatedMenu {
     private final OnlineUser user;
 
@@ -44,7 +43,7 @@ public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements Pa
     public void fillPaginationItems() {
         clearContent();
         for (Setting<?> setting : user.getSettings()) {
-            addContent(setting.getItem().getFirst(), e -> setting.getItem().getSecond().accept(e, user, this));
+            addContent(setting.getItem(), e -> setting.getHandler().accept(e, user, this));
         }
     }
 }

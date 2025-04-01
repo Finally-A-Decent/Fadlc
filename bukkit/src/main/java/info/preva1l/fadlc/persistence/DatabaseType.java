@@ -17,4 +17,8 @@ public enum DatabaseType {
     private final String id;
     private final String friendlyName;
     private String driverClass;
+
+    public boolean isLocal() {
+        return this == DatabaseType.SQLITE;
+    }
 }

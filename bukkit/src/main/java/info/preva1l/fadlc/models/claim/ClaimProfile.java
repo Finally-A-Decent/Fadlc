@@ -83,6 +83,11 @@ public class ClaimProfile implements IClaimProfile {
     }
 
     @Override
+    public boolean getFlag(ProfileFlag flag) {
+        return getFlags().getOrDefault(flag, flag.isEnabledByDefault());
+    }
+
+    @Override
     public void setBorder(String border) {
         this.border = border;
     }
