@@ -40,7 +40,53 @@ public class Particles {
             .header(CONFIG_HEADER).build();
 
     private Map<String, ParticleType> particles = Map.of(
-
+            "default", new ParticleType(
+                    "&7Default",
+                    new ParticleType.Description(
+                            List.of(
+                                    "&fThe default claim border.",
+                                    "",
+                                    "&7Click to select"),
+                            List.of(
+                                    "&fThe default claim border.",
+                                    "",
+                                    "&cYou have not unlocked this!"
+                            )
+                    ),
+                    "fadlc.particle.default",
+                    "VILLAGER_HAPPY",
+                    new ParticleType.ParticleColor(
+                            0,
+                            0,
+                            0
+                    ),
+                    1,
+                    1
+            ),
+            "purple_mist", new ParticleType(
+                    "&5Purple Mist",
+                    new ParticleType.Description(
+                            List.of(
+                                    "&fEnter the abyss.",
+                                    "",
+                                    "&7Click to select"),
+                            List.of(
+                                    "&fEnter the abyss.",
+                                    "",
+                                    "&cYou have not unlocked this!",
+                                    "&7You need the &eSkibidi &7rank!"
+                            )
+                    ),
+                    "fadlc.particle.purple_mist",
+                    "REDSTONE",
+                    new ParticleType.ParticleColor(
+                            184,
+                            50,
+                            172
+                    ),
+                    1,
+                    1
+            )
     );
 
     public static ParticleType getParticle(String name) {
