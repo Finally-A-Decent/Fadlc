@@ -5,6 +5,10 @@ import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.Menus;
 import info.preva1l.fadlc.config.menus.MenuConfig;
 import info.preva1l.fadlc.config.menus.lang.MenuLang;
+import info.preva1l.fadlc.managers.UserManager;
+import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.utils.Executors;
+import info.preva1l.fadlc.utils.Tasks;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -30,7 +35,7 @@ import java.util.stream.IntStream;
  * @author MrMicky
  * @version 3.1.1
  */
-public class FastInv<C extends MenuConfig<? extends MenuLang>> implements InventoryHolder {
+public abstract class FastInv<C extends MenuConfig<? extends MenuLang>> implements InventoryHolder {
     protected final C config;
     protected final InventoryScheme scheme;
     private final Map<Integer, Consumer<InventoryClickEvent>> itemHandlers = new HashMap<>();
@@ -41,11 +46,13 @@ public class FastInv<C extends MenuConfig<? extends MenuLang>> implements Invent
     private final Inventory inventory;
     @Setter private Predicate<Player> closeFilter;
 
-    public FastInv(C config) {
-        this(owner -> Bukkit.createInventory(owner, config.getSize() * 9, config.title()), config);
+    protected final OnlineUser user;
+
+    public FastInv(Player player, C config) {
+        this(owner -> Bukkit.createInventory(owner, config.getSize() * 9, config.title()), player, config);
     }
 
-    public FastInv(Function<InventoryHolder, Inventory> inventoryFunction, C config) {
+    public FastInv(Function<InventoryHolder, Inventory> inventoryFunction, Player player, C config) {
         Objects.requireNonNull(inventoryFunction, "inventoryFunction");
         Inventory inv = inventoryFunction.apply(this);
 
@@ -53,11 +60,19 @@ public class FastInv<C extends MenuConfig<? extends MenuLang>> implements Invent
             throw new IllegalStateException("Inventory holder is not FastInv, found: " + inv.getHolder());
         }
 
+        this.user = UserManager.getInstance().getUser(player).orElseThrow();
         this.inventory = inv;
         this.config = config;
         this.scheme = new InventoryScheme().masks(config.getLayout().toArray(new String[0])).bindItem('0', Menus.getInstance().getFiller().itemStack());
-        scheme.apply(this);
+
+        CompletableFuture.runAsync(this::buttons, Executors.VTHREAD).thenRun(() -> Tasks.runSync(player, this::open));
     }
+
+    protected void buttons() {
+        placeNavigationItems();
+    }
+
+    protected abstract void placeNavigationItems();
 
     /**
      * Called when the inventory is opened.

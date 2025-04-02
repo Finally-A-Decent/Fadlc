@@ -1,12 +1,16 @@
 package info.preva1l.fadlc.models;
 
 import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.ApiStatus;
 
 @Getter
+@Setter
+@ApiStatus.NonExtendable
 public class Location {
-    private final int x;
-    private final int y;
-    private final int z;
+    private int x;
+    private int y;
+    private int z;
 
     public Location(int x, int y, int z) {
         super();

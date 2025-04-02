@@ -7,11 +7,13 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.function.Consumer;
+
 /**
  * Easy creation of Bukkit Tasks
  */
 @UtilityClass
-public class TaskManager {
+public class Tasks {
     private final JavaPlugin plugin = Fadlc.i();
 
     /**
@@ -30,6 +32,15 @@ public class TaskManager {
      */
     public RegionizedTask runSync(Entity entity, Runnable runnable) {
         return MultiLib.getEntityScheduler(entity).run(plugin, t -> runnable.run(), null);
+    }
+
+    /**
+     * Run a synchronous task once. Helpful when needing to run some sync code in an async loop
+     *
+     * @param runnable The runnable, lambda supported yeh
+     */
+    public <E extends Entity> RegionizedTask runSync(E entity, Consumer<E> runnable) {
+        return MultiLib.getEntityScheduler(entity).run(plugin, t -> runnable.accept(entity), null);
     }
 
     /**

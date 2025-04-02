@@ -1,7 +1,6 @@
 package info.preva1l.fadlc.models;
 
 import info.preva1l.fadlc.persistence.DatabaseObject;
-import org.bukkit.World;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.NonExtendable
@@ -12,11 +11,9 @@ public interface IClaimChunk extends DatabaseObject {
 
     int getChunkZ();
 
-    String getWorldName();
+    String getWorld();
 
     String getServer();
-
-    World getWorld();
 
     ChunkStatus getStatus();
 

@@ -8,11 +8,7 @@ import info.preva1l.fadlc.models.Tuple;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.settings.values.EnumSettingValue;
 import info.preva1l.fadlc.utils.Text;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 /**
  * Created on 1/04/2025
@@ -26,8 +22,7 @@ public abstract class DefaultEnumSetting<T extends EnumSettingValue<T>> extends 
 
     @Override
     public ItemStack getItem() {
-        SettingsConfig config = SettingsConfig.i();
-        ItemBuilder itemStack = new ItemBuilder(getLang().icon());
+        SettingsConfig.Lang.SettingCycle config = SettingsConfig.i().getLang().getSettingCycle();
 
         String previous = getState().previous()
                 .map(EnumSettingValue::formattedName)
@@ -37,30 +32,19 @@ public abstract class DefaultEnumSetting<T extends EnumSettingValue<T>> extends 
                 .map(EnumSettingValue::formattedName)
                 .orElse(Lang.i().getWords().getNone());
 
-        List<Component> lore = Text.list(
-                config.getLang().getSettingCycle().description(),
-                Tuple.of("%current%", current),
-                Tuple.of("%next%", next),
-                Tuple.of("%previous%", previous)
-        );
-        int i = 0;
-        for (Component line : lore) {
-            if (((TextComponent) line).content().contains("%description%")) {
-                lore.addAll(++i, Text.list(getDescription()));
-                break;
-            }
-        }
-
-        itemStack.name(Text.text(
-                        SettingsConfig.i().getLang().getSettingCycle().name(),
-                        Tuple.of("%setting%", getName())))
-                .lore(lore);
-
-        return itemStack.build();
+        return new ItemBuilder(getLang().icon())
+                .name(Text.text(config.name(), Tuple.of("%setting%", getName())))
+                .lore(Text.list(config.description(),
+                        Tuple.of("%current%", current),
+                        Tuple.of("%next%", next),
+                        Tuple.of("%previous%", previous),
+                        Tuple.of("%description%", getDescription())
+                ))
+                .build();
     }
 
     @Override
     public void postChange(OnlineUser user, PaginatedMenu menu) {
-        SettingsConfig.i().getLang().getSettingCycle().getSound().play(user.asPlayer());
+        SettingsConfig.i().getLang().getSettingCycle().getSound().play(user);
     }
 }

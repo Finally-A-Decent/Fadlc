@@ -19,7 +19,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @UtilityClass
 public final class Text {
@@ -52,7 +51,7 @@ public final class Text {
 
     @SafeVarargs
     public List<Component> list(@Nullable Player player, List<String> list, Tuple<String, Object>... args) {
-        return list.stream().map(string -> Text.text(player, string, args)).collect(Collectors.toList());
+        return replace(list.stream().map(string -> Text.text(player, string)).toList(), args);
     }
 
     /**
@@ -119,15 +118,7 @@ public final class Text {
     public Component replace(Component message, Tuple<String, Object>... args) {
         if (args == null) return message;
         for (Tuple<String, Object> replacement : args) {
-            TextComponent text = (TextComponent) message;
-            if (!text.content().contains(replacement.getFirst())) continue;
-
-            if (replacement.getSecond() instanceof Component comp) {
-                message = message.replaceText(conf -> conf.match(replacement.getFirst()).replacement(comp));
-                continue;
-            }
-
-            message = message.replaceText(conf -> conf.match(replacement.getFirst()).replacement(String.valueOf(replacement.getSecond())));
+            message = finishReplacement(message, replacement);
         }
         return message;
     }
@@ -143,10 +134,34 @@ public final class Text {
     public List<Component> replace(List<Component> list, Tuple<String, Object>... args) {
         if (args == null) return list;
         List<Component> result = new ArrayList<>();
-        for (Component component : list) {
-            result.add(replace(component, args));
+
+        for (Component line : list) {
+            for (Tuple<String, Object> replacement : args) {
+                if (!((TextComponent) line).content().contains(replacement.getFirst())) continue;
+                if (replacement.getSecond() instanceof List<?> l) {
+                    for (Object additionalLine : l) {
+                        if (additionalLine instanceof Component comp) {
+                            result.add(comp);
+                        }
+                        result.add(text(String.valueOf(additionalLine)));
+                    }
+                    continue;
+                }
+                result.add(finishReplacement(line, replacement));
+            }
         }
         return result;
+    }
+
+    private Component finishReplacement(Component message, Tuple<String, Object> replacement) {
+        if (!((TextComponent) message).content().contains(replacement.getFirst())) return message;
+
+        if (replacement.getSecond() instanceof Component comp) {
+            message = message.replaceText(conf -> conf.match(replacement.getFirst()).replacement(comp));
+        }
+
+        message = message.replaceText(conf -> conf.match(replacement.getFirst()).replacement(String.valueOf(replacement.getSecond())));
+        return message;
     }
 
     /**

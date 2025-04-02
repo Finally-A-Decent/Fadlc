@@ -6,7 +6,7 @@ import info.preva1l.fadlc.persistence.DatabaseObject;
 import info.preva1l.fadlc.persistence.DatabaseType;
 import info.preva1l.fadlc.persistence.handlers.MySQLHandler;
 import info.preva1l.fadlc.persistence.handlers.SQLiteHandler;
-import info.preva1l.fadlc.utils.FadlcExecutors;
+import info.preva1l.fadlc.utils.Executors;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.Getter;
 
@@ -23,7 +23,7 @@ public final class PersistenceManager {
 
     private PersistenceManager() {
         Logger.info("Connecting to Database and populating caches...");
-        threadPool = FadlcExecutors.VIRTUAL_THREAD_PER_TASK;
+        threadPool = Executors.V_THREAD_P_TASK;
         databaseHandlers.put(DatabaseType.MARIADB, MySQLHandler.class);
         databaseHandlers.put(DatabaseType.MYSQL, MySQLHandler.class);
         databaseHandlers.put(DatabaseType.SQLITE, SQLiteHandler.class);

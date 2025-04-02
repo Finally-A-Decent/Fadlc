@@ -2,6 +2,7 @@ package info.preva1l.fadlc.models.user;
 
 import info.preva1l.fadlc.Fadlc;
 import info.preva1l.fadlc.config.Lang;
+import info.preva1l.fadlc.config.ServerSettings;
 import info.preva1l.fadlc.config.menus.SettingsConfig;
 import info.preva1l.fadlc.managers.ClaimManager;
 import info.preva1l.fadlc.models.IPosition;
@@ -14,6 +15,7 @@ import info.preva1l.fadlc.models.user.settings.values.MessageLocation;
 import info.preva1l.fadlc.registry.UserSettingsRegistry;
 import info.preva1l.fadlc.utils.Logger;
 import info.preva1l.fadlc.utils.Text;
+import io.papermc.paper.entity.TeleportFlag;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -22,7 +24,9 @@ import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
 import net.kyori.adventure.title.TitlePart;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -205,6 +210,25 @@ public final class BukkitUser extends OfflineUser implements OnlineUser, Command
     @Override
     public IPosition getPosition() {
         return Position.fromBukkit(getPlayer().getLocation());
+    }
+
+    @Override
+    public CompletableFuture<Boolean> teleport(IPosition position) {
+        if (position.getServer().equals(ServerSettings.getInstance().getName())) {
+            return asPlayer().teleportAsync(
+                    new Location(
+                            Bukkit.getWorld(position.getWorld()),
+                            position.getX(),
+                            position.getY(),
+                            position.getZ()),
+                    PlayerTeleportEvent.TeleportCause.PLUGIN,
+                    TeleportFlag.EntityState.RETAIN_OPEN_INVENTORY,
+                    TeleportFlag.Relative.YAW,
+                    TeleportFlag.Relative.PITCH
+            );
+        }
+        // todo: implement server transfer, probs have it in a pattern that allows people to override it, ex: huskhomes hook
+        return null;
     }
 
     @Override

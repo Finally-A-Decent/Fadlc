@@ -4,15 +4,13 @@ import com.github.puregero.multilib.regionized.RegionizedTask;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.config.menus.ClaimConfig;
 import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.managers.UserManager;
+import info.preva1l.fadlc.managers.IClaimManager;
 import info.preva1l.fadlc.menus.lib.FastInv;
 import info.preva1l.fadlc.models.ChunkStatus;
 import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
-import info.preva1l.fadlc.models.user.OnlineUser;
-import info.preva1l.fadlc.utils.FadlcExecutors;
-import info.preva1l.fadlc.utils.TaskManager;
+import info.preva1l.fadlc.utils.Tasks;
 import info.preva1l.fadlc.utils.Text;
 import info.preva1l.fadlc.utils.Time;
 import net.kyori.adventure.text.Component;
@@ -25,45 +23,41 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public class ClaimMenu extends FastInv<ClaimConfig> {
-    private final Player player;
-    private final OnlineUser user;
-
     private final RegionizedTask updateTask;
 
-    public ClaimMenu(Player player) {
-        super(ClaimConfig.i());
-        this.player = player;
-        this.user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
+    private final IClaimManager claimManager = ClaimManager.getInstance();
 
-        CompletableFuture.runAsync(this::buttons, FadlcExecutors.VIRTUAL_THREAD_PER_TASK)
-                .thenRun(() -> TaskManager.runSync(player, () -> this.open(player)));
-        this.updateTask = TaskManager.runAsyncRepeat(this::placeChunkItems, 20L);
+    public ClaimMenu(Player player) {
+        super(player, ClaimConfig.i());
+       
+        this.updateTask = Tasks.runAsyncRepeat(this::placeChunkItems, 20L);
         addCloseHandler((e) -> updateTask.cancel());
     }
 
-    private void buttons() {
+    @Override
+    protected void buttons() {
+        super.buttons();
         placeChunkItems();
-        placeNavigationButtons();
         placeProfileSwitchButton();
     }
 
-    private void placeNavigationButtons() {
+    @Override
+    protected void placeNavigationItems() {
         scheme.bindItem('B', config.getLang().getBuyChunks().easyItem()
                 .replaceAnywhere("%chunks%", user.getAvailableChunks() + "").getBase(), e -> {
-            config.getLang().getBuyChunks().getSound().play(player);
+            config.getLang().getBuyChunks().getSound().play(user);
         });
 
         scheme.bindItem('M', config.getLang().getManageProfiles().itemStack(), e -> {
-            config.getLang().getManageProfiles().getSound().play(player);
-            new ProfilesMenu(player);
+            config.getLang().getManageProfiles().getSound().play(user.asPlayer());
+            new ProfilesMenu(user.asPlayer());
         });
 
-        scheme.bindItem('S', config.getLang().getSettings().easyItem().skullOwner(player).getBase(), e -> {
-            config.getLang().getSettings().getSound().play(player);
-            new SettingsMenu(player);
+        scheme.bindItem('S', config.getLang().getSettings().easyItem().skullOwner(user.asPlayer()).getBase(), e -> {
+            config.getLang().getSettings().getSound().play(user);
+            new SettingsMenu(user.asPlayer());
         });
     }
 
@@ -81,7 +75,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                 .replaceAnywhere("%previous%", previous)
                 .replaceAnywhere("%current%", Text.text(current))
                 .replaceAnywhere("%next%", Text.text(next)).getBase(), e -> {
-            config.getLang().getSwitchProfile().getSound().play(player);
+            config.getLang().getSwitchProfile().getSound().play(user);
 
             if (e.isLeftClick() && previousProfile != null) {
                 user.setClaimWithProfile(previousProfile);
@@ -105,26 +99,26 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                 switch (chunkStatus) {
                     case CLAIMABLE -> claimChunk(chunk);
                     case CLAIMED -> {
-                        Optional<IClaim> claim = ClaimManager.getInstance().getClaimAt(chunk);
+                        Optional<IClaim> claim = claimManager.getClaimAt(chunk);
                         if (claim.orElseThrow().getOwner().equals(user)) {
-                            config.getLang().getChunks().getClaimedYou().getSound().play(player);
+                            config.getLang().getChunks().getClaimedYou().getSound().play(user);
                             return;
                         }
 
                         user.sendMessage("&cChunk is already claimed!");
-                        config.getLang().getChunks().getClaimedOther().getSound().play(player);
+                        config.getLang().getChunks().getClaimedOther().getSound().play(user);
                     }
                     case WORLD_DISABLED -> {
                         user.sendMessage("&cClaiming is disabled in this world!");
-                        config.getLang().getChunks().getWorldDisabled().getSound().play(player);
+                        config.getLang().getChunks().getWorldDisabled().getSound().play(user);
                     }
                     case BLOCKED_WORLD_GUARD -> {
                         user.sendMessage("&cThis chunk is protected by world guard!");
-                        config.getLang().getChunks().getRestrictedRegion().getSound().play(player);
+                        config.getLang().getChunks().getRestrictedRegion().getSound().play(user);
                     }
                     case BLOCKED_ZONE_BORDER -> {
                         user.sendMessage("&cYou cannot claim within 3 chunks of the zone border!");
-                        config.getLang().getChunks().getZoneBorder().getSound().play(player);
+                        config.getLang().getChunks().getZoneBorder().getSound().play(user);
                     }
                 }
             });
@@ -135,17 +129,17 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
     private void claimChunk(IClaimChunk chunk) {
         if (user.getAvailableChunks() <= 0) {
             user.sendMessage(Lang.i().getClaimMessages().getFail().getNotEnoughChunks());
-            config.getLang().getChunks().getUnclaimedExpensive().getSound().play(player);
+            config.getLang().getChunks().getUnclaimedExpensive().getSound().play(user);
             return;
         }
 
         user.getClaim().claimChunk(chunk);
         placeChunkItems();
-        config.getLang().getChunks().getUnclaimed().getSound().play(player);
+        config.getLang().getChunks().getUnclaimed().getSound().play(user);
     }
 
     private ItemStack getChunkItem(int index, IClaimChunk chunk) {
-        IClaim claim = ClaimManager.getInstance().getClaimAt(chunk).orElse(null);
+        IClaim claim = claimManager.getClaimAt(chunk).orElse(null);
         boolean isOwned = claim != null && claim.getOwner().equals(user);
 
         ItemStack stack = switch (chunk.getStatus()) {
@@ -195,16 +189,16 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
 
     public List<IClaimChunk> getNearByChunksRelativeToPlayerAndMenu() {
         List<IClaimChunk> chunkList = new LinkedList<>();
-        BlockFace facing = player.getFacing();
-        int playerChunkX = player.getLocation().getChunk().getX();
-        int playerChunkZ = player.getLocation().getChunk().getZ();
+        BlockFace facing = user.asPlayer().getFacing();
+        int playerChunkX = user.getPosition().toChunkLoc().getX();
+        int playerChunkZ = user.getPosition().toChunkLoc().getX();
+        String worldName = user.getPosition().getWorld();
         switch (facing) {
             case NORTH:
                 for (int z = -2; z <= 2; z++) { // normal z-order for SOUTH
                     for (int x = -4; x <= 4; x++) {
                         int chunkX = playerChunkX + x, chunkZ = playerChunkZ + z;
-                        chunkList.add(ClaimManager.getInstance()
-                                .getChunkAt(chunkX, chunkZ, player.getWorld().getName()));
+                        chunkList.add(claimManager.getChunkAt(chunkX, chunkZ, worldName));
                     }
                 }
                 break;
@@ -212,8 +206,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                 for (int x = 2; x >= -2; x--) {
                     for (int z = -4; z <= 4; z++) {
                         int chunkX = playerChunkX + x, chunkZ = playerChunkZ + z;
-                        chunkList.add(ClaimManager.getInstance()
-                                .getChunkAt(chunkX, chunkZ, player.getWorld().getName()));
+                        chunkList.add(claimManager.getChunkAt(chunkX, chunkZ, worldName));
                     }
                 }
                 break;
@@ -221,8 +214,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                 for (int z = 2; z >= -2; z--) { // reverse z-order for NORTH
                     for (int x = 4; x >= -4; x--) {
                         int chunkX = playerChunkX + x, chunkZ = playerChunkZ + z;
-                        chunkList.add(ClaimManager.getInstance()
-                                .getChunkAt(chunkX, chunkZ, player.getWorld().getName()));
+                        chunkList.add(claimManager.getChunkAt(chunkX, chunkZ, worldName));
                     }
                 }
                 break;
@@ -230,8 +222,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
                 for (int x = -2; x <= 2; x++) {
                     for (int z = 4; z >= -4; z--) {
                         int chunkX = playerChunkX + x, chunkZ = playerChunkZ + z;
-                        chunkList.add(ClaimManager.getInstance()
-                                .getChunkAt(chunkX, chunkZ, player.getWorld().getName()));
+                        chunkList.add(claimManager.getChunkAt(chunkX, chunkZ, worldName));
                     }
                 }
                 break;

@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -30,14 +31,6 @@ public interface OnlineUser extends User {
 
     IClaim getClaim();
 
-    void sendMessage(String message);
-
-    void sendMessage(String message, boolean prefixed);
-
-    void sendMessage(@NotNull Component component);
-
-    void sendMessage(@NotNull Component component, boolean prefixed);
-
     List<Setting<?>> getSettings();
 
     default <T> T getSetting(Supplier<Class<Setting<T>>> clazz, T def) {
@@ -54,9 +47,19 @@ public interface OnlineUser extends User {
 
     <T> T updateSetting(T object, Class<? extends Setting<T>> clazz);
 
+    void sendMessage(String message);
+
+    void sendMessage(String message, boolean prefixed);
+
+    void sendMessage(@NotNull Component component);
+
+    void sendMessage(@NotNull Component component, boolean prefixed);
+
     <T> void requestInput(InputSetting<T> type, Consumer<T> callback);
 
     <T> void requestInput(String prompt, @Nullable String placeholder, Class<T> type, Consumer<T> callback);
 
     IPosition getPosition();
+
+    CompletableFuture<Boolean> teleport(IPosition position);
 }

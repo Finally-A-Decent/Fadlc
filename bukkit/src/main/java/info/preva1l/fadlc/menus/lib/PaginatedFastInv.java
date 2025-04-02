@@ -25,10 +25,17 @@ public abstract class PaginatedFastInv<C extends MenuConfig<? extends PaginatedL
     private int previousPageSlot = -1;
     private int nextPageSlot = -1;
 
-    public PaginatedFastInv(C config) {
-        super(config);
+    public PaginatedFastInv(Player player, C config) {
+        super(player, config);
     }
 
+    @Override
+    protected void buttons() {
+        super.buttons();
+        fillPaginationItems();
+    }
+
+    @Override
     protected void placeNavigationItems() {
         scheme.bindItem('P', config.getLang().getPrevious().itemStack(), e -> {
             config.getLang().getPrevious().getSound().play((Player) e.getWhoClicked());

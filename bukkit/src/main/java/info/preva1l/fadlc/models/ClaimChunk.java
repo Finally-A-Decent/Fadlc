@@ -6,8 +6,6 @@ import info.preva1l.fadlc.models.claim.IClaim;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -52,18 +50,13 @@ public class ClaimChunk implements IClaimChunk {
     }
 
     @Override
-    public String getWorldName() {
+    public String getWorld() {
         return loc.getWorld();
     }
 
     @Override
     public String getServer() {
         return loc.getServer();
-    }
-
-    @Override
-    public World getWorld() {
-        return Bukkit.getWorld(loc.getWorld());
     }
 
     @Override
