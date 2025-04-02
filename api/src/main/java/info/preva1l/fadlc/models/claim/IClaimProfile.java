@@ -37,6 +37,12 @@ public interface IClaimProfile extends DatabaseObject {
         return getFlag(flag.get());
     }
 
+    boolean setFlag(ProfileFlag flag, boolean value);
+
+    default boolean setFlag(Supplier<ProfileFlag> flag, boolean value) {
+        return setFlag(flag.get(), value);
+    }
+
     String getBorder();
 
     void setBorder(String border);

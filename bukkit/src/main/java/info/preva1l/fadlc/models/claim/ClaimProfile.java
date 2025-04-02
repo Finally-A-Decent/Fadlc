@@ -88,6 +88,12 @@ public class ClaimProfile implements IClaimProfile {
     }
 
     @Override
+    public boolean setFlag(ProfileFlag flag, boolean value) {
+        getFlags().put(flag, value);
+        return value;
+    }
+
+    @Override
     public void setBorder(String border) {
         this.border = border;
     }

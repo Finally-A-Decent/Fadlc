@@ -1,8 +1,10 @@
-package info.preva1l.fadlc.persistence;
+package info.preva1l.fadlc.persistence.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import info.preva1l.fadlc.models.user.settings.Setting;
+import info.preva1l.fadlc.persistence.DatabaseObject;
+import info.preva1l.fadlc.persistence.daos.Dao;
 import info.preva1l.fadlc.persistence.gson.SettingSerializer;
 
 import java.util.List;

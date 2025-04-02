@@ -1,4 +1,6 @@
-package info.preva1l.fadlc.persistence;
+package info.preva1l.fadlc.persistence.daos;
+
+import info.preva1l.fadlc.persistence.DatabaseObject;
 
 import java.util.List;
 import java.util.Optional;

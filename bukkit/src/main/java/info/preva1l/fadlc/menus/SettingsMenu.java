@@ -9,8 +9,6 @@ import org.bukkit.entity.Player;
 public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements PaginatedMenu {
     public SettingsMenu(Player player) {
         super(player, SettingsConfig.i());
-
-        scheme.bindPagination('X');
     }
 
     @Override

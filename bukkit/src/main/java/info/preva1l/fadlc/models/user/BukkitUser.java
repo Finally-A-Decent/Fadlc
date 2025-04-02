@@ -126,8 +126,9 @@ public final class BukkitUser extends OfflineUser implements OnlineUser, Command
 
     @Override
     public <T> T getSetting(Class<? extends Setting<T>> clazz, T def) {
-        T t = getSettingAccess(clazz, def).getState();
-        if (t == null) t = updateSetting(def, clazz);
+        Setting<T> access = getSettingAccess(clazz, def);
+        T t = access.getState();
+        if (t == null) access.setState(def);
         return t;
     }
 
@@ -152,9 +153,8 @@ public final class BukkitUser extends OfflineUser implements OnlineUser, Command
     }
 
     @Override
-    public <T> T updateSetting(T object, Class<? extends Setting<T>> clazz) {
+    public <T> void updateSetting(T object, Class<? extends Setting<T>> clazz) {
         getSettingAccess(clazz, object).setState(object);
-        return object;
     }
 
     @Override
@@ -169,6 +169,11 @@ public final class BukkitUser extends OfflineUser implements OnlineUser, Command
                     callback.accept(input);
                 }
         );
+    }
+
+    @Override
+    public void requestInput(String prompt, @Nullable String placeholder, Consumer<@Nullable String> callback) {
+        requestInput(prompt, placeholder, String.class, callback);
     }
 
     @Override

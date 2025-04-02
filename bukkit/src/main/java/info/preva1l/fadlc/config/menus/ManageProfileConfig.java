@@ -18,12 +18,17 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * Created on 2/04/2025
+ *
+ * @author Preva1l
+ */
 @Getter
 @Configuration
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("FieldMayBeFinal")
-public class ProfilesConfig implements MenuConfig<PaginatedLang> {
-    private static ProfilesConfig instance;
+public class ManageProfileConfig implements MenuConfig<PaginatedLang> {
+    private static ManageProfileConfig instance;
     private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
             .charset(StandardCharsets.UTF_8)
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE).build();
@@ -36,10 +41,6 @@ public class ProfilesConfig implements MenuConfig<PaginatedLang> {
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Lang implements PaginatedLang {
-        private ConfigurableItem back = new ConfigurableItem(
-                Material.FEATHER, 0, "click",
-                "&3Back", List.of("&7\u2192 Click to go back")
-        );
         private ConfigurableItem previous = new ConfigurableItem(
                 Material.ARROW, 0, "click",
                 "&3Previous Page", List.of("&7\u2192 Click to go to the previous page")
@@ -48,31 +49,31 @@ public class ProfilesConfig implements MenuConfig<PaginatedLang> {
                 Material.ARROW, 0, "click",
                 "&3Next Page", List.of("&7\u2192 Click to go to the next page")
         );
-        private Profile profile = new Profile(
-                "click", "%profile%",
+
+        private Flag flag = new Flag(
+                "click", "click", "%flag%",
                 List.of(
-                        "&3Info:",
-                        "&7\u2023 &3Members: &f%members%",
-                        "&7\u2023 &3Border: &f%border%",
-                        "&7\u2023 &3Chunks: &f%chunks%",
-                        "&3Flags:",
-                        "%flags%",
+                        "%info%",
                         "",
-                        "&7\u2192 Click to manage this profile"
-                ), new FlagInfo("&aEnabled", "&cDisabled", "&7\u2023 &3%flag%: &r%status%")
+                        "&7\u2192 Click to go to toggle"
+                ),
+                new FlagInfo("&aEnabled", "&cDisabled", "&7\u2023 &3Status: &r%status%")
         );
-        public record Profile(String sound, String name, List<String> lore, FlagInfo flag) {
-            public SoundType getSound() {
-                return Sounds.getSound(sound);
+
+        public record Flag(String enableSound, String disableSound, String name, List<String> lore, FlagInfo info) {
+            public SoundType getEnableSound() {
+                return Sounds.getSound(enableSound);
+            }
+            public SoundType getDisableSound() {
+                return Sounds.getSound(disableSound);
             }
         }
-
     }
 
     @Comment({
             "0 = Filler",
             "B = Back",
-            "X = Profiles (Paginated)",
+            "X = Profile Flags (Paginated)",
             "N = Next Page",
             "P = Previous Page",
     })
@@ -85,21 +86,21 @@ public class ProfilesConfig implements MenuConfig<PaginatedLang> {
 
     public static void reload() {
         instance = YamlConfigurations.load(
-                new File(Fadlc.i().getDataFolder(), "menus/profiles.yml").toPath(),
-                ProfilesConfig.class,
+                new File(Fadlc.i().getDataFolder(), "menus/profile-flags.yml").toPath(),
+                ManageProfileConfig.class,
                 PROPERTIES
         );
         Logger.info("profiles.yml automatically reloaded from disk.");
     }
 
-    public static ProfilesConfig i() {
+    public static ManageProfileConfig i() {
         if (instance == null) {
             instance = YamlConfigurations.update(
                     new File(Fadlc.i().getDataFolder(), "menus/profiles.yml").toPath(),
-                    ProfilesConfig.class,
+                    ManageProfileConfig.class,
                     PROPERTIES
             );
-            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "menus/profiles.yml", ProfilesConfig::reload);
+            AutoReload.watch(Fadlc.i().getDataFolder().toPath(), "menus/profiles.yml", ManageProfileConfig::reload);
         }
         return instance;
     }

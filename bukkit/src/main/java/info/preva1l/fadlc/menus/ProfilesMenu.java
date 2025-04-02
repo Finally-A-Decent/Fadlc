@@ -15,23 +15,16 @@ import java.util.List;
 public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
     public ProfilesMenu(Player player) {
         super(player, ProfilesConfig.i());
-
-        scheme.bindPagination('X');
-    }
-
-    @Override
-    protected void buttons() {
-        fillPaginationItems();
-        placeNavigationItems();
     }
 
     @Override
     protected void placeNavigationItems() {
         super.placeNavigationItems();
+
         scheme.bindItem('B', config.getLang().getBack().itemStack(),
                 e -> {
-                    config.getLang().getBack().getSound().play((Player) e.getWhoClicked());
-                    new ClaimMenu((Player) e.getWhoClicked());
+                    config.getLang().getBack().getSound().play(user);
+                    new ClaimMenu(user.asPlayer());
                 });
     }
 
@@ -60,7 +53,8 @@ public class ProfilesMenu extends PaginatedFastInv<ProfilesConfig> {
                     .lore(lore);
 
             addContent(itemStack.build(), (e) -> {
-                conf.getSound().play((Player) e.getWhoClicked());
+                conf.getSound().play(user);
+                new ManageProfileMenu(user.asPlayer(), profile);
             });
         }
     }

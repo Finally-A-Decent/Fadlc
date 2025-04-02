@@ -26,26 +26,31 @@ public interface RegistryProvider {
         Lang.ProfileFlags conf = Lang.i().getProfileFlags();
         Stream.of(
                 new ProfileFlag("explosion_damage",
+                        conf.getExplosionDamage().getIcon(),
                         conf.getExplosionDamage().getName(),
                         conf.getExplosionDamage().getDescription(),
                         conf.getExplosionDamage().isEnabledByDefault()
                 ),
                 new ProfileFlag("entity_griefing",
+                        conf.getEntityGriefing().getIcon(),
                         conf.getEntityGriefing().getName(),
                         conf.getEntityGriefing().getDescription(),
                         conf.getEntityGriefing().isEnabledByDefault()
                 ),
                 new ProfileFlag("pvp",
+                        conf.getPvp().getIcon(),
                         conf.getPvp().getName(),
                         conf.getPvp().getDescription(),
                         conf.getPvp().isEnabledByDefault()
                 ),
                 new ProfileFlag("passive_mob_spawn",
+                        conf.getPassiveMobSpawn().getIcon(),
                         conf.getPassiveMobSpawn().getName(),
                         conf.getPassiveMobSpawn().getDescription(),
                         conf.getPassiveMobSpawn().isEnabledByDefault()
                 ),
                 new ProfileFlag("hostile_mob_spawn",
+                        conf.getHostileMobSpawn().getIcon(),
                         conf.getHostileMobSpawn().getName(),
                         conf.getHostileMobSpawn().getDescription(),
                         conf.getHostileMobSpawn().isEnabledByDefault()

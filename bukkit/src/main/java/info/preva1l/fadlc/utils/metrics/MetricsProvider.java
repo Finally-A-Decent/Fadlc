@@ -15,22 +15,21 @@ public interface MetricsProvider {
     default void setupMetrics() {
         Logger.info("Starting Metrics...");
 
-        MetricsHolder.self.metrics = new Metrics(getPlugin(), METRICS_ID);
-        MetricsHolder.self.metrics.addCustomChart(new Metrics.SingleLineChart("claims_created", () -> ClaimManager.getInstance().getAllClaims().size()));
-        MetricsHolder.self.metrics.addCustomChart(new Metrics.SingleLineChart("chunks_claimed", () -> ClaimManager.getInstance().getClaimedChunks().size()));
+        MetricsHolder.metrics = new Metrics(getPlugin(), METRICS_ID);
+        MetricsHolder.metrics.addCustomChart(new Metrics.SingleLineChart("claims_created", () -> ClaimManager.getInstance().getAllClaims().size()));
+        MetricsHolder.metrics.addCustomChart(new Metrics.SingleLineChart("chunks_claimed", () -> ClaimManager.getInstance().getClaimedChunks().size()));
 
         Logger.info("Metrics Logging Started!");
     }
 
     default void shutdownMetrics() {
-        if (MetricsHolder.self.metrics != null) {
-            MetricsHolder.self.metrics.shutdown();
+        if (MetricsHolder.metrics != null) {
+            MetricsHolder.metrics.shutdown();
         }
     }
 
     class MetricsHolder {
-        private static final MetricsHolder self = new MetricsHolder();
-        private Metrics metrics;
+        private static Metrics metrics;
     }
 
     Fadlc getPlugin();

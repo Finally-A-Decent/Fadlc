@@ -11,8 +11,8 @@ import info.preva1l.fadlc.models.claim.Claim;
 import info.preva1l.fadlc.models.claim.IClaim;
 import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.models.user.OfflineUser;
-import info.preva1l.fadlc.persistence.Dao;
-import info.preva1l.fadlc.persistence.DataHandler;
+import info.preva1l.fadlc.persistence.daos.Dao;
+import info.preva1l.fadlc.persistence.handlers.DataHandler;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
 

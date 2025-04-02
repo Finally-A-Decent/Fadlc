@@ -27,6 +27,8 @@ public abstract class PaginatedFastInv<C extends MenuConfig<? extends PaginatedL
 
     public PaginatedFastInv(Player player, C config) {
         super(player, config);
+
+        scheme.bindPagination('X');
     }
 
     @Override

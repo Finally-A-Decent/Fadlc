@@ -5,8 +5,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadlc.models.user.BukkitUser;
 import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.models.user.settings.Setting;
-import info.preva1l.fadlc.persistence.Dao;
-import info.preva1l.fadlc.persistence.DataHandler;
+import info.preva1l.fadlc.persistence.daos.Dao;
+import info.preva1l.fadlc.persistence.handlers.DataHandler;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
 

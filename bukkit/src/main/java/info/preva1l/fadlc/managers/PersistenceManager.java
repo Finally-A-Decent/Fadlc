@@ -1,9 +1,9 @@
 package info.preva1l.fadlc.managers;
 
 import info.preva1l.fadlc.config.Config;
-import info.preva1l.fadlc.persistence.DataHandler;
 import info.preva1l.fadlc.persistence.DatabaseObject;
 import info.preva1l.fadlc.persistence.DatabaseType;
+import info.preva1l.fadlc.persistence.handlers.DataHandler;
 import info.preva1l.fadlc.persistence.handlers.MySQLHandler;
 import info.preva1l.fadlc.persistence.handlers.SQLiteHandler;
 import info.preva1l.fadlc.utils.Executors;

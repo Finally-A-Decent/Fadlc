@@ -11,6 +11,7 @@ import info.preva1l.fadlc.utils.Text;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -145,8 +146,9 @@ public class Lang {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class EntityGriefing {
+            private Material icon = Material.CREEPER_SPAWN_EGG;
             private String name = "Entity Griefing";
-            private List<String> description = List.of("Whether or not to allow", "creepers, endermen,", "wither & enderdragon to break blocks.");
+            private List<String> description = List.of("&7Whether or not to allow", "&7creepers, endermen, etc...", "&7to break blocks.");
             private boolean enabledByDefault = false;
             private String message = "&cYou cannot use frost walker in &e%player%'s&c claim!";
         }
@@ -157,8 +159,9 @@ public class Lang {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class ExplosionDamage {
+            private Material icon = Material.TNT;
             private String name = "Explosion Damage";
-            private List<String> description = List.of("Whether or not to allow", "TNT, End Crystals & TNT Minecarts", "to break blocks.");
+            private List<String> description = List.of("&7Whether or not to allow", "&7TNT, End Crystals & TNT Minecarts", "&7to break blocks.");
             private boolean enabledByDefault = false;
         }
 
@@ -168,8 +171,9 @@ public class Lang {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class PvP {
+            private Material icon = Material.DIAMOND_SWORD;
             private String name = "PvP";
-            private List<String> description = List.of("Whether or not to allow", "players to fight each other.");
+            private List<String> description = List.of("&7Whether or not to allow", "&7players to fight each other.");
             private boolean enabledByDefault = false;
             private String message = "&cYou cannot attack players in &e%player%'s&c claim!";
         }
@@ -180,8 +184,9 @@ public class Lang {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class HostileMobSpawn {
+            private Material icon = Material.ZOMBIE_SPAWN_EGG;
             private String name = "Monster Spawning";
-            private List<String> description = List.of("Whether or not to allow", "hostile mobs to spawn.");
+            private List<String> description = List.of("&7Whether or not to allow", "&7hostile mobs to spawn.");
             private boolean enabledByDefault = false;
         }
 
@@ -191,8 +196,9 @@ public class Lang {
         @Configuration
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class PassiveMobSpawn {
+            private Material icon = Material.PIG_SPAWN_EGG;
             private String name = "Animal Spawning";
-            private List<String> description = List.of("Whether or not to allow", "passive mobs to spawn.");
+            private List<String> description = List.of("&7Whether or not to allow", "&7passive mobs to spawn.");
             private boolean enabledByDefault = true;
         }
     }

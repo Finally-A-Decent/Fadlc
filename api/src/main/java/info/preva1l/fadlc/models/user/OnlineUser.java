@@ -41,11 +41,11 @@ public interface OnlineUser extends User {
 
     <T> Optional<Setting<T>> getSettingAccess(Class<? extends Setting<T>> clazz);
 
-    default <T> T updateSetting(T object, Supplier<Class<Setting<T>>> clazz) {
-        return updateSetting(object, clazz.get());
+    default <T> void updateSetting(T object, Supplier<Class<Setting<T>>> clazz) {
+        updateSetting(object, clazz.get());
     }
 
-    <T> T updateSetting(T object, Class<? extends Setting<T>> clazz);
+    <T> void updateSetting(T object, Class<? extends Setting<T>> clazz);
 
     void sendMessage(String message);
 
@@ -55,9 +55,11 @@ public interface OnlineUser extends User {
 
     void sendMessage(@NotNull Component component, boolean prefixed);
 
-    <T> void requestInput(InputSetting<T> type, Consumer<T> callback);
+    <T> void requestInput(InputSetting<T> type, Consumer<@Nullable T> callback);
 
-    <T> void requestInput(String prompt, @Nullable String placeholder, Class<T> type, Consumer<T> callback);
+    void requestInput(String prompt, @Nullable String placeholder, Consumer<@Nullable String> callback);
+
+    <T> void requestInput(String prompt, @Nullable String placeholder, Class<T> type, Consumer<@Nullable T> callback);
 
     IPosition getPosition();
 
