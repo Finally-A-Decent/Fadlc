@@ -3,7 +3,7 @@ package info.preva1l.fadlc.menus;
 import info.preva1l.fadlc.config.menus.SettingsConfig;
 import info.preva1l.fadlc.menus.lib.PaginatedFastInv;
 import info.preva1l.fadlc.menus.lib.PaginatedMenu;
-import info.preva1l.fadlc.models.user.settings.Setting;
+import info.preva1l.fadlc.user.settings.Setting;
 import org.bukkit.entity.Player;
 
 public class SettingsMenu extends PaginatedFastInv<SettingsConfig> implements PaginatedMenu {

@@ -5,9 +5,9 @@ import dev.triumphteam.cmd.core.SubCommand;
 import dev.triumphteam.cmd.core.message.MessageRegistry;
 import dev.triumphteam.cmd.core.message.context.DefaultMessageContext;
 import dev.triumphteam.cmd.core.sender.SenderValidator;
-import info.preva1l.fadlc.models.user.BukkitUser;
-import info.preva1l.fadlc.models.user.CommandUser;
-import info.preva1l.fadlc.models.user.ConsoleUser;
+import info.preva1l.fadlc.user.BukkitUser;
+import info.preva1l.fadlc.user.CommandUser;
+import info.preva1l.fadlc.user.ConsoleUser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;

@@ -1,8 +1,8 @@
 package info.preva1l.fadlc.persistence.daos.mysql;
 
 import com.zaxxer.hikari.HikariDataSource;
-import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.persistence.daos.sql.SQLUserDao;
+import info.preva1l.fadlc.user.OnlineUser;
 import info.preva1l.fadlc.utils.Logger;
 
 import java.sql.Connection;

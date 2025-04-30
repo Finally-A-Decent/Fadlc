@@ -6,9 +6,9 @@ import dev.triumphteam.cmd.core.annotation.Command;
 import dev.triumphteam.cmd.core.annotation.Default;
 import dev.triumphteam.cmd.core.annotation.SubCommand;
 import info.preva1l.fadlc.menus.ClaimMenu;
-import info.preva1l.fadlc.menus.ProfilesMenu;
 import info.preva1l.fadlc.menus.SettingsMenu;
-import info.preva1l.fadlc.models.user.CommandUser;
+import info.preva1l.fadlc.menus.profile.ProfilesMenu;
+import info.preva1l.fadlc.user.CommandUser;
 
 @Command(value = "claim", alias = {"c", "claims"})
 @Permission("fadlc.claim")

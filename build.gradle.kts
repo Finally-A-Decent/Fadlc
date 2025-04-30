@@ -84,13 +84,6 @@ subprojects {
         useJUnitPlatform()
     }
 
-    tasks.withType<ProcessResources> {
-        val tokenMap = variables()
-        filesMatching(listOf("**/*.json", "**/plugin.yml")) {
-            expand(tokenMap)
-        }
-    }
-
     publishing {
         repositories.configureFinallyADecentRepository(dev = devMode)
 
@@ -133,22 +126,6 @@ fun RepositoryHandler.configureFinallyADecentRepository(dev: Boolean = false) {
         name = "FinallyADecent"
     }
 }
-
-fun variables(): Map<String, String> =
-        mapOf(
-                "version" to rootProject.version.toString(),
-                "minecraftVersion" to rootProject.property("minecraftVersion") as String,
-                "configlibVersion" to rootProject.property("configlibVersion") as String,
-                "acp2Version" to rootProject.property("acp2Version") as String,
-                "redissonVersion" to rootProject.property("redissonVersion") as String,
-                "hikariVersion" to rootProject.property("hikariVersion") as String,
-                "sqliteVersion" to rootProject.property("sqliteVersion") as String,
-                "mysqlVersion" to rootProject.property("mysqlVersion") as String,
-                "mariadbVersion" to rootProject.property("mariadbVersion") as String,
-                "mongoVersion" to rootProject.property("mongoVersion") as String,
-                "influxdbVersion" to rootProject.property("influxdbVersion") as String,
-                "minimessageVersion" to rootProject.property("minimessageVersion") as String
-        )
 
 project.delete("$rootDir/target")
 logger.lifecycle("Building Fadlc $version")

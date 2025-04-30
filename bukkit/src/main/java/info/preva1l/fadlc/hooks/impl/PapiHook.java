@@ -1,14 +1,14 @@
 package info.preva1l.fadlc.hooks.impl;
 
 import info.preva1l.fadlc.Fadlc;
+import info.preva1l.fadlc.claim.IClaimProfile;
+import info.preva1l.fadlc.claim.IProfileGroup;
+import info.preva1l.fadlc.claim.services.ClaimService;
 import info.preva1l.fadlc.config.Config;
 import info.preva1l.fadlc.config.Lang;
-import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.ChunkStatus;
-import info.preva1l.fadlc.models.claim.IClaimProfile;
-import info.preva1l.fadlc.models.claim.IProfileGroup;
-import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.user.OnlineUser;
+import info.preva1l.fadlc.user.UserService;
 import info.preva1l.hooker.annotation.Hook;
 import info.preva1l.hooker.annotation.OnStart;
 import info.preva1l.hooker.annotation.Require;
@@ -46,7 +46,7 @@ public class PapiHook {
     private static class Expansion extends PlaceholderExpansion {
         public final String identifier = "fadlc";
         public final String author = "Preva1l";
-        public final String version = Fadlc.i().getVersion().toString();
+        public final String version = Fadlc.i().getCurrentVersion().toString();
         @Override public boolean persist() { return true; }
 
         @Override
@@ -66,18 +66,18 @@ public class PapiHook {
             online("current_chunk_status", user -> user.getPosition().getChunk().getStatus().name());
 
             online("current_claim", user ->
-                    ClaimManager.getInstance().getClaimAt(user.getPosition())
+                    ClaimService.getInstance().getClaimAt(user.getPosition())
                             .flatMap(claim -> claim.getProfile(user.getPosition().getChunk()))
                             .map(IClaimProfile::getName)
                             .orElse(Lang.i().getWords().getNone())
             );
             online("current_claim_owner", user ->
-                    ClaimManager.getInstance().getClaimAt(user.getPosition())
+                    ClaimService.getInstance().getClaimAt(user.getPosition())
                             .map(claim -> claim.getOwner().getName())
                             .orElse(Lang.i().getWords().getNone())
             );
             online("current_claim_group", user ->
-                    ClaimManager.getInstance().getClaimAt(user.getPosition())
+                    ClaimService.getInstance().getClaimAt(user.getPosition())
                             .flatMap(claim -> claim.getProfile(user.getPosition().getChunk()))
                             .map(profile -> profile.getPlayerGroup(user))
                             .map(IProfileGroup::getName)
@@ -97,7 +97,7 @@ public class PapiHook {
 
         public static String parse(@Nullable OfflinePlayer player, @NotNull String params) {
             if (player instanceof Player online) {
-                var user = UserManager.getInstance().getUser(online).orElseThrow();
+                var user = UserService.getInstance().getUser(online).orElseThrow();
                 if (get(params).type.isAssignableFrom(OnlineUser.class)) return String.valueOf(get(params).parse(user));
             }
             return String.valueOf(get(params).parse(player));

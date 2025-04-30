@@ -1,9 +1,9 @@
 package info.preva1l.fadlc.persistence.daos.sql;
 
 import com.zaxxer.hikari.HikariDataSource;
+import info.preva1l.fadlc.claim.ClaimChunk;
+import info.preva1l.fadlc.claim.IClaimChunk;
 import info.preva1l.fadlc.models.ChunkLoc;
-import info.preva1l.fadlc.models.ClaimChunk;
-import info.preva1l.fadlc.models.IClaimChunk;
 import info.preva1l.fadlc.persistence.daos.Dao;
 import info.preva1l.fadlc.persistence.handlers.DataHandler;
 import info.preva1l.fadlc.utils.Logger;

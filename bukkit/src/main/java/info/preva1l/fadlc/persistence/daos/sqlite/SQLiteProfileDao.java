@@ -1,7 +1,7 @@
 package info.preva1l.fadlc.persistence.daos.sqlite;
 
 import com.zaxxer.hikari.HikariDataSource;
-import info.preva1l.fadlc.models.claim.IClaimProfile;
+import info.preva1l.fadlc.claim.IClaimProfile;
 import info.preva1l.fadlc.persistence.daos.sql.SQLProfileDao;
 import info.preva1l.fadlc.utils.Logger;
 

@@ -2,15 +2,15 @@ package info.preva1l.fadlc.persistence.handlers;
 
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadlc.Fadlc;
+import info.preva1l.fadlc.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaimChunk;
+import info.preva1l.fadlc.claim.IClaimProfile;
+import info.preva1l.fadlc.claim.IProfileGroup;
 import info.preva1l.fadlc.config.Config;
-import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.claim.IClaim;
-import info.preva1l.fadlc.models.claim.IClaimProfile;
-import info.preva1l.fadlc.models.claim.IProfileGroup;
-import info.preva1l.fadlc.models.user.OnlineUser;
 import info.preva1l.fadlc.persistence.DatabaseObject;
 import info.preva1l.fadlc.persistence.daos.Dao;
 import info.preva1l.fadlc.persistence.daos.mysql.*;
+import info.preva1l.fadlc.user.OnlineUser;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

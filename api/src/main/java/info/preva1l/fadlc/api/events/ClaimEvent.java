@@ -1,6 +1,6 @@
 package info.preva1l.fadlc.api.events;
 
-import info.preva1l.fadlc.models.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaim;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerEvent;

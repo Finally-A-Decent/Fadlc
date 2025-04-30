@@ -2,7 +2,6 @@ package info.preva1l.fadlc.config.misc;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import info.preva1l.fadlc.models.Tuple;
 import info.preva1l.fadlc.persistence.Skins;
 import info.preva1l.fadlc.utils.Text;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +61,7 @@ public class EasyItem {
     }
 
     public EasyItem replaceInName(@RegExp String match, Component replacement) {
-        cachedName = Text.replace(getCachedName(), Tuple.of(match, replacement));
+        cachedName = getCachedName().replaceText(b -> b.match(match).replacement(replacement));
         return this;
     }
 
@@ -72,7 +71,9 @@ public class EasyItem {
     }
 
     public EasyItem replaceInLore(@RegExp String match, Component replacement) {
-        cachedLore = Text.replace(getCachedLore(), Tuple.of(match, replacement));
+        cachedLore = getCachedLore().stream()
+                .map(line -> line.replaceText(b -> b.match(match).replacement(replacement)))
+                .toList();
         return this;
     }
 

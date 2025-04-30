@@ -2,14 +2,14 @@ package info.preva1l.fadlc.persistence.daos.sql;
 
 import com.google.gson.reflect.TypeToken;
 import com.zaxxer.hikari.HikariDataSource;
-import info.preva1l.fadlc.managers.PersistenceManager;
-import info.preva1l.fadlc.models.claim.ClaimProfile;
-import info.preva1l.fadlc.models.claim.IClaimProfile;
-import info.preva1l.fadlc.models.claim.IProfileGroup;
-import info.preva1l.fadlc.models.claim.settings.ProfileFlag;
+import info.preva1l.fadlc.claim.ClaimProfile;
+import info.preva1l.fadlc.claim.IClaimProfile;
+import info.preva1l.fadlc.claim.IProfileGroup;
+import info.preva1l.fadlc.claim.registry.ProfileFlagsRegistry;
+import info.preva1l.fadlc.claim.settings.ProfileFlag;
+import info.preva1l.fadlc.persistence.DataService;
 import info.preva1l.fadlc.persistence.daos.Dao;
 import info.preva1l.fadlc.persistence.handlers.DataHandler;
-import info.preva1l.fadlc.registry.ProfileFlagsRegistry;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
@@ -115,7 +115,7 @@ public abstract class SQLProfileDao implements Dao<IClaimProfile> {
         Map<Integer, IProfileGroup> list = new HashMap<>();
         for (String uuidStr : groups) {
             UUID uuid = UUID.fromString(uuidStr);
-            PersistenceManager.getInstance().get(IProfileGroup.class, uuid).join().ifPresent(group -> {
+            DataService.getInstance().get(IProfileGroup.class, uuid).join().ifPresent(group -> {
                 list.put(group.getId(), group);
             });
         }

@@ -1,5 +1,6 @@
 package info.preva1l.fadlc.models;
 
+import info.preva1l.fadlc.claim.IClaimChunk;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.ApiStatus;

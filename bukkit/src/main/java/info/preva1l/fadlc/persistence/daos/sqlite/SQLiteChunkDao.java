@@ -1,7 +1,7 @@
 package info.preva1l.fadlc.persistence.daos.sqlite;
 
 import com.zaxxer.hikari.HikariDataSource;
-import info.preva1l.fadlc.models.IClaimChunk;
+import info.preva1l.fadlc.claim.IClaimChunk;
 import info.preva1l.fadlc.persistence.daos.sql.SQLChunkDao;
 import info.preva1l.fadlc.utils.Logger;
 

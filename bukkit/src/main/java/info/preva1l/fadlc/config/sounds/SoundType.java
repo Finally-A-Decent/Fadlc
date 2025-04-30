@@ -1,6 +1,6 @@
 package info.preva1l.fadlc.config.sounds;
 
-import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.user.OnlineUser;
 import org.bukkit.entity.Player;
 
 public record SoundType(

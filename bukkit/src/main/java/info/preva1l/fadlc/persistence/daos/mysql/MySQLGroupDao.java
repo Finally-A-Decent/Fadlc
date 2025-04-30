@@ -1,7 +1,7 @@
 package info.preva1l.fadlc.persistence.daos.mysql;
 
 import com.zaxxer.hikari.HikariDataSource;
-import info.preva1l.fadlc.models.claim.IProfileGroup;
+import info.preva1l.fadlc.claim.IProfileGroup;
 import info.preva1l.fadlc.persistence.daos.sql.SQLGroupDao;
 import info.preva1l.fadlc.utils.Logger;
 

@@ -1,8 +1,8 @@
 package info.preva1l.fadlc.migrators;
 
-import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaimChunk;
+import info.preva1l.fadlc.claim.services.ClaimService;
 import info.preva1l.fadlc.utils.Logger;
 
 import java.util.Map;
@@ -22,13 +22,13 @@ public abstract class Migrator {
             AtomicInteger scannedChunks = new AtomicInteger();
 
             migrateClaims().values().forEach(claim -> {
-                    ClaimManager.getInstance().updateClaim(claim);
+                    ClaimService.getInstance().updateClaim(claim);
                     migratedClaims.getAndIncrement();
             });
             Logger.info("Migrated %s Claims".formatted(migratedClaims.get()));
 
             scanChunks().values().forEach(chunk -> {
-                ClaimManager.getInstance().cacheChunk(chunk);
+                ClaimService.getInstance().cacheChunk(chunk);
                 scannedChunks.getAndIncrement();
             });
             Logger.info("Scanned & Migrated %s Chunks".formatted(scannedChunks.get()));

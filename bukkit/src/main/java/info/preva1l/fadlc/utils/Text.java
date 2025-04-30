@@ -1,7 +1,7 @@
 package info.preva1l.fadlc.utils;
 
 import info.preva1l.fadlc.hooks.impl.PapiHook;
-import info.preva1l.fadlc.models.Tuple;
+import info.preva1l.fadlc.models.Replacer;
 import info.preva1l.hooker.Hooker;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
@@ -11,47 +11,44 @@ import net.kyori.adventure.text.minimessage.internal.parser.Token;
 import net.kyori.adventure.text.minimessage.internal.parser.TokenParser;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @UtilityClass
-public final class Text {
+public class Text {
     private final MiniMessage miniMessage = MiniMessage.builder().build();
     private final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacyAmpersand();
     private final Pattern REMOVE_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-fA-F])|&[0-9a-fA-Fk-orK-OR]");
 
-    @SafeVarargs
-    public Component text(@NotNull String message, Tuple<String, Object>... args) {
+    public Component text(@NotNull String message, Replacer... args) {
         return text(null, message, args);
     }
 
-    @SafeVarargs
-    public Component text(@NotNull List<String> message, Tuple<String, Object>... args) {
+    public Component text(@NotNull List<String> message, Replacer... args) {
         return text(String.join("\n", message), args);
     }
 
-    @SafeVarargs
-    public Component text(@Nullable Player player, @NotNull String message, Tuple<String, Object>... args) {
+    public Component text(@Nullable Player player, @NotNull String message, Replacer... args) {
         Optional<PapiHook> hook = Hooker.getHook(PapiHook.class);
         if (hook.isPresent()) message = hook.get().format(player, message);
-        return replace(miniMessage.deserialize(unescape(miniMessage.serialize(
-                legacySerializer.deserialize("<!italic>" + message)))), args);
+        return miniMessage.deserialize(unescape(miniMessage.serialize(
+                legacySerializer.deserialize("<!italic>" + replace(message, args)))));
     }
 
-    @SafeVarargs
-    public List<Component> list(@NotNull List<String> list, Tuple<String, Object>... args) {
+    public List<Component> list(@NotNull List<String> list, Replacer... args) {
         return list(null, list, args);
     }
 
-    @SafeVarargs
-    public List<Component> list(@Nullable Player player, List<String> list, Tuple<String, Object>... args) {
-        return replace(list.stream().map(string -> Text.text(player, string)).toList(), args);
+    public List<Component> list(@Nullable Player player, List<String> list, Replacer... args) {
+        return list.stream().map(string -> Text.text(player, string, args)).collect(Collectors.toList());
     }
 
     /**
@@ -92,76 +89,29 @@ public final class Text {
      * @param args    placeholders to replace
      * @return formatted string
      */
-    @SafeVarargs
-    public String replace(String message, Tuple<String, Object>... args) {
-        for (Tuple<String, Object> replacement : args) {
-            if (!message.contains(replacement.getFirst())) continue;
+    public String replace(String message, Replacer... args) {
+        for (Replacer replacement : args) {
+            if (!message.contains(replacement.first())) continue;
 
-            if (replacement.getSecond() instanceof Component comp) {
-                message = message.replace(replacement.getFirst(), legacySerializer.serialize(comp));
+            if (replacement.second() instanceof Component comp) {
+                message = message.replace(replacement.first(), legacySerializer.serialize(comp));
                 continue;
             }
 
-            message = message.replace(replacement.getFirst(), String.valueOf(replacement.getSecond()));
+            message = message.replace(replacement.first(), String.valueOf(replacement.second()));
         }
         return message;
     }
 
     /**
-     * Formats a message with placeholders.
+     * Capitalizes the first letter in a string.
      *
-     * @param message message with placeholders
-     * @param args    placeholders to replace
-     * @return formatted string
+     * @param str String
+     * @return Capitalized String
      */
-    @SafeVarargs
-    public Component replace(Component message, Tuple<String, Object>... args) {
-        if (args == null) return message;
-        for (Tuple<String, Object> replacement : args) {
-            message = finishReplacement(message, replacement);
-        }
-        return message;
-    }
-
-    /**
-     * Formats a list with placeholders.
-     *
-     * @param list list with placeholders
-     * @param args    placeholders to replace
-     * @return formatted list
-     */
-    @SafeVarargs
-    public List<Component> replace(List<Component> list, Tuple<String, Object>... args) {
-        if (args == null) return list;
-        List<Component> result = new ArrayList<>();
-
-        for (Component line : list) {
-            for (Tuple<String, Object> replacement : args) {
-                if (!((TextComponent) line).content().contains(replacement.getFirst())) continue;
-                if (replacement.getSecond() instanceof List<?> l) {
-                    for (Object additionalLine : l) {
-                        if (additionalLine instanceof Component comp) {
-                            result.add(comp);
-                        }
-                        result.add(text(String.valueOf(additionalLine)));
-                    }
-                    continue;
-                }
-                result.add(finishReplacement(line, replacement));
-            }
-        }
-        return result;
-    }
-
-    private Component finishReplacement(Component message, Tuple<String, Object> replacement) {
-        if (!((TextComponent) message).content().contains(replacement.getFirst())) return message;
-
-        if (replacement.getSecond() instanceof Component comp) {
-            message = message.replaceText(conf -> conf.match(replacement.getFirst()).replacement(comp));
-        }
-
-        message = message.replaceText(conf -> conf.match(replacement.getFirst()).replacement(String.valueOf(replacement.getSecond())));
-        return message;
+    public String capitalizeFirst(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
     /**
@@ -175,5 +125,63 @@ public final class Text {
         str = legacySerializer.serialize(miniMessage.deserialize(str));
         str = REMOVE_PATTERN.matcher(str).replaceAll("");
         return str;
+    }
+
+    public double getAmountFromString(String priceString) throws NumberFormatException {
+        if (priceString.toLowerCase().contains("nan") || priceString.toLowerCase().contains("infinity")) {
+            throw new NumberFormatException();
+        }
+
+        double multi = 1;
+
+        if (priceString.toLowerCase().endsWith("k")) {
+            multi = 1000;
+            priceString = priceString.replace("k", "");
+            priceString = priceString.replace("K", "");
+        } else if (priceString.toLowerCase().endsWith("m")) {
+            multi = 1_000_000;
+            priceString = priceString.replace("m", "");
+            priceString = priceString.replace("M", "");
+        } else if (priceString.toLowerCase().endsWith("b")) {
+            multi = 1_000_000_000;
+            priceString = priceString.replace("b", "");
+            priceString = priceString.replace("B", "");
+        } else if (priceString.toLowerCase().endsWith("t")) {
+            multi = 1_000_000_000_000L;
+            priceString = priceString.replace("t", "");
+            priceString = priceString.replace("T", "");
+        } else if (priceString.toLowerCase().endsWith("q")) {
+            multi = 1_000_000_000_000_000L;
+            priceString = priceString.replace("q", "");
+            priceString = priceString.replace("Q", "");
+        }
+
+        return Double.parseDouble(priceString) * multi;
+    }
+
+    /**
+     * Gets an item name from an item stack
+     *
+     * @param item item stack
+     * @return formatted item name
+     */
+    public String extractItemName(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            Component display = meta.displayName();
+            if (display != null) {
+                return ((TextComponent) display).content();
+            }
+
+            if (meta.hasLocalizedName()) {
+                return meta.getLocalizedName();
+            }
+        }
+        String[] split = item.getType().name().toLowerCase().split("_");
+        StringBuilder builder = new StringBuilder();
+        for (String s : split) {
+            builder.append(capitalizeFirst(s)).append(" ");
+        }
+        return builder.toString().trim();
     }
 }

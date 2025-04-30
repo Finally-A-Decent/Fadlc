@@ -1,7 +1,7 @@
 package info.preva1l.fadlc.api.events;
 
-import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaimChunk;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;

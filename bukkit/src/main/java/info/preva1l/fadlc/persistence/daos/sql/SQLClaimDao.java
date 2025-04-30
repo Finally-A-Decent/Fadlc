@@ -3,16 +3,16 @@ package info.preva1l.fadlc.persistence.daos.sql;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zaxxer.hikari.HikariDataSource;
-import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.managers.PersistenceManager;
+import info.preva1l.fadlc.claim.Claim;
+import info.preva1l.fadlc.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaimChunk;
+import info.preva1l.fadlc.claim.IClaimProfile;
+import info.preva1l.fadlc.claim.services.ClaimService;
 import info.preva1l.fadlc.models.ChunkLoc;
-import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.claim.Claim;
-import info.preva1l.fadlc.models.claim.IClaim;
-import info.preva1l.fadlc.models.claim.IClaimProfile;
-import info.preva1l.fadlc.models.user.OfflineUser;
+import info.preva1l.fadlc.persistence.DataService;
 import info.preva1l.fadlc.persistence.daos.Dao;
 import info.preva1l.fadlc.persistence.handlers.DataHandler;
+import info.preva1l.fadlc.user.OfflineUser;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
 
@@ -136,7 +136,7 @@ public abstract class SQLClaimDao implements Dao<IClaim> {
     protected Map<Integer, IClaimProfile> profileDeserialize(List<String> profiles) {
         Map<Integer, IClaimProfile> ret = new HashMap<>();
         for (String profileId : profiles) {
-            IClaimProfile profile = PersistenceManager.getInstance()
+            IClaimProfile profile = DataService.getInstance()
                     .get(IClaimProfile.class, UUID.fromString(profileId)).join().orElseThrow();
             ret.put(profile.getId(), profile);
         }
@@ -155,7 +155,7 @@ public abstract class SQLClaimDao implements Dao<IClaim> {
         Map<ChunkLoc, Integer> ret = new HashMap<>();
         for (String locStr : profiles) {
             ChunkLoc loc = DataHandler.GSON.fromJson(locStr, ChunkLoc.class);
-            IClaimChunk chunk = ClaimManager.getInstance().getChunk(loc);
+            IClaimChunk chunk = ClaimService.getInstance().getChunk(loc);
             ret.put(chunk.getLoc(), chunk.getProfileId());
         }
         return ret;

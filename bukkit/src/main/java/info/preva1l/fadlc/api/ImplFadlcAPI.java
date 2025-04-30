@@ -1,13 +1,10 @@
 package info.preva1l.fadlc.api;
 
 import info.preva1l.fadlc.Fadlc;
-import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.managers.IClaimManager;
-import info.preva1l.fadlc.managers.IUserManager;
-import info.preva1l.fadlc.managers.UserManager;
-import info.preva1l.fadlc.models.IPosition;
-import info.preva1l.fadlc.models.claim.settings.GroupSetting;
-import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.claim.IClaimService;
+import info.preva1l.fadlc.claim.services.ClaimService;
+import info.preva1l.fadlc.user.IUserService;
+import info.preva1l.fadlc.user.UserService;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -15,22 +12,17 @@ public class ImplFadlcAPI extends FadlcAPI {
     private final Fadlc plugin;
 
     @Override
-    public IClaimManager getClaimManager() {
-        return ClaimManager.getInstance();
+    public IClaimService getClaimManager() {
+        return ClaimService.getInstance();
     }
 
     @Override
-    public IUserManager getUserManager() {
-        return UserManager.getInstance();
+    public IUserService getUserManager() {
+        return UserService.getInstance();
     }
 
     @Override
     public Adapter getAdapter() {
         return ImplAdapter.getInstance();
-    }
-
-    @Override
-    public boolean isActionAllowed(OnlineUser user, IPosition location, GroupSetting setting) {
-        return plugin.isActionAllowed(user, location, setting);
     }
 }

@@ -1,7 +1,7 @@
 package info.preva1l.fadlc.persistence.gson;
 
 import com.google.gson.*;
-import info.preva1l.fadlc.models.user.settings.Setting;
+import info.preva1l.fadlc.user.settings.Setting;
 
 import java.lang.reflect.Type;
 

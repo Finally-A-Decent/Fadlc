@@ -2,11 +2,10 @@ package info.preva1l.fadlc.menus.lib;
 
 import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadlc.Fadlc;
-import info.preva1l.fadlc.config.Menus;
 import info.preva1l.fadlc.config.menus.MenuConfig;
 import info.preva1l.fadlc.config.menus.lang.MenuLang;
-import info.preva1l.fadlc.managers.UserManager;
-import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.user.OnlineUser;
+import info.preva1l.fadlc.user.UserService;
 import info.preva1l.fadlc.utils.Executors;
 import info.preva1l.fadlc.utils.Tasks;
 import lombok.Setter;
@@ -60,10 +59,12 @@ public abstract class FastInv<C extends MenuConfig<? extends MenuLang>> implemen
             throw new IllegalStateException("Inventory holder is not FastInv, found: " + inv.getHolder());
         }
 
-        this.user = UserManager.getInstance().getUser(player).orElseThrow();
+        this.user = UserService.getInstance().getUser(player).orElseThrow();
         this.inventory = inv;
         this.config = config;
-        this.scheme = new InventoryScheme().masks(config.getLayout().toArray(new String[0])).bindItem('0', Menus.getInstance().getFiller().itemStack());
+        this.scheme = new InventoryScheme()
+                .masks(config.getLayout().toArray(new String[0]))
+                .bindItem('0', config.getLang().getFiller().itemStack());
 
         CompletableFuture.runAsync(this::buttons, Executors.VTHREAD).thenRun(() -> Tasks.runSync(player, this::open));
     }

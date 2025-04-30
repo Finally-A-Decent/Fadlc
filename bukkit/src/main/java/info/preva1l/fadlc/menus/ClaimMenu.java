@@ -1,15 +1,16 @@
 package info.preva1l.fadlc.menus;
 
 import com.github.puregero.multilib.regionized.RegionizedTask;
+import info.preva1l.fadlc.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaimChunk;
+import info.preva1l.fadlc.claim.IClaimProfile;
+import info.preva1l.fadlc.claim.IClaimService;
+import info.preva1l.fadlc.claim.services.ClaimService;
 import info.preva1l.fadlc.config.Lang;
 import info.preva1l.fadlc.config.menus.ClaimConfig;
-import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.managers.IClaimManager;
 import info.preva1l.fadlc.menus.lib.FastInv;
+import info.preva1l.fadlc.menus.profile.ProfilesMenu;
 import info.preva1l.fadlc.models.ChunkStatus;
-import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.claim.IClaim;
-import info.preva1l.fadlc.models.claim.IClaimProfile;
 import info.preva1l.fadlc.utils.Tasks;
 import info.preva1l.fadlc.utils.Text;
 import info.preva1l.fadlc.utils.Time;
@@ -27,7 +28,7 @@ import java.util.Optional;
 public class ClaimMenu extends FastInv<ClaimConfig> {
     private final RegionizedTask updateTask;
 
-    private final IClaimManager claimManager = ClaimManager.getInstance();
+    private final IClaimService claimManager = ClaimService.getInstance();
 
     public ClaimMenu(Player player) {
         super(player, ClaimConfig.i());
@@ -173,7 +174,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
     }
 
     private ItemStack centerChunkItem(ItemStack stack) {
-        stack = stack.withType(config.getLang().getChunks().getCurrent().icon());
+        stack.setType(config.getLang().getChunks().getCurrent().icon());
         ItemMeta meta = stack.getItemMeta();
         if (meta == null) return stack;
 

@@ -1,14 +1,14 @@
 package info.preva1l.fadlc.api;
 
-import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.managers.UserManager;
-import info.preva1l.fadlc.models.IClaimChunk;
+import info.preva1l.fadlc.claim.IClaimChunk;
+import info.preva1l.fadlc.claim.services.ClaimService;
 import info.preva1l.fadlc.models.IPosition;
 import info.preva1l.fadlc.models.Location;
 import info.preva1l.fadlc.models.Position;
-import info.preva1l.fadlc.models.user.OfflineUser;
-import info.preva1l.fadlc.models.user.OnlineUser;
-import info.preva1l.fadlc.models.user.User;
+import info.preva1l.fadlc.user.OfflineUser;
+import info.preva1l.fadlc.user.OnlineUser;
+import info.preva1l.fadlc.user.User;
+import info.preva1l.fadlc.user.UserService;
 import org.bukkit.Chunk;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -26,7 +26,7 @@ public class ImplAdapter implements Adapter {
 
     @Override
     public OnlineUser player(Player player) {
-        return UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
+        return UserService.getInstance().getUser(player.getUniqueId()).orElseThrow();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ImplAdapter implements Adapter {
 
     @Override
     public IClaimChunk chunk(Chunk chunk) {
-        return ClaimManager.getInstance().getChunkAt(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+        return ClaimService.getInstance().getChunkAt(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
     }
 
     @Override

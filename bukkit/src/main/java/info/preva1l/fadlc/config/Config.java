@@ -2,10 +2,10 @@ package info.preva1l.fadlc.config;
 
 import de.exlll.configlib.*;
 import info.preva1l.fadlc.Fadlc;
+import info.preva1l.fadlc.claim.registry.GroupSettingsRegistry;
+import info.preva1l.fadlc.claim.settings.GroupSetting;
 import info.preva1l.fadlc.config.misc.PerformanceMode;
-import info.preva1l.fadlc.models.claim.settings.GroupSetting;
 import info.preva1l.fadlc.persistence.DatabaseType;
-import info.preva1l.fadlc.registry.GroupSettingsRegistry;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,6 +42,13 @@ public class Config {
             "When the plugin is disabled, claim protection will still be in place,",
             "but modifying & creating claims is disabled."})
     private boolean enabled = true;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        save();
+    }
+
+    private boolean updateChecker = true;
+
 
     private General general = new General();
 
@@ -239,6 +246,10 @@ public class Config {
         private String username = "root";
         private String password = "myFancyPassword";
         private boolean useSsl = false;
+    }
+
+    public void save() {
+        YamlConfigurations.save(new File(Fadlc.i().getDataFolder(), FILE_NAME).toPath(), Config.class, this);
     }
 
     public static void reload() {

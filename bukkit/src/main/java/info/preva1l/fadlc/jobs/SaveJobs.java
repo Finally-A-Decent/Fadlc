@@ -1,14 +1,14 @@
 package info.preva1l.fadlc.jobs;
 
+import info.preva1l.fadlc.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaimChunk;
+import info.preva1l.fadlc.claim.IClaimProfile;
+import info.preva1l.fadlc.claim.IProfileGroup;
+import info.preva1l.fadlc.claim.services.ClaimService;
 import info.preva1l.fadlc.config.Config;
-import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.managers.PersistenceManager;
-import info.preva1l.fadlc.managers.UserManager;
-import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.claim.IClaim;
-import info.preva1l.fadlc.models.claim.IClaimProfile;
-import info.preva1l.fadlc.models.claim.IProfileGroup;
-import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.persistence.DataService;
+import info.preva1l.fadlc.user.OnlineUser;
+import info.preva1l.fadlc.user.UserService;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -43,14 +43,14 @@ public class SaveJobs {
 
         @Override
         protected void execute() {
-            ClaimManager.getInstance().getAllClaims().forEach(f -> {
-                    PersistenceManager.getInstance().save(IClaim.class, f).join();
+            ClaimService.getInstance().getAllClaims().forEach(f -> {
+                    DataService.getInstance().save(IClaim.class, f).join();
                     f.getProfiles().values().forEach(p -> {
-                        PersistenceManager.getInstance().save(IClaimProfile.class, p).join();
-                        p.getGroups().values().forEach(g -> PersistenceManager.getInstance().save(IProfileGroup.class, g).join());
+                        DataService.getInstance().save(IClaimProfile.class, p).join();
+                        p.getGroups().values().forEach(g -> DataService.getInstance().save(IProfileGroup.class, g).join());
                     });
                     f.getClaimedChunks().keySet().forEach(cUUID ->
-                            PersistenceManager.getInstance().save(IClaimChunk.class, ClaimManager.getInstance().getChunk(cUUID)).join());
+                            DataService.getInstance().save(IClaimChunk.class, ClaimService.getInstance().getChunk(cUUID)).join());
             });
         }
     }
@@ -62,8 +62,8 @@ public class SaveJobs {
 
         @Override
         protected void execute() {
-            UserManager.getInstance().getAllUsers().forEach(f ->
-                    PersistenceManager.getInstance().save(OnlineUser.class, f).join());
+            UserService.getInstance().getAllUsers().forEach(f ->
+                    DataService.getInstance().save(OnlineUser.class, f).join());
         }
     }
 }

@@ -32,7 +32,7 @@ public class ClaimConfig implements MenuConfig<MenuLang> {
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Lang implements MenuLang {
+    public static class Lang extends MenuLang {
         private Chunks chunks = new Chunks();
 
         @Getter
@@ -114,13 +114,13 @@ public class ClaimConfig implements MenuConfig<MenuLang> {
         }
         private ConfigurableItem buyChunks = new ConfigurableItem(
                 Material.BELL, 0, "click",
-                "&3Buy Chunks", List.of("&fYou have &3%chunks% &fchunks", "&7Click to purchase more")
+                "&3Buy Chunks", List.of("&fYou have &3%chunks% &fchunks", "&f\u2192 Click &7to purchase chunks")
         );
         private ConfigurableItem switchProfile = new ConfigurableItem(
                 Material.PAPER, 0, "click", "&3Switch Profile",
                 List.of(
-                        "&7\u2192 Left Click to cycle up",
-                        "&7\u2192 Right Click to cycle down",
+                        "&f\u2192 Left Click &7to cycle up",
+                        "&f\u2192 Right Click &7to cycle down",
                         "&8-------------------------",
                         "&f%previous%",
                         "&8> &3%current%",
@@ -130,11 +130,11 @@ public class ClaimConfig implements MenuConfig<MenuLang> {
         );
         private ConfigurableItem manageProfiles = new ConfigurableItem(
                 Material.ANVIL, 0, "click",
-                "&3Manage Profiles", List.of("&7\u2192 Click to manage your claim profiles")
+                "&3Manage Profiles", List.of("&f\u2192 Click &7to manage your claim profiles")
         );
         private ConfigurableItem settings = new ConfigurableItem(
                 Material.PLAYER_HEAD, 0, "click",
-                "&3Settings", List.of("&7\u2192 Click to manage your settings")
+                "&3Settings", List.of("&f\u2192 Click &7to manage your settings")
         );
     }
 

@@ -2,14 +2,14 @@ package info.preva1l.fadlc.persistence.daos.sql;
 
 import com.google.gson.reflect.TypeToken;
 import com.zaxxer.hikari.HikariDataSource;
-import info.preva1l.fadlc.models.claim.IProfileGroup;
-import info.preva1l.fadlc.models.claim.ProfileGroup;
-import info.preva1l.fadlc.models.claim.settings.GroupSetting;
-import info.preva1l.fadlc.models.user.OfflineUser;
-import info.preva1l.fadlc.models.user.User;
+import info.preva1l.fadlc.claim.IProfileGroup;
+import info.preva1l.fadlc.claim.ProfileGroup;
+import info.preva1l.fadlc.claim.registry.GroupSettingsRegistry;
+import info.preva1l.fadlc.claim.settings.GroupSetting;
 import info.preva1l.fadlc.persistence.daos.Dao;
 import info.preva1l.fadlc.persistence.handlers.DataHandler;
-import info.preva1l.fadlc.registry.GroupSettingsRegistry;
+import info.preva1l.fadlc.user.OfflineUser;
+import info.preva1l.fadlc.user.User;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.AllArgsConstructor;
 

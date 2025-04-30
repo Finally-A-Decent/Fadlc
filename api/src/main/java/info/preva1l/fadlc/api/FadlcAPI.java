@@ -1,10 +1,8 @@
 package info.preva1l.fadlc.api;
 
-import info.preva1l.fadlc.managers.IClaimManager;
-import info.preva1l.fadlc.managers.IUserManager;
+import info.preva1l.fadlc.claim.IClaimService;
 import info.preva1l.fadlc.models.IPosition;
-import info.preva1l.fadlc.models.claim.settings.GroupSetting;
-import info.preva1l.fadlc.models.user.OnlineUser;
+import info.preva1l.fadlc.user.IUserService;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +28,7 @@ public abstract class FadlcAPI {
      * @return the claim manager instance.
      * @since 1.0.0
      */
-    public abstract IClaimManager getClaimManager();
+    public abstract IClaimService getClaimManager();
 
     /**
      * Get the user manager to interact with users.
@@ -38,7 +36,7 @@ public abstract class FadlcAPI {
      * @return the user manager instance.
      * @since 1.0.0
      */
-    public abstract IUserManager getUserManager();
+    public abstract IUserService getUserManager();
 
     /**
      * The adapter to adapt bukkit types/values to Fadlc objects.
@@ -50,17 +48,6 @@ public abstract class FadlcAPI {
      * @since 1.0.0
      */
     public abstract Adapter getAdapter();
-
-    /**
-     * Check if the player can perform an action at the provided location.
-     *
-     * @param user the player to check.
-     * @param location the location of the action.
-     * @param setting the action to check
-     * @return true if the action is allowed false if not
-     * @since 1.0.0
-     */
-    public abstract boolean isActionAllowed(OnlineUser user, IPosition location, GroupSetting setting);
 
     /**
      * Get the instance of the Fadlc API.

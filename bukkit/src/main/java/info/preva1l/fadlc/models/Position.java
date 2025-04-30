@@ -1,7 +1,8 @@
 package info.preva1l.fadlc.models;
 
+import info.preva1l.fadlc.claim.IClaimChunk;
+import info.preva1l.fadlc.claim.services.ClaimService;
 import info.preva1l.fadlc.config.ServerSettings;
-import info.preva1l.fadlc.managers.ClaimManager;
 
 public class Position extends IPosition {
     public Position(String server, String world, int x, int y, int z) {
@@ -18,6 +19,6 @@ public class Position extends IPosition {
 
     @Override
     public IClaimChunk getChunk() {
-        return ClaimManager.getInstance().getChunkAt(this);
+        return ClaimService.getInstance().getChunkAt(this);
     }
 }

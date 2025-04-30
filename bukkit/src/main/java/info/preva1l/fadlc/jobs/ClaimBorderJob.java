@@ -1,15 +1,15 @@
 package info.preva1l.fadlc.jobs;
 
+import info.preva1l.fadlc.claim.IClaim;
+import info.preva1l.fadlc.claim.IClaimChunk;
+import info.preva1l.fadlc.claim.IClaimProfile;
+import info.preva1l.fadlc.claim.services.ClaimService;
 import info.preva1l.fadlc.config.Config;
 import info.preva1l.fadlc.config.particles.Particles;
-import info.preva1l.fadlc.managers.ClaimManager;
-import info.preva1l.fadlc.managers.UserManager;
 import info.preva1l.fadlc.models.ChunkStatus;
-import info.preva1l.fadlc.models.IClaimChunk;
-import info.preva1l.fadlc.models.claim.IClaim;
-import info.preva1l.fadlc.models.claim.IClaimProfile;
-import info.preva1l.fadlc.models.user.OnlineUser;
-import info.preva1l.fadlc.registry.UserSettingsRegistry;
+import info.preva1l.fadlc.user.OnlineUser;
+import info.preva1l.fadlc.user.UserService;
+import info.preva1l.fadlc.user.registry.UserSettingsRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -26,7 +26,7 @@ public class ClaimBorderJob extends Job {
     @Override
     protected void execute() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            OnlineUser user = UserManager.getInstance().getUser(player.getUniqueId()).orElseThrow();
+            OnlineUser user = UserService.getInstance().getUser(player.getUniqueId()).orElseThrow();
             if (!user.getSetting(UserSettingsRegistry.VIEW_BORDERS, true)) continue;
             Location playerLocation = player.getLocation();
             int playerY = playerLocation.getBlockY();
@@ -40,7 +40,7 @@ public class ClaimBorderJob extends Job {
             for (int chunkX = playerChunkX - chunkRadius; chunkX <= playerChunkX + chunkRadius; chunkX++) {
                 for (int chunkZ = playerChunkZ - chunkRadius; chunkZ <= playerChunkZ + chunkRadius; chunkZ++) {
                     Chunk chunk = player.getWorld().getChunkAt(chunkX, chunkZ);
-                    IClaimChunk claimChunk = ClaimManager.getInstance().getChunkAt(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+                    IClaimChunk claimChunk = ClaimService.getInstance().getChunkAt(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
 
                     if (claimChunk.getStatus() != ChunkStatus.CLAIMED) continue;
 
@@ -55,8 +55,8 @@ public class ClaimBorderJob extends Job {
         int startZ = chunk.getZ() << 4;
         int endX = startX + 16;
         int endZ = startZ + 16;
-        IClaimChunk claimChunk = ClaimManager.getInstance().getChunkAt(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
-        Optional<IClaim> claim = ClaimManager.getInstance().getClaimAt(claimChunk);
+        IClaimChunk claimChunk = ClaimService.getInstance().getChunkAt(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+        Optional<IClaim> claim = ClaimService.getInstance().getClaimAt(claimChunk);
 
         if (claim.isEmpty()) {
             return;
@@ -91,11 +91,11 @@ public class ClaimBorderJob extends Job {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isConnectingChunk(Chunk chnk1, Chunk chnk2) {
-        IClaimChunk chunk1 = ClaimManager.getInstance().getChunkAt(chnk1.getX(), chnk1.getZ(), chnk1.getWorld().getName());
-        IClaimChunk chunk2 = ClaimManager.getInstance().getChunkAt(chnk2.getX(), chnk2.getZ(), chnk2.getWorld().getName());
+        IClaimChunk chunk1 = ClaimService.getInstance().getChunkAt(chnk1.getX(), chnk1.getZ(), chnk1.getWorld().getName());
+        IClaimChunk chunk2 = ClaimService.getInstance().getChunkAt(chnk2.getX(), chnk2.getZ(), chnk2.getWorld().getName());
 
-        Optional<IClaim> claim1 = ClaimManager.getInstance().getClaimAt(chunk1);
-        Optional<IClaim> claim2 = ClaimManager.getInstance().getClaimAt(chunk2);
+        Optional<IClaim> claim1 = ClaimService.getInstance().getClaimAt(chunk1);
+        Optional<IClaim> claim2 = ClaimService.getInstance().getClaimAt(chunk2);
 
         if (claim1.isEmpty() || claim2.isEmpty()) return false;
 

@@ -34,18 +34,10 @@ public class SettingsConfig implements MenuConfig<PaginatedLang> {
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Lang implements PaginatedLang {
+    public static class Lang extends PaginatedLang {
         private ConfigurableItem back = new ConfigurableItem(
                 Material.FEATHER, 0, "click",
                 "&3Back", List.of("&7\u2192 Click to go back")
-        );
-        private ConfigurableItem previous = new ConfigurableItem(
-                Material.ARROW, 0, "click",
-                "&3Previous Page", List.of("&7\u2192 Click to go to the previous page")
-        );
-        private ConfigurableItem next = new ConfigurableItem(
-                Material.ARROW, 0, "click",
-                "&3Next Page", List.of("&7\u2192 Click to go to the next page")
         );
         private SettingToggle settingToggle = new SettingToggle(
                 "click", "%setting%",
