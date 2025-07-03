@@ -1,10 +1,13 @@
 package info.preva1l.fadlc.utils;
 
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
+@Deprecated
+@ApiStatus.Obsolete
 @UtilityClass
 public class Logger {
     private final java.util.logging.Logger logger = java.util.logging.Logger.getLogger("Fadlc");

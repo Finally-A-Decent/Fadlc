@@ -1,14 +1,13 @@
 package info.preva1l.fadlc.jobs;
 
 import info.preva1l.fadlc.config.Config;
+import info.preva1l.fadlc.utils.Executors;
 import info.preva1l.fadlc.utils.Logger;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,9 +15,6 @@ import java.util.concurrent.TimeUnit;
  */
 @RequiredArgsConstructor
 public abstract class Job {
-    private static final ScheduledExecutorService scheduler =
-            new ScheduledThreadPoolExecutor(Config.i().getJobs().getPoolSize());
-
     private final String name;
     private final Duration interval;
     private boolean silent = false;
@@ -57,7 +53,7 @@ public abstract class Job {
     }
 
     public final void start() {
-        future = scheduler.scheduleAtFixedRate(this::run,
+        future = Executors.SCHEDULED.scheduleAtFixedRate(this::run,
                 interval.toMillis(), interval.toMillis(), TimeUnit.MILLISECONDS);
         Logger.info("[JOBS] Job '%s' scheduled at an interval of %s seconds".formatted(this.name, interval.get(ChronoUnit.SECONDS)));
     }

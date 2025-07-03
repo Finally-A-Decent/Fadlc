@@ -1,6 +1,5 @@
 package info.preva1l.fadlc.menus;
 
-import com.github.puregero.multilib.regionized.RegionizedTask;
 import info.preva1l.fadlc.claim.IClaim;
 import info.preva1l.fadlc.claim.IClaimChunk;
 import info.preva1l.fadlc.claim.IClaimProfile;
@@ -11,7 +10,7 @@ import info.preva1l.fadlc.config.menus.ClaimConfig;
 import info.preva1l.fadlc.menus.lib.FastInv;
 import info.preva1l.fadlc.menus.profile.ProfilesMenu;
 import info.preva1l.fadlc.models.ChunkStatus;
-import info.preva1l.fadlc.utils.Tasks;
+import info.preva1l.fadlc.utils.Executors;
 import info.preva1l.fadlc.utils.Text;
 import info.preva1l.fadlc.utils.Time;
 import net.kyori.adventure.text.Component;
@@ -24,17 +23,19 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ClaimMenu extends FastInv<ClaimConfig> {
-    private final RegionizedTask updateTask;
+    private final ScheduledFuture<?> updateTask;
 
     private final IClaimService claimManager = ClaimService.getInstance();
 
     public ClaimMenu(Player player) {
         super(player, ClaimConfig.i());
        
-        this.updateTask = Tasks.runAsyncRepeat(this::placeChunkItems, 20L);
-        addCloseHandler((e) -> updateTask.cancel());
+        this.updateTask = Executors.SCHEDULED.scheduleAtFixedRate(this::placeChunkItems, 0L, 1L, TimeUnit.SECONDS);
+        addCloseHandler((e) -> updateTask.cancel(true));
     }
 
     @Override
@@ -49,6 +50,7 @@ public class ClaimMenu extends FastInv<ClaimConfig> {
         scheme.bindItem('B', config.getLang().getBuyChunks().easyItem()
                 .replaceAnywhere("%chunks%", user.getAvailableChunks() + "").getBase(), e -> {
             config.getLang().getBuyChunks().getSound().play(user);
+            //more
         });
 
         scheme.bindItem('M', config.getLang().getManageProfiles().itemStack(), e -> {

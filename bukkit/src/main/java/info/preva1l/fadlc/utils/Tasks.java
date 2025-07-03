@@ -9,9 +9,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Consumer;
 
-/**
- * Easy creation of Bukkit Tasks
- */
 @UtilityClass
 public class Tasks {
     private final JavaPlugin plugin = Fadlc.i();
@@ -61,34 +58,5 @@ public class Tasks {
      */
     public RegionizedTask runSyncDelayed(Runnable runnable, long delay) {
         return MultiLib.getGlobalRegionScheduler().runDelayed(plugin, t -> runnable.run(), delay);
-    }
-
-    /**
-     * Run an asynchronous task once. Helpful when needing to run some sync code in an async loop
-     *
-     * @param runnable The runnable, lambda supported yeh
-     */
-    public RegionizedTask runAsync(Runnable runnable) {
-        return MultiLib.getAsyncScheduler().runNow(plugin, c -> runnable.run());
-    }
-
-    /**
-     * Run an asynchronous task forever with a delay between runs.
-     *
-     * @param runnable The runnable, lambda supported yeh
-     * @param interval Time between each run
-     */
-    public RegionizedTask runAsyncRepeat(Runnable runnable, long interval) {
-        return MultiLib.getAsyncScheduler().runAtFixedRate(plugin, c -> runnable.run(), 0L, interval);
-    }
-
-    /**
-     * Run an asynchronous task once with a delay. Helpful when needing to run some sync code in an async loop
-     *
-     * @param runnable The runnable, lambda supported yeh
-     * @param delay Time before running.
-     */
-    public RegionizedTask runAsyncDelayed(Runnable runnable, long delay) {
-        return MultiLib.getAsyncScheduler().runDelayed(plugin, c -> runnable.run(), delay);
     }
 }
